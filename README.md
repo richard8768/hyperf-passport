@@ -59,13 +59,17 @@ return [
 ?>
 ```php
 
+
 ## 安装 - install
+
 
 ```bash
 $ composer require richard/hyperf-passport
 php bin/hyperf.php vendor:publish richard/hyperf-passport
 ```
+
 ## 配置 - configuration
+
 
 编辑文件 config/autoload/auth.php
 在文件中引入Provicer和Guard
@@ -239,7 +243,9 @@ class User extends Model implements Authenticatable {
 ?>
 ```php
 
+
 ## 使用 - usage
+
 
 > 以下是伪代码，仅供参考。
 在文件config/autoload/exceptions.php中添加全局异常处理器
