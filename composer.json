@@ -1,5 +1,5 @@
 {
-    "name": "richard/hyperf-passport",
+    "name": "richard8768/hyperf-passport",
     "type": "library",
     "license": "MIT",
     "keywords": [
@@ -9,7 +9,7 @@
     "description": "Hyperf Passport",
     "authors": [
         {
-            "name": "richard876",
+            "name": "richard8768",
             "email": "jobsen123@qq.com"
         }
     ],
