@@ -15,10 +15,17 @@ use League\OAuth2\Server\AuthorizationServer;
 use Nyholm\Psr7\Response as Psr7Response;
 use Psr\Http\Message\ServerRequestInterface;
 use Qbhy\HyperfAuth\AuthManager;
+use Hyperf\Contract\ConfigInterface;
 
 class AuthorizationController {
 
     use HandlesOAuthErrors;
+
+    /**
+     * @Inject
+     * @var \Hyperf\Contract\ConfigInterface
+     */
+    protected $config;
 
     /**
      * The authorization server.
@@ -85,13 +92,15 @@ class AuthorizationController {
         $authToken = Str::random();
         $this->session->set('authToken', $authToken);
         $this->session->set('authRequest', $authRequest);
+        $appname = $this->config->get('app_name');
 
-        return $this->render->render('passport::authorize', [
+        return $this->render->render('passport.authorize', [
                     'client' => $client,
                     'user' => $user,
                     'scopes' => $scopes,
                     'request' => $request,
                     'authToken' => $authToken,
+                    'appname' => $appname,
         ]);
     }
 

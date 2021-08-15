@@ -7,6 +7,7 @@ use League\OAuth2\Server\AuthorizationServer;
 use Nyholm\Psr7\Response as Psr7Response;
 use Hyperf\Contract\SessionInterface;
 use Qbhy\HyperfAuth\AuthManager;
+use Hyperf\HttpServer\Request;
 
 class ApproveAuthorizationController {
 

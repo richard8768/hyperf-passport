@@ -73,7 +73,7 @@ class Client extends Model {
      * @return \Hyperf\Database\Model\Relations\BelongsTo
      */
     public function user() {
-        $provider = $this->provider ?: config('auth.guards.api.provider');
+        $provider = $this->provider ?: config('auth.guards.passport.provider');
 
         return $this->belongsTo(
                         config("auth.providers.{$provider}.model")

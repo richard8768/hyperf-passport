@@ -76,7 +76,7 @@ class Token extends Model {
      * @return \Hyperf\Database\Model\Relations\BelongsTo
      */
     public function user() {
-        $provider = config('auth.guards.api.provider');
+        $provider = config('auth.guards.passport.provider');
 
         $model = config('auth.providers.' . $provider . '.model');
 
