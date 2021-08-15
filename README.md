@@ -1,33 +1,33 @@
 # richard/hyperf-passport
 
-hyperf µÄ hyperf-passport ×é¼ş£¬Ö§³Ö¶Ô¶àÖÖÓÃ»§½øĞĞµÇÂ¼ÊÚÈ¨Ö§³ÖOauth2.0µÄËÄÖÖÊÚÈ¨Ä£Ê½£¬Ä¿Ç°ÃÜÂëÊÚÈ¨Ä£Ê½ÒÑÍêÈ«¿ÉÓÃ¡£
-±¾×é¼ş²Î¿¼ÁË laravel µÄ passport ×é¼şÉè¼Æ£¬Ê¹ÓÃÌåÑé´óÌåºÍ laravel µÄ passport ²î²»¶à¡£
+hyperf çš„ hyperf-passport ç»„ä»¶ï¼Œæ”¯æŒå¯¹å¤šç§ç”¨æˆ·è¿›è¡Œç™»å½•æˆæƒæ”¯æŒOauth2.0çš„å››ç§æˆæƒæ¨¡å¼ï¼Œç›®å‰å¯†ç æˆæƒæ¨¡å¼å·²å®Œå…¨å¯ç”¨ã€‚
+æœ¬ç»„ä»¶å‚è€ƒäº† laravel çš„ passport ç»„ä»¶è®¾è®¡ï¼Œä½¿ç”¨ä½“éªŒå¤§ä½“å’Œ laravel çš„ passport å·®ä¸å¤šã€‚
 
-> ÈÎºÎÎÊÌâÇë¼ÓQQÌáÎÊ£º444626008
+> ä»»ä½•é—®é¢˜è¯·åŠ QQæé—®ï¼š444626008
 
-## °²×°Ç°µÄ×¼±¸ - before install
+## å®‰è£…å‰çš„å‡†å¤‡ - before install
 
 PHP>=7.3
-°²×°ÒÀÀµ°ü
+å®‰è£…ä¾èµ–åŒ…
 ```bash
-#ÊÚÈ¨ÒÀÀµ°ü
+#æˆæƒä¾èµ–åŒ…
 $ composer require 96qbhy/hyperf-auth
 $ php bin/hyperf.php vendor:publish 96qbhy/hyperf-auth
-#¼ÓÃÜÒÀÀµ°ü
+#åŠ å¯†ä¾èµ–åŒ…
 $ composer require hyperf-ext/encryption
 $ php bin/hyperf.php vendor:publish hyperf-ext/encryption
 $ composer require hyperf-ext/hashing
 $ php bin/hyperf.php vendor:publish hyperf-ext/hashing
-#Ä£°åÒıÇæºÍÊÓÍ¼
+#æ¨¡æ¿å¼•æ“å’Œè§†å›¾
 $ composer require hyperf/view-engine
 $ composer require hyperf/view
-#hyperfµÄsession
+#hyperfçš„session
 $ composer require hyperf/session
 $ php bin/hyperf.php vendor:publish hyperf/session
 ```
-Ê¹ÓÃ php bin/hyperf.php gen:key ÃüÁîÀ´Éú³ÉÃÜÔ¿,²¢½«KEYÖµ¸´ÖÆµ½ÎÄ¼ş config/autoload/encryption.phpÖĞµÄenv('AES_KEY', 'place_to_hold_key')
+ä½¿ç”¨ php bin/hyperf.php gen:key å‘½ä»¤æ¥ç”Ÿæˆå¯†é’¥,å¹¶å°†KEYå€¼å¤åˆ¶åˆ°æ–‡ä»¶ config/autoload/encryption.phpä¸­çš„env('AES_KEY', 'place_to_hold_key')
 
-±à¼­ÎÄ¼şconfig/autoload/view.phpÅäÖÃÊÓÍ¼Ä¬ÈÏÒıÇæ:
+ç¼–è¾‘æ–‡ä»¶config/autoload/view.phpé…ç½®è§†å›¾é»˜è®¤å¼•æ“:
 ```
 <?php
 declare(strict_types=1);
@@ -36,23 +36,23 @@ use Hyperf\View\Mode;
 use Hyperf\View\Engine\BladeEngine;
 
 return [
-    // Ê¹ÓÃµÄäÖÈ¾ÒıÇæ
+    // ä½¿ç”¨çš„æ¸²æŸ“å¼•æ“
     'engine' => BladeEngine::class,
-    // ²»ÌîĞ´ÔòÄ¬ÈÏÎª Task Ä£Ê½£¬ÍÆ¼öÊ¹ÓÃ Task Ä£Ê½
+    // ä¸å¡«å†™åˆ™é»˜è®¤ä¸º Task æ¨¡å¼ï¼Œæ¨èä½¿ç”¨ Task æ¨¡å¼
     'mode' => Mode::TASK,
     'config' => [
-        // ÈôÏÂÁĞÎÄ¼ş¼Ğ²»´æÔÚÇë×ÔĞĞ´´½¨
+        // è‹¥ä¸‹åˆ—æ–‡ä»¶å¤¹ä¸å­˜åœ¨è¯·è‡ªè¡Œåˆ›å»º
         'view_path' => BASE_PATH . '/storage/view/',
         'cache_path' => BASE_PATH . '/runtime/view/',
     ],
 ];
 ?>
 ```
-ÔÚÎÄ¼ş config/autoload/middlewares.phpÖĞÌí¼ÓÈ«¾ÖÖĞ¼ä¼ş 
+åœ¨æ–‡ä»¶ config/autoload/middlewares.phpä¸­æ·»åŠ å…¨å±€ä¸­é—´ä»¶ 
 ```
 <?php
 return [
-    // ÕâÀïµÄ http ¶ÔÓ¦Ä¬ÈÏµÄ server name£¬ÈçÄúĞèÒªÔÚÆäËü server ÉÏÊ¹ÓÃ Session£¬ĞèÒª¶ÔÓ¦µÄÅäÖÃÈ«¾ÖÖĞ¼ä¼ş
+    // è¿™é‡Œçš„ http å¯¹åº”é»˜è®¤çš„ server nameï¼Œå¦‚æ‚¨éœ€è¦åœ¨å…¶å®ƒ server ä¸Šä½¿ç”¨ Sessionï¼Œéœ€è¦å¯¹åº”çš„é…ç½®å…¨å±€ä¸­é—´ä»¶
     'http' => [
         \Hyperf\Session\Middleware\SessionMiddleware::class,
     ],
@@ -61,7 +61,7 @@ return [
 ```
 
 
-## °²×° - install
+## å®‰è£… - install
 
 
 ```bash
@@ -69,25 +69,25 @@ $ composer require richard/hyperf-passport
 php bin/hyperf.php vendor:publish richard/hyperf-passport
 ```
 
-## ÅäÖÃ - configuration
+## é…ç½® - configuration
 
 
-±à¼­ÎÄ¼ş config/autoload/auth.php
+ç¼–è¾‘æ–‡ä»¶ config/autoload/auth.php
 
-ÔÚÎÄ¼şÖĞÒıÈëProvicerºÍGuard
+åœ¨æ–‡ä»¶ä¸­å¼•å…¥Provicerå’ŒGuard
 
 use Richard\HyperfPassport\PassportUserProvider;
 
 use Richard\HyperfPassport\Guard\TokenGuard;
 
-ÔÚguardsÀïÃæÌîĞ´
+åœ¨guardsé‡Œé¢å¡«å†™
 
 'passport' => [
     'driver' => TokenGuard::class,
     'provider' => 'users',
 ]
 
-²¢ÔÚusersÀïÃæ¶¨ÒåÏàÓ¦µÄprovider
+å¹¶åœ¨usersé‡Œé¢å®šä¹‰ç›¸åº”çš„provider
 
 'users' => [
     'driver' => PassportUserProvider::class, 
@@ -95,7 +95,7 @@ use Richard\HyperfPassport\Guard\TokenGuard;
     'model' => App\Model\User::class,
 ]
 
-ÒÔÏÂÎªauth.phpÎÄ¼şÑù°å
+ä»¥ä¸‹ä¸ºauth.phpæ–‡ä»¶æ ·æ¿
 
 ```
 <?php
@@ -114,12 +114,12 @@ return [
         'guard' => 'jwt',
         'provider' => 'admin',
     ],
-    'guards' => [// ¿ª·¢Õß¿ÉÒÔÔÚÕâÀïÌí¼Ó×Ô¼ºµÄ guard £¬guard Qbhy\HyperfAuth\AuthGuard ½Ó¿Ú
+    'guards' => [// å¼€å‘è€…å¯ä»¥åœ¨è¿™é‡Œæ·»åŠ è‡ªå·±çš„ guard ï¼Œguard Qbhy\HyperfAuth\AuthGuard æ¥å£
         'jwt' => [
             'driver' => Qbhy\HyperfAuth\Guard\JwtGuard::class,
             'provider' => 'admin',
             'secret' => env('JWT_SECRET', 'hyperf.plus'),
-            'ttl' => 60 * 60, // µ¥Î»Ãë
+            'ttl' => 60 * 60, // å•ä½ç§’
             'default' => PasswordHashEncrypter::class,
             'encoder' => new Base64UrlSafeEncoder(),
             'cache' => function () {
@@ -137,52 +137,52 @@ return [
     ],
     'providers' => [
         'admin' => [
-            'driver' => EloquentProvider::class, // user provider ĞèÒªÊµÏÖ Qbhy\HyperfAuth\UserProvider ½Ó¿Ú
-            'model' => Administrator::class, //  ĞèÒªÊµÏÖ Qbhy\HyperfAuth\Authenticatable ½Ó¿Ú
+            'driver' => EloquentProvider::class, // user provider éœ€è¦å®ç° Qbhy\HyperfAuth\UserProvider æ¥å£
+            'model' => Administrator::class, //  éœ€è¦å®ç° Qbhy\HyperfAuth\Authenticatable æ¥å£
         ],
         'users' => [
-            'driver' => PassportUserProvider::class, // user provider ĞèÒªÊµÏÖ Qbhy\HyperfAuth\UserProvider ½Ó¿Ú
-            'model' => App\Model\User::class, //  ĞèÒªÊµÏÖ Qbhy\HyperfAuth\Authenticatable ½Ó¿Ú
+            'driver' => PassportUserProvider::class, // user provider éœ€è¦å®ç° Qbhy\HyperfAuth\UserProvider æ¥å£
+            'model' => App\Model\User::class, //  éœ€è¦å®ç° Qbhy\HyperfAuth\Authenticatable æ¥å£
         ],
         'merchants' => [
-            'driver' => PassportUserProvider::class, // user provider ĞèÒªÊµÏÖ Qbhy\HyperfAuth\UserProvider ½Ó¿Ú
-            'model' => App\Model\Merchant::class, //  ĞèÒªÊµÏÖ Qbhy\HyperfAuth\Authenticatable ½Ó¿Ú
+            'driver' => PassportUserProvider::class, // user provider éœ€è¦å®ç° Qbhy\HyperfAuth\UserProvider æ¥å£
+            'model' => App\Model\Merchant::class, //  éœ€è¦å®ç° Qbhy\HyperfAuth\Authenticatable æ¥å£
         ],
     ],
 ];
 ?>
 ```
-Ö´ĞĞÇ¨ÒÆ
+æ‰§è¡Œè¿ç§»
 
 php bin/hyperf.php migrate
 
 php bin/hyperf.php migrate:status
 
-°²×°passport
+å®‰è£…passport
 
 php bin/hyperf.php passport:install  --force --length=4096
 
 php bin/hyperf.php passport:purge
 
-Äã»¹¿ÉÒÔ¸ù¾İprovidersÅäÖÃÏîÀïÃæµÄÔªËØÉú³Éclient
+ä½ è¿˜å¯ä»¥æ ¹æ®providersé…ç½®é¡¹é‡Œé¢çš„å…ƒç´ ç”Ÿæˆclient
 
 php bin/hyperf.php passport:client --password --name="your client name"
 
 
-Èç¹ûÓĞÊı¾İÌî³äÎÄ¼ş¿ÉÒÔÖ´ĞĞ php bin/hyperf.php db:seed --path=seeders/user_table_seeder.php
+å¦‚æœæœ‰æ•°æ®å¡«å……æ–‡ä»¶å¯ä»¥æ‰§è¡Œ php bin/hyperf.php db:seed --path=seeders/user_table_seeder.php
 
-ÆäÖĞseeders/user_table_seeder.phpÎªÌî³äÎÄ¼şÂ·¾¶
+å…¶ä¸­seeders/user_table_seeder.phpä¸ºå¡«å……æ–‡ä»¶è·¯å¾„
 
-×¢ÒâÌî³äÎÄ¼şÖĞÃÜÂëµÄ¸ñÊ½Îª \HyperfExt\Hashing\Hash::make('your password'),·ñÔò»áµ¼ÖÂpassportÃÜÂëĞ£ÑéÊ§°Ü
+æ³¨æ„å¡«å……æ–‡ä»¶ä¸­å¯†ç çš„æ ¼å¼ä¸º \HyperfExt\Hashing\Hash::make('your password'),å¦åˆ™ä¼šå¯¼è‡´passportå¯†ç æ ¡éªŒå¤±è´¥
 
 
-ÔÚÓÃ»§Ä£ĞÍÖĞÒıÈë\Richard\HyperfPassport\HasApiTokensºÍ\Richard\HyperfPassport\Auth\AuthenticatableTraitÒÔ¼°\Qbhy\HyperfAuth\AuthAbility
+åœ¨ç”¨æˆ·æ¨¡å‹ä¸­å¼•å…¥\Richard\HyperfPassport\HasApiTokenså’Œ\Richard\HyperfPassport\Auth\AuthenticatableTraitä»¥åŠ\Qbhy\HyperfAuth\AuthAbility
 
-ÓÃ»§µÇÂ¼Ä¬ÈÏÊÇÑéÖ¤emailÈç¹ûÏ£ÍûÑéÖ¤ÆäËû×Ö¶Î¿ÉÒÔÔÚÄ£ĞÍÖĞÌí¼ÓfindForPassport·½·¨£¬È»ºó±àĞ´×Ô¼ºµÄ´úÂëÂß¼­
+ç”¨æˆ·ç™»å½•é»˜è®¤æ˜¯éªŒè¯emailå¦‚æœå¸Œæœ›éªŒè¯å…¶ä»–å­—æ®µå¯ä»¥åœ¨æ¨¡å‹ä¸­æ·»åŠ findForPassportæ–¹æ³•ï¼Œç„¶åç¼–å†™è‡ªå·±çš„ä»£ç é€»è¾‘
 
-ÓÃ»§ÃÜÂëÄ¬ÈÏ´æ´¢×Ö¶ÎÊÇpasswordÈç¹ûÏ£ÍûÑéÖ¤ÆäËû×Ö¶Î¿ÉÒÔÔÚÄ£ĞÍÖĞÌí¼ÓgetAuthPassword·½·¨£¬È»ºó·µ»Ø×Ô¼ºµÄÃÜÂë×Ö¶Î
+ç”¨æˆ·å¯†ç é»˜è®¤å­˜å‚¨å­—æ®µæ˜¯passwordå¦‚æœå¸Œæœ›éªŒè¯å…¶ä»–å­—æ®µå¯ä»¥åœ¨æ¨¡å‹ä¸­æ·»åŠ getAuthPasswordæ–¹æ³•ï¼Œç„¶åè¿”å›è‡ªå·±çš„å¯†ç å­—æ®µ
 
-ÒÔÏÂÎªÄ£ĞÍÎÄ¼şUser.phpÑù°å
+ä»¥ä¸‹ä¸ºæ¨¡å‹æ–‡ä»¶User.phpæ ·æ¿
 
 ```
 <?php
@@ -230,7 +230,7 @@ class User extends Model implements Authenticatable {
 
 
     /**
-     * ĞŞ¸ÄÈÏÖ¤Ê±µÄÄ¬ÈÏusername×Ö¶Î
+     * ä¿®æ”¹è®¤è¯æ—¶çš„é»˜è®¤usernameå­—æ®µ
      */
     public function findForPassport($username) {
         if (strpos($username, '@') !== false) {
@@ -270,11 +270,11 @@ class User extends Model implements Authenticatable {
 ```
 
 
-## Ê¹ÓÃ - usage
+## ä½¿ç”¨ - usage
 
 
-> ÒÔÏÂÊÇÎ±´úÂë£¬½ö¹©²Î¿¼¡£
-ÔÚÎÄ¼şconfig/autoload/exceptions.phpÖĞÌí¼ÓÈ«¾ÖÒì³£´¦ÀíÆ÷
+> ä»¥ä¸‹æ˜¯ä¼ªä»£ç ï¼Œä»…ä¾›å‚è€ƒã€‚
+åœ¨æ–‡ä»¶config/autoload/exceptions.phpä¸­æ·»åŠ å…¨å±€å¼‚å¸¸å¤„ç†å™¨
 ```
 <?php
 
@@ -299,27 +299,27 @@ return [
 ];
 ?>
 ```
-##### ½Ó¿ÚÃû³Æ
+##### æ¥å£åç§°
 
-- µÇÂ¼ÒÔ»ñÈ¡»á»°ÁîÅÆºÍË¢ĞÂÁîÅÆ
+- ç™»å½•ä»¥è·å–ä¼šè¯ä»¤ç‰Œå’Œåˆ·æ–°ä»¤ç‰Œ
 
-##### ÇëÇóµØÖ·
+##### è¯·æ±‚åœ°å€
 - ` /oauth/token `
   
-##### ÇëÇó·½Ê½
+##### è¯·æ±‚æ–¹å¼
 - POST 
 
-##### ²ÎÊı
+##### å‚æ•°
 
-|²ÎÊıÃû|±ØÑ¡|ÀàĞÍ|ËµÃ÷|
+|å‚æ•°å|å¿…é€‰|ç±»å‹|è¯´æ˜|
 |:----    |:---|:----- |-----   |
-username |ÊÇ  |string |ÓÃ»§Ãû/ÓÊÏä/ÊÖ»úºÅ  |
-password |ÊÇ  |string |ÓÃ»§ÃÜÂë  |
-grant_type |ÊÇ  |string |ÊÚÈ¨ÀàĞÍ Ò»°ãÌîpassword  |
-client_id |ÊÇ  |string |·şÎñ¶Ë·ÖÅäµÄclient_id  |
-client_secret |ÊÇ  |string |·şÎñ¶Ë·ÖÅäµÄclient_id¶ÔÓ¦µÄÃÜÔ¿  |
+username |æ˜¯  |string |ç”¨æˆ·å/é‚®ç®±/æ‰‹æœºå·  |
+password |æ˜¯  |string |ç”¨æˆ·å¯†ç   |
+grant_type |æ˜¯  |string |æˆæƒç±»å‹ ä¸€èˆ¬å¡«password  |
+client_id |æ˜¯  |string |æœåŠ¡ç«¯åˆ†é…çš„client_id  |
+client_secret |æ˜¯  |string |æœåŠ¡ç«¯åˆ†é…çš„client_idå¯¹åº”çš„å¯†é’¥  |
 
-##### ÏìÓ¦ĞÅÏ¢ 
+##### å“åº”ä¿¡æ¯ 
 
 ``` 
 {
@@ -329,26 +329,26 @@ client_secret |ÊÇ  |string |·şÎñ¶Ë·ÖÅäµÄclient_id¶ÔÓ¦µÄÃÜÔ¿  |
     "refresh_token": "def50200961f6b024f098f4ef9416c07515a6449f5feb7e3db6e2e19f4bb260f2758e9bc71b81e49587a96f83658c05f8b93243a6cd5342f1a6a7eee8582e3dedab8915ce24f41875077cd5e22926a53ea0b4675eeb86f3322285848cbac96086eedb0782d6d99a8f9bbe39bcdf1c3215ae127e0a40a9536bdb3496e36f03026015ebf88c81c1a860c6c15a8a48edc7bc8c4a150948b1cfad76c29b01e403711a25f6a6969aaec0777ef6919a7fc707ea63c780e744ceb593f8d7cfd8aef7af59769f1ba5be7b6479c45cdd1c15d3827dd6ba4d0193bead299840c4fea66356a56e2ca407add2d904b1a97a4f0977ad4fcc256cc8f805d3e1fe0379e77478c32d2c22b3f3b31ac289645873cae6de46fa50523238826942846746b0ee4270e6dffcd79994b14a939ada51af7afcc86047f5350b178f0a1d18ba4a3c72b5327dd366a4224252571e1a238fd11748703dbd439f620809b6706fd0d485c29b5c04feb"
 }
 ```
-##### ½Ó¿ÚÃû³Æ
+##### æ¥å£åç§°
 
-- Ê¹ÓÃË¢ĞÂÁîÅÆ»ñµÃĞÂµÄ»á»°ÁîÅÆºÍË¢ĞÂÁîÅÆ
+- ä½¿ç”¨åˆ·æ–°ä»¤ç‰Œè·å¾—æ–°çš„ä¼šè¯ä»¤ç‰Œå’Œåˆ·æ–°ä»¤ç‰Œ
 
-##### ÇëÇóµØÖ·
-- ` /oauth/token/refresh `
+##### è¯·æ±‚åœ°å€
+- ` /oauth/token `
   
-##### ÇëÇó·½Ê½
+##### è¯·æ±‚æ–¹å¼
 - POST 
 
-##### ²ÎÊı
+##### å‚æ•°
 
-|²ÎÊıÃû|±ØÑ¡|ÀàĞÍ|ËµÃ÷|
+|å‚æ•°å|å¿…é€‰|ç±»å‹|è¯´æ˜|
 |:----    |:---|:----- |-----   |
-grant_type |ÊÇ  |string |ÊÚÈ¨ÀàĞÍ refresh_token  |
-refresh_token |ÊÇ  |string |µÇÂ¼»ñµÃµÄË¢ĞÂÁîÅÆ  |
-client_id |ÊÇ  |string |·şÎñ¶Ë·ÖÅäµÄclient_id  |
-client_secret |ÊÇ  |string |·şÎñ¶Ë·ÖÅäµÄclient_id¶ÔÓ¦µÄÃÜÔ¿  |
+grant_type |æ˜¯  |string |æˆæƒç±»å‹ refresh_token  |
+refresh_token |æ˜¯  |string |ç™»å½•è·å¾—çš„åˆ·æ–°ä»¤ç‰Œ  |
+client_id |æ˜¯  |string |æœåŠ¡ç«¯åˆ†é…çš„client_id  |
+client_secret |æ˜¯  |string |æœåŠ¡ç«¯åˆ†é…çš„client_idå¯¹åº”çš„å¯†é’¥  |
 
-##### ÏìÓ¦ĞÅÏ¢ 
+##### å“åº”ä¿¡æ¯ 
 
 ``` 
 {
@@ -359,17 +359,17 @@ client_secret |ÊÇ  |string |·şÎñ¶Ë·ÖÅäµÄclient_id¶ÔÓ¦µÄÃÜÔ¿  |
 }
 ```
 
-»ñµÃÓÃ»§ĞÅÏ¢
+è·å¾—ç”¨æˆ·ä¿¡æ¯
 
-ÓÉÓÚpassportÖ§³Ö¶àÖÖÀàĞÍÓÃ»§,clientidÊÇ»ùÓÚprovicder·¢·ÅµÄËùÒÔ»ñÈ¡ÓÃ»§ĞÅÏ¢Ê±ĞèÒªÌá¹©client
+ç”±äºpassportæ”¯æŒå¤šç§ç±»å‹ç”¨æˆ·,clientidæ˜¯åŸºäºprovicderå‘æ”¾çš„æ‰€ä»¥è·å–ç”¨æˆ·ä¿¡æ¯æ—¶éœ€è¦æä¾›client
 
-ÇëÇóÍ·ĞÅÏ¢
+è¯·æ±‚å¤´ä¿¡æ¯
 
-Authorization Bearer access_token(×¢ÒâBearerºóÃæº¬ÓĞ¿Õ¸ñ)
+Authorization Bearer access_token(æ³¨æ„Beareråé¢å«æœ‰ç©ºæ ¼)
 
 X-Client-Id client_id
 
-¿ØÖÆÆ÷´úÂë
+æ§åˆ¶å™¨ä»£ç 
 ```
 <?php
 

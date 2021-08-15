@@ -328,7 +328,8 @@ class TokenGuard implements ExtendAuthGuard {
      */
     public function bearerToken(Request $request) {
 
-        $header = $request->getHeader('Authorization')[0];
+        $arrHeader = $request->getHeader('Authorization');
+        $header = (!empty($arrHeader)) ? $arrHeader[0] : '';
         if (Str::startsWith($header, 'Bearer ')) {
             return Str::substr($header, 7);
         }

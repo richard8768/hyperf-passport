@@ -18,7 +18,7 @@ trait RetrievesAuthRequestFromSession {
      * @throws \Richard\HyperfPassport\Exception\InvalidAuthTokenException
      */
     protected function assertValidAuthToken(Request $request) {
-        if ($request->has('auth_token') && $this->session->get('authToken') !== $request->get('auth_token')) {
+        if ($request->has('auth_token') && $this->session->get('authToken') !== $request->input('auth_token')) {
             $this->session->forget(['authToken', 'authRequest']);
 
             throw InvalidAuthTokenException::different();

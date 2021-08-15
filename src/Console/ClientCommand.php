@@ -62,8 +62,16 @@ class ClientCommand extends Command {
                         config('APP_NAME') . ' Personal Access Client'
         );
 
+        $providers = array_keys(config('auth.providers'));
+
+        $provider = $this->input->getOption('provider') ?: $this->choice(
+                        'Which user provider should this client use to retrieve users?',
+                        $providers,
+                        in_array('users', $providers) ? 'users' : null
+        );
+
         $client = $clients->createPersonalAccessClient(
-                null, $name, 'http://localhost'
+                null, $name, 'http://localhost', $provider
         );
 
         $this->info('Personal access client created successfully.');
@@ -112,8 +120,16 @@ class ClientCommand extends Command {
                         config('APP_NAME') . ' ClientCredentials Grant Client'
         );
 
+        $providers = array_keys(config('auth.providers'));
+
+        $provider = $this->input->getOption('provider') ?: $this->choice(
+                        'Which user provider should this client use to retrieve users?',
+                        $providers,
+                        in_array('users', $providers) ? 'users' : null
+        );
+
         $client = $clients->create(
-                null, $name, ''
+                null, $name, '', $provider
         );
 
         $this->info('New client created successfully.');
@@ -138,11 +154,19 @@ class ClientCommand extends Command {
 
         $redirect = $this->input->getOption('redirect_uri') ?: $this->ask(
                         'Where should we redirect the request after authorization?',
-                        url('/auth/callback')
+                        $this->genUrl('/auth/callback')
+        );
+
+        $providers = array_keys(config('auth.providers'));
+
+        $provider = $this->input->getOption('provider') ?: $this->choice(
+                        'Which user provider should this client use to retrieve users?',
+                        $providers,
+                        in_array('users', $providers) ? 'users' : null
         );
 
         $client = $clients->create(
-                $userId, $name, $redirect, null, false, false, !$this->input->getOption('public')
+                $userId, $name, $redirect, $provider, false, false, !$this->input->getOption('public')
         );
 
         $this->info('New client created successfully.');
@@ -170,5 +194,12 @@ class ClientCommand extends Command {
     protected function configure() {
         $this->setDescription($this->description);
     }
+
+	protected function genUrl(string $toUrl) {
+            if (! \Hyperf\Utils\ApplicationContext::hasContainer() || \Hyperf\Utils\Str::startsWith($toUrl, ['http://', 'https://'])) {
+                return $toUrl;
+            }
+            return 'http://localhost' . (\Hyperf\Utils\Str::startsWith($toUrl, '/') ? $toUrl : '/' . $toUrl);
+        }
 
 }

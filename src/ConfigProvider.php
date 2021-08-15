@@ -60,7 +60,7 @@ class ConfigProvider {
                     'id' => 'view',
                     'description' => 'The view for passport.',
                     'source' => __DIR__ . '/../resources/views',
-                    'destination' => BASE_PATH . '/resources/views/vendor/passport',
+                    'destination' => BASE_PATH . '/storage/view',
                 ],
             ],
         ];
