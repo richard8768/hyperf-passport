@@ -67,9 +67,9 @@ class PersonalAccessTokenFactory {
      * @param  array  $scopes
      * @return \Richard\HyperfPassport\PersonalAccessTokenResult
      */
-    public function make($userId, $name, array $scopes = []) {
+    public function make($userId, $name, array $scopes = [], $provider = 'users') {
         $response = $this->dispatchRequestToAuthorizationServer(
-                $this->createRequest($this->clients->personalAccessClient(), $userId, $scopes)
+                $this->createRequest($this->clients->personalAccessClient($provider), $userId, $scopes)
         );
 
         $token = tap($this->findAccessToken($response), function ($token) use ($userId, $name) {

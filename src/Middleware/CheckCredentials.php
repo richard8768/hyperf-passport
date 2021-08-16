@@ -3,12 +3,9 @@
 namespace Richard\HyperfPassport\Middleware;
 
 use Closure;
-use Richard\HyperfPassport\Auth\AuthorizationException;
 use Richard\HyperfPassport\TokenRepository;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
-use Nyholm\Psr7\Factory\Psr17Factory;
-use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 
 abstract class CheckCredentials {
 
@@ -46,20 +43,17 @@ abstract class CheckCredentials {
      * @param  mixed  ...$scopes
      * @return mixed
      *
-     * @throws \Richard\HyperfPassport\Auth\AuthorizationException
+     * @throws \Richard\HyperfPassport\Exception\PassportException
      */
     public function handle($request, Closure $next, ...$scopes) {
-        $psr = (new PsrHttpFactory(
-                        new Psr17Factory,
-                        new Psr17Factory,
-                        new Psr17Factory,
-                        new Psr17Factory
-                ))->createRequest($request);
+        $psr = $request;
 
         try {
-            $psr = $this->server->validateAuthenticatedRequest($psr);
+            $psr = $this->server->validateAuthenticatedRequest($request);
         } catch (OAuthServerException $e) {
-            throw new AuthorizationException;
+            $exception = new \Richard\HyperfPassport\Exception\PassportException($e->getMessage());
+            $exception->setStatusCode($e->getCode());
+            throw $exception;
         }
 
         $this->validate($psr, $scopes);
@@ -74,7 +68,7 @@ abstract class CheckCredentials {
      * @param  array  $scopes
      * @return void
      *
-     * @throws \Richard\HyperfPassport\Exception\MissingScopeException|\Qbhy\HyperfAuth\Exception\AuthException
+     * @throws \Richard\HyperfPassport\Exception\PassportException
      */
     protected function validate($psr, $scopes) {
         $token = $this->repository->find($psr->getAttribute('oauth_access_token_id'));
@@ -90,7 +84,7 @@ abstract class CheckCredentials {
      * @param  \Richard\HyperfPassport\Token  $token
      * @return void
      *
-     * @throws \Richard\HyperfPassport\Auth\AuthorizationException
+     * @throws \Richard\HyperfPassport\Exception\PassportException
      */
     abstract protected function validateCredentials($token);
 
@@ -101,7 +95,7 @@ abstract class CheckCredentials {
      * @param  array  $scopes
      * @return void
      *
-     * @throws \Richard\HyperfPassport\Exception\MissingScopeException
+     * @throws \Richard\HyperfPassport\Exception\PassportException
      */
     abstract protected function validateScopes($token, $scopes);
 }

@@ -2,9 +2,7 @@
 
 namespace Richard\HyperfPassport\Controller;
 
-use Richard\HyperfPassport\Exception\OAuthServerException;
 use League\OAuth2\Server\Exception\OAuthServerException as LeagueException;
-use Nyholm\Psr7\Response as Psr7Response;
 
 trait HandlesOAuthErrors {
 
@@ -16,16 +14,15 @@ trait HandlesOAuthErrors {
      * @param  \Closure  $callback
      * @return mixed
      *
-     * @throws \Richard\HyperfPassport\Exception\OAuthServerException
+     * @throws \Richard\HyperfPassport\Exception\PassportException
      */
     protected function withErrorHandling($callback) {
         try {
             return $callback();
         } catch (LeagueException $e) {
-            throw new OAuthServerException(
-                    $e,
-                    $this->convertResponse($e->generateHttpResponse(new Psr7Response))
-            );
+            $exception = new \Richard\HyperfPassport\Exception\PassportException($e->getMessage());
+            $exception->setStatusCode($e->getCode());
+            throw $exception;
         }
     }
 

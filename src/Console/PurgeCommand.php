@@ -3,7 +3,7 @@
 namespace Richard\HyperfPassport\Console;
 
 use Hyperf\Command\Command;
-use Richard\HyperfPassport\Utils\Carbon;
+use Carbon\Carbon;
 use Richard\HyperfPassport\Passport;
 
 class PurgeCommand extends Command {

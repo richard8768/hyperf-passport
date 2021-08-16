@@ -3,7 +3,6 @@
 namespace Richard\HyperfPassport\Middleware;
 
 use Closure;
-use Richard\HyperfPassport\Utils\JsonResponse;
 use Hyperf\HttpMessage\Server\Response;
 use Richard\HyperfPassport\ApiTokenCookieFactory;
 use Hyperf\Contract\SessionInterface;
@@ -90,8 +89,7 @@ class CreateFreshApiToken {
      * @return bool
      */
     protected function responseShouldReceiveFreshToken($response) {
-        return ($response instanceof Response ||
-                $response instanceof JsonResponse) &&
+        return ($response instanceof Response ) &&
                 !$this->alreadyContainsToken($response);
     }
 

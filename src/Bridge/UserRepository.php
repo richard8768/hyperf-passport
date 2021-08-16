@@ -23,7 +23,7 @@ class UserRepository implements UserRepositoryInterface {
         $provider = $clientEntity->provider ?: config('auth.guards.passport.provider');
 
         if (is_null($model = config('auth.providers.' . $provider . '.model'))) {
-            throw new RuntimeException('Unable to determine authentication model from configuration.');
+            throw new \Richard\HyperfPassport\Exception\PassportException('Unable to determine authentication model from configuration.');
         }
 
         if (method_exists($model, 'findAndValidateForPassport')) {
