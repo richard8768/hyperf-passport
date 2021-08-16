@@ -313,7 +313,7 @@ class Passport {
      */
     public function keyPath($file) {
         $file = ltrim($file, '/\\');
-        $path = BASE_PATH . DIRECTORY_SEPARATOR . (config('passport.key_store_path') ?? 'passport');
+        $path = BASE_PATH . DIRECTORY_SEPARATOR . (config('passport.key_store_path') ?? 'storage');
 
         return $this->keyPath ? (rtrim($this->keyPath, '/\\') . DIRECTORY_SEPARATOR . $file) : ($path . DIRECTORY_SEPARATOR . $file);
     }

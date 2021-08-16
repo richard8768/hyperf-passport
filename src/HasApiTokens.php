@@ -59,9 +59,9 @@ trait HasApiTokens {
      * @param  array  $scopes
      * @return \Richard\HyperfPassport\PersonalAccessTokenResult
      */
-    public function createToken($name, array $scopes = []) {
+    public function createToken($name, array $scopes = [], $provider = 'users') {
         return Container::getInstance()->make(PersonalAccessTokenFactory::class)->make(
-                        $this->getKey(), $name, $scopes
+                        $this->getKey(), $name, $scopes, $provider
         );
     }
 

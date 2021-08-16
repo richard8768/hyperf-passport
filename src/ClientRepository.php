@@ -100,6 +100,17 @@ class ClientRepository {
                 })->values();
     }
 
+    public function findForProvider($id, $provider = 'user') {
+        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $client = $passport->client();
+
+        if (empty($provider)) {
+            return $client->where($client->getKeyName(), $id)->first();
+        } else {
+            return $client->where($client->getKeyName(), $id)->where('provider', $provider)->first();
+        }
+    }
+
     /**
      * Get the personal access token client for the application.
      *
@@ -107,18 +118,27 @@ class ClientRepository {
      *
      * @throws \RuntimeException
      */
-    public function personalAccessClient() {
+    public function personalAccessClient($provider = 'users') {
         if ($this->personalAccessClientId) {
-            return $this->find($this->personalAccessClientId);
+            $resClient = $this->findForProvider($this->personalAccessClientId, $provider);
+            if (empty($resClient)) {
+                throw new \Richard\HyperfPassport\Exception\PassportException('Personal access client not found. Please create one..');
+            }
+            return $resClient;
         }
         $passport = make(\Richard\HyperfPassport\Passport::class);
         $client = $passport->personalAccessClient();
 
         if (!$client->exists()) {
-            throw new RuntimeException('Personal access client not found. Please create one.');
+            throw new \Richard\HyperfPassport\Exception\PassportException('Personal access client not found. Please create one.');
         }
 
-        return $client->orderBy($client->getKeyName(), 'desc')->first()->client;
+        $clientRes = $client->where('provider', $provider)->orderBy($client->getKeyName(), 'desc')->first();
+        if (empty($clientRes)) {
+            throw new \Richard\HyperfPassport\Exception\PassportException('Personal access client not found. Please create one..');
+        }
+
+        return $clientRes->client;
     }
 
     /**

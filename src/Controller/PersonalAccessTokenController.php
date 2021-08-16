@@ -70,9 +70,11 @@ class PersonalAccessTokenController {
             'name' => 'required|max:191',
             'scopes' => 'array|in:' . implode(',', $passport->scopeIds()),
         ])->validate();
-        $user = $this->auth->guard('passport')->user();
+        $passportGuard = $this->auth->guard('passport');
+        $provider = $passportGuard->getProvider()->getProviderName();
+        $user = $passportGuard->user();
         return $user->createToken(
-                        $request->name, $request->scopes ?: []
+                        $request->input('name'), $request->input('scopes') ?: [], $provider
         );
     }
 

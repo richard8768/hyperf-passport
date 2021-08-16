@@ -133,6 +133,7 @@ class TokenGuard implements ExtendAuthGuard {
         } elseif ($this->request->cookie($passport->cookie())) {
             return $this->authenticateViaCookie($this->request);
         }
+        return null;
     }
 
     /**
@@ -212,7 +213,7 @@ class TokenGuard implements ExtendAuthGuard {
         try {
             return $this->server->validateAuthenticatedRequest($request);
         } catch (OAuthServerException $e) {
-            $newException = new \Richard\HyperfPassport\PassportException(
+            $newException = new \Richard\HyperfPassport\Exception\PassportException(
                     $e->getMessage(),
                     $this,
                     $e

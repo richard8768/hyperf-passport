@@ -15,10 +15,12 @@ namespace Richard\HyperfPassport;
 use Hyperf\ExceptionHandler\ExceptionHandler;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Psr\Http\Message\ResponseInterface;
-use Richard\HyperfPassport\PassportException;
+use Richard\HyperfPassport\Exception\PassportException;
 use Throwable;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Di\Annotation\Inject;
+use Qbhy\HyperfAuth\Exception\GuardException;
+use Qbhy\HyperfAuth\Exception\UserProviderException;
 
 class PassportExceptionHandler extends ExceptionHandler {
 
@@ -29,14 +31,17 @@ class PassportExceptionHandler extends ExceptionHandler {
     protected $requests;
 
     public function handle(Throwable $throwable, ResponseInterface $response) {
-        if ($throwable instanceof PassportException) {
+        if (($throwable instanceof PassportException) || ($throwable instanceof GuardException) || ($throwable instanceof UserProviderException)) {
             $this->stopPropagation();
-            $data = $this->getHandleMsg();
-            if (empty($data)) {
+            $handleData = $this->getHandleMsg();
+            if (empty($handleData)) {
                 $emptyObj = new \stdClass();
                 $data = ['status' => 999999, 'data' => $emptyObj, 'message' => $throwable->getMessage()];
+            } else {
+                $data = ['status' => $handleData['status'] ?? 999999, 'data' => $handleData['data'] ?? $emptyObj, 'message' => $throwable->getMessage()];
             }
-            return $response->withHeader('Content-Type', 'application/json;charset=utf-8')->withStatus($throwable->getStatusCode())->withBody(new SwooleStream(json_encode($data)));
+            return $response->withHeader('Content-Type', 'application/json;charset=utf-8')
+                            ->withStatus($throwable->getStatusCode())->withBody(new SwooleStream(json_encode($data)));
         }
 
         // 交给下一个异常处理器
