@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 return [
-    'key_store_path' => 'passport',
+    'key_store_path' => 'storage',
     'client_uuids' => false,
     'key' => 'CpmLVtjV8diGbhEsVD3IWoVOn31pRpmupEcxMCgtXp9LGpe39F',
     'token_days' => null,
