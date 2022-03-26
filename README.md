@@ -1,4 +1,4 @@
-# richard/hyperf-passport
+# richard8768/hyperf-passport
 
 hyperf 的 hyperf-passport 组件，支持对多种用户进行登录授权支持Oauth2.0的四种授权模式，目前密码授权模式已完全可用。
 本组件参考了 laravel 的 passport 组件设计，使用体验大体和 laravel 的 passport 差不多。
@@ -65,8 +65,8 @@ return [
 
 
 ```bash
-$ composer require richard/hyperf-passport
-php bin/hyperf.php vendor:publish richard/hyperf-passport
+$ composer require richard8768/hyperf-passport
+php bin/hyperf.php vendor:publish richard8768/hyperf-passport
 ```
 
 ## 配置 - configuration
