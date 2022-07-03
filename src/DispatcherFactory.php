@@ -7,11 +7,12 @@ namespace Richard\HyperfPassport;
 use Hyperf\HttpServer\Router\DispatcherFactory as Dispatcher;
 use Hyperf\HttpServer\Router\RouteCollector;
 use Hyperf\HttpServer\Router\Router;
-use Richard\HyperfPassport\Middleware\PassportAuthMiddleware;
 
-class DispatcherFactory extends Dispatcher {
+class DispatcherFactory extends Dispatcher
+{
 
-    public function initConfigRoute() {
+    public function initConfigRoute()
+    {
         parent::initConfigRoute();
         $this->all();
     }
@@ -21,7 +22,8 @@ class DispatcherFactory extends Dispatcher {
      *
      * @return void
      */
-    public function all() {
+    public function all()
+    {
         $this->forAuthorization();
         $this->forAccessTokens();
         $this->forTransientTokens();
@@ -34,12 +36,13 @@ class DispatcherFactory extends Dispatcher {
      *
      * @return void
      */
-    public function forAuthorization() {
-        Router::addGroup('/oauth', function (RouteCollector $router) {// need web auth middleware
+    public function forAuthorization()
+    {
+        Router::addGroup('/oauth', function (RouteCollector $router) {//need web auth middleware
             $router->addRoute('GET', '/authorize', '\Richard\HyperfPassport\Controller\AuthorizationController@authorize');
             $router->addRoute('POST', '/authorize', '\Richard\HyperfPassport\Controller\ApproveAuthorizationController@approve');
             $router->addRoute('DELETE', '/authorize', '\Richard\HyperfPassport\Controller\DenyAuthorizationController@deny');
-        });
+        }, ['middleware' => [\Richard\HyperfPassport\SessionAuthMiddleware::class]]);
     }
 
     /**
@@ -47,7 +50,8 @@ class DispatcherFactory extends Dispatcher {
      *
      * @return void
      */
-    public function forAccessTokens() {
+    public function forAccessTokens()
+    {
         Router::addRoute(['POST'], '/oauth/token', '\Richard\HyperfPassport\Controller\AccessTokenController@issueToken');
         Router::addGroup('/oauth', function (RouteCollector $router) {
             $router->addRoute('GET', '/tokens', '\Richard\HyperfPassport\Controller\AuthorizedAccessTokenController@forUser');
@@ -60,7 +64,8 @@ class DispatcherFactory extends Dispatcher {
      *
      * @return void
      */
-    public function forTransientTokens() {
+    public function forTransientTokens()
+    {
         Router::addRoute(['POST'], '/oauth/token/refresh', '\Richard\HyperfPassport\Controller\TransientTokenController@refresh');
     }
 
@@ -69,7 +74,8 @@ class DispatcherFactory extends Dispatcher {
      *
      * @return void
      */
-    public function forClients() {
+    public function forClients()
+    {
         Router::addGroup('/oauth', function (RouteCollector $router) {
             $router->addRoute('GET', '/clients', '\Richard\HyperfPassport\Controller\ClientController@forUser');
             $router->addRoute('POST', '/clients', '\Richard\HyperfPassport\Controller\ClientController@store');
@@ -83,16 +89,17 @@ class DispatcherFactory extends Dispatcher {
      *
      * @return void
      */
-    public function forPersonalAccessTokens() {
+    public function forPersonalAccessTokens()
+    {
         Router::addGroup('/oauth', function (RouteCollector $router) {
             $router->addRoute('GET', '/scopes', '\Richard\HyperfPassport\Controller\ScopeController@all',
-                    ['middleware' => [\Richard\HyperfPassport\PassportAuthMiddleware::class]]);
+                ['middleware' => [\Richard\HyperfPassport\PassportAuthMiddleware::class]]);
             $router->addRoute('GET', '/personal-access-tokens', '\Richard\HyperfPassport\Controller\PersonalAccessTokenController@forUser',
-                    ['middleware' => [\Richard\HyperfPassport\PassportAuthMiddleware::class]]);
+                ['middleware' => [\Richard\HyperfPassport\PassportAuthMiddleware::class]]);
             $router->addRoute('POST', '/personal-access-tokens', '\Richard\HyperfPassport\Controller\PersonalAccessTokenController@store',
-                    ['middleware' => [\Richard\HyperfPassport\PassportAuthMiddleware::class]]);
+                ['middleware' => [\Richard\HyperfPassport\PassportAuthMiddleware::class]]);
             $router->addRoute('DELETE', '/personal-access-tokens/{token_id}', '\Richard\HyperfPassport\Controller\PersonalAccessTokenController@destroy',
-                    ['middleware' => [\Richard\HyperfPassport\PassportAuthMiddleware::class]]);
+                ['middleware' => [\Richard\HyperfPassport\PassportAuthMiddleware::class]]);
         });
     }
 

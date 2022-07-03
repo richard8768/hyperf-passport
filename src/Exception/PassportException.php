@@ -39,7 +39,7 @@ class PassportException extends AuthException {
     }
 
     public function getGuard(): string {
-        return $this->guard;
+        return (string)$this->guard;
     }
 
     public function setScopes(array $scopes = []) {

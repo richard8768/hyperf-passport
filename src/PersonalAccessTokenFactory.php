@@ -2,7 +2,7 @@
 
 namespace Richard\HyperfPassport;
 
-use Lcobucci\JWT\Parser as JwtParser;
+use Lcobucci\JWT\Token\Parser as JwtParser;
 use League\OAuth2\Server\AuthorizationServer;
 use Nyholm\Psr7\Response;
 use Nyholm\Psr7\ServerRequest;
@@ -34,7 +34,7 @@ class PersonalAccessTokenFactory {
     /**
      * The JWT token parser instance.
      *
-     * @var \Lcobucci\JWT\Parser
+     * @var \Lcobucci\JWT\Token\Parser
      *
      * @deprecated This property will be removed in a future Passport version.
      */
@@ -46,7 +46,7 @@ class PersonalAccessTokenFactory {
      * @param  \League\OAuth2\Server\AuthorizationServer  $server
      * @param  \Richard\HyperfPassport\ClientRepository  $clients
      * @param  \Richard\HyperfPassport\TokenRepository  $tokens
-     * @param  \Lcobucci\JWT\Parser  $jwt
+     * @param  \Lcobucci\JWT\Token\Parser  $jwt
      * @return void
      */
     public function __construct(AuthorizationServer $server,

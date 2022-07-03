@@ -67,7 +67,6 @@ class AuthorizationController {
      * @param  \Hyperf\HttpServer\Request  $request
      * @param  \Richard\HyperfPassport\ClientRepository  $clients
      * @param  \Richard\HyperfPassport\TokenRepository  $tokens
-     * @return \Hyperf\HttpMessage\Server\Response
      */
     public function authorize(ServerRequestInterface $psrRequest,
             Request $request,
@@ -80,7 +79,7 @@ class AuthorizationController {
         $scopes = $this->parseScopes($authRequest);
 
         $token = $tokens->findValidToken(
-                $user = $this->auth->guard('passport')->user(),
+                $user = $this->auth->guard('session')->user(),
                 $client = $clients->find($authRequest->getClient()->getIdentifier())
         );
 

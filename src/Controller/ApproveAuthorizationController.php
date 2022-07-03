@@ -9,7 +9,8 @@ use Hyperf\Contract\SessionInterface;
 use Qbhy\HyperfAuth\AuthManager;
 use Hyperf\HttpServer\Request;
 
-class ApproveAuthorizationController {
+class ApproveAuthorizationController
+{
 
     use ConvertsPsrResponses,
         RetrievesAuthRequestFromSession;
@@ -30,10 +31,11 @@ class ApproveAuthorizationController {
     /**
      * Create a new controller instance.
      *
-     * @param  \League\OAuth2\Server\AuthorizationServer  $server
+     * @param \League\OAuth2\Server\AuthorizationServer $server
      * @return void
      */
-    public function __construct(AuthorizationServer $server, SessionInterface $session, AuthManager $auth) {
+    public function __construct(AuthorizationServer $server, SessionInterface $session, AuthManager $auth)
+    {
         $this->server = $server;
         $this->session = $session;
         $this->auth = $auth;
@@ -42,16 +44,17 @@ class ApproveAuthorizationController {
     /**
      * Approve the authorization request.
      *
-     * @param  \Hyperf\HttpServer\Request  $request
+     * @param \Hyperf\HttpServer\Request $request
      * @return \Hyperf\HttpMessage\Server\Response
      */
-    public function approve(Request $request) {
+    public function approve(Request $request)
+    {
         $this->assertValidAuthToken($request);
 
         $authRequest = $this->getAuthRequestFromSession($request);
 
         return $this->convertResponse(
-                        $this->server->completeAuthorizationRequest($authRequest, new Psr7Response)
+            $this->server->completeAuthorizationRequest($authRequest, new Psr7Response)
         );
     }
 

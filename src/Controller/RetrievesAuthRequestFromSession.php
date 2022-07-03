@@ -39,7 +39,7 @@ trait RetrievesAuthRequestFromSession {
                 $exception->setStatusCode(400);
                 throw $exception;
             }
-            $user = $this->auth->guard('passport')->user();
+            $user = $this->auth->guard('session')->user();
             $authRequest->setUser(new User($user->getKey()));
 
             $authRequest->setAuthorizationApproved(true);

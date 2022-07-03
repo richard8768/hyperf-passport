@@ -8,7 +8,8 @@ use Hyperf\Utils\Arr;
 use Hyperf\Contract\SessionInterface;
 use Qbhy\HyperfAuth\AuthManager;
 
-class DenyAuthorizationController {
+class DenyAuthorizationController
+{
 
     use RetrievesAuthRequestFromSession;
 
@@ -28,10 +29,11 @@ class DenyAuthorizationController {
     /**
      * Create a new controller instance.
      *
-     * @param  \Hyperf\HttpServer\Response  $response
+     * @param \Hyperf\HttpServer\Response $response
      * @return void
      */
-    public function __construct(Response $response, SessionInterface $session, AuthManager $auth) {
+    public function __construct(Response $response, SessionInterface $session, AuthManager $auth)
+    {
         $this->response = $response;
         $this->session = $session;
         $this->auth = $auth;
@@ -40,10 +42,10 @@ class DenyAuthorizationController {
     /**
      * Deny the authorization request.
      *
-     * @param  \Hyperf\HttpServer\Request  $request
-     * @return \Hyperf\HttpMessage\Server\RedirectResponse
+     * @param \Hyperf\HttpServer\Request $request
      */
-    public function deny(Request $request) {
+    public function deny(Request $request)
+    {
         $this->assertValidAuthToken($request);
 
         $authRequest = $this->getAuthRequestFromSession($request);
@@ -57,7 +59,7 @@ class DenyAuthorizationController {
         $separator = $authRequest->getGrantTypeId() === 'implicit' ? '#' : (strstr($uri, '?') ? '&' : '?');
 
         return $this->response->redirect(
-                        $uri . $separator . 'error=access_denied&state=' . $request->input('state')
+            $uri . $separator . 'error=access_denied&state=' . $request->input('state')
         );
     }
 
