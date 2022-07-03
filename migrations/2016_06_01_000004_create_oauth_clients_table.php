@@ -28,7 +28,7 @@ class CreateOauthClientsTable extends Migration {
      * @return string|null
      */
     public function getConnection() {
-        return config('passport.storage.database.connection');
+        return config('passport.database_connection');
     }
 
     /**

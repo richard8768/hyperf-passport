@@ -152,11 +152,8 @@ class AuthorizationServerFactory {
      * @return \League\OAuth2\Server\CryptKey
      */
     protected function makeCryptKey($type) {
-        $key = str_replace('\\n', "\n", $this->config->get('passport.' . $type . '_key'));
         $passport = make(\Richard\HyperfPassport\Passport::class);
-        if (!$key) {
-            $key = 'file://' . $passport->keyPath('oauth-' . $type . '.key');
-        }
+        $key = str_replace('\\n', "\n", file_get_contents($passport->keyPath('oauth-'.$type.'.key')));
 
         return new CryptKey($key, null, false);
     }

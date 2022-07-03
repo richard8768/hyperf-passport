@@ -159,7 +159,7 @@ class Token extends Model {
      * @return string|null
      */
     public function getConnectionName() {
-        return config('passport.storage.database.connection') ?? $this->connection;
+        return config('passport.database_connection') ?? $this->connection;
     }
 
 }

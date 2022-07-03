@@ -34,8 +34,8 @@ class PassportExceptionHandler extends ExceptionHandler {
         if (($throwable instanceof PassportException) || ($throwable instanceof GuardException) || ($throwable instanceof UserProviderException)) {
             $this->stopPropagation();
             $handleData = $this->getHandleMsg();
+            $emptyObj = new \stdClass();
             if (empty($handleData)) {
-                $emptyObj = new \stdClass();
                 $data = ['status' => 999999, 'data' => $emptyObj, 'message' => $throwable->getMessage()];
             } else {
                 $data = ['status' => $handleData['status'] ?? 999999, 'data' => $handleData['data'] ?? $emptyObj, 'message' => $throwable->getMessage()];
