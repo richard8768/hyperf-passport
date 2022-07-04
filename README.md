@@ -71,6 +71,64 @@ php bin/hyperf.php vendor:publish richard8768/hyperf-passport
 
 ## 配置 - configuration
 
+编辑文件 config/autoload/passport.php
+
+在文件中引入填写自己的session用户登录URL
+
+'session_user_login_uri' => '/your/user-login/path',
+
+以下为passport.php文件样板
+
+```
+<?php
+
+declare(strict_types=1);
+return [
+    'session_user_login_uri' => '/login/index',
+    'key_store_path' => 'storage',
+    'client_uuids' => false,
+    'key' => 'CpmLVtjV8diGbhEsVD3IWoVOn31pRpmupEcxMCgtXp9LGpe39F',
+    'token_days' => null,
+    'refresh_token_days' => null,
+    'person_token_days' => null,
+    'database_connection' => env('DB_CONNECTION', 'default'),
+];
+```
+
+编辑文件 config/autoload/exceptions.php
+
+在文件中引入session中间件验证的异常处理器和passport中间件验证的异常处理器
+
+Richard\HyperfPassport\Exception\Handler\SessionAuthenticationExceptionHandler::class
+Richard\HyperfPassport\PassportExceptionHandler::class
+
+用户也可以定义自己的PassportExceptionHandler
+
+以下为exceptions.php文件样板
+
+```
+<?php
+
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+return [
+    'handler' => [
+        'http' => [
+            Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler::class,
+            App\Exception\Handler\AppExceptionHandler::class,
+            \Richard\HyperfPassport\Exception\Handler\SessionAuthenticationExceptionHandler::class,
+            \Richard\HyperfPassport\PassportExceptionHandler::class,
+        ],
+    ],
+];
+```
 
 编辑文件 config/autoload/auth.php
 
@@ -164,9 +222,9 @@ php bin/hyperf.php passport:install  --force --length=4096
 
 php bin/hyperf.php passport:purge
 
-你还可以根据providers配置项里面的元素生成client
+你还可以根据providers配置项里面的元素生成对应的client
 
-php bin/hyperf.php passport:client --password --name="your client name"
+php bin/hyperf.php passport:client --password --name="your client name"//生成密码模式的client
 
 
 如果有数据填充文件可以执行 php bin/hyperf.php db:seed --path=seeders/user_table_seeder.php
@@ -274,31 +332,6 @@ class User extends Model implements Authenticatable {
 
 
 > 以下是伪代码，仅供参考。
-在文件config/autoload/exceptions.php中添加全局异常处理器
-```
-<?php
-
-declare(strict_types=1);
-/**
- * This file is part of Hyperf.
- *
- * @link     https://www.hyperf.io
- * @document https://hyperf.wiki
- * @contact  group@hyperf.io
- * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
- */
-return [
-    'handler' => [
-        'http' => [
-            \HPlus\Admin\Exception\Handler\AppExceptionHandler::class,
-            Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler::class,
-            App\Exception\Handler\AppExceptionHandler::class,
-            \Richard\HyperfPassport\PassportExceptionHandler::class,
-        ],
-    ],
-];
-?>
-```
 ##### 接口名称
 
 - 登录以获取会话令牌和刷新令牌
@@ -411,6 +444,106 @@ class DemoController extends AbstractController {
         return ['user_id' => $userId];
     }
 
+
+}
+?>
+```
+> 授权码模式使用指南
+>
+> 1 安装授权码模式client
+> 
+> 2 假定 当前系统当前地址是 http://192.168.56.141:15403/,
+> 
+> 当前系统用户登录成功后的回调地址是 http://192.168.56.141:15403/demo/callback,
+> 
+> 当用户发起应用授权的时候系统将跳转到passport的授权页 http://192.168.56.141:15403/oauth/authorize?response_type=code&client_id=5&redirect_uri=http%3A%2F%2F192.168.56.141%3A15403%2Fdemo%2Fcallback&scope= 
+> 该页面将检查当前用户是否登录,如果用户没有登录系统将跳转至passport.php中指定的session_user_login_uri位置让用户登录
+> 
+> 3 当用户登录成功并给应用授权后系统将跳转到指定的成功后的回调地址并携带授权码code,即http://192.168.56.141:15403/demo/callback?code=thisiscodedata
+> 在此页面用户需要使用此code向服务器发起获得会话令牌和刷新令牌的请求,以下为示例代码:
+> 
+```
+<?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+
+namespace App\Controller;
+
+use Hyperf\HttpServer\Contract\RequestInterface;
+use Hyperf\HttpServer\Contract\ResponseInterface;
+use Hyperf\HttpServer\Annotation\Controller;
+use Hyperf\HttpServer\Annotation\RequestMapping;
+use Hyperf\Di\Annotation\Inject;
+use Hyperf\HttpServer\Annotation\Middleware;
+use Hyperf\HttpServer\Annotation\Middlewares;
+use Richard\HyperfPassport\SessionAuthMiddleware;
+use Richard\HyperfPassport\AuthManager;
+use Hyperf\HttpServer\Annotation\AutoController;
+
+/**
+ * @Controller
+ */
+class DemoController extends AbstractController {
+
+    /**
+     * @Inject
+     * @var AuthManager
+     */
+    protected $auth;
+
+    /**
+     * @Middlewares({
+     *    @Middleware(SessionAuthMiddleware::class)
+     * })
+     * @RequestMapping(path="index", methods="get,post,options")
+     */
+    public function index(RequestInterface $request, ResponseInterface $response) {
+        $user = $this->auth->guard('session')->user();
+        var_dump($user, $this->auth->guard('session')->getName(), $this->auth->guard('session')->getProvider()->getProviderName());
+        $userId = (int) $user->getId();
+        $name = isset($user->login_name) ? $user->login_name : $user->member_name;
+        return ['user_id' => $userId, 'user_name' => $name];
+    }
+
+    /**
+     * @RequestMapping(path="callback", methods="get,post,options")
+     */
+    public function callback(RequestInterface $request, ResponseInterface $response) {
+        //first http://192.168.56.141:15403/oauth/authorize?response_type=code&client_id=5&redirect_uri=http%3A%2F%2F192.168.56.141%3A15403%2Fdemo%2Fcallback&scope=
+        var_dump($request->all());
+        $code = $request->input('code');
+        echo $code;
+        echo '<br/>';
+        $client = new \GuzzleHttp\Client([
+            'base_uri' => 'http://192.168.56.141:15403/',//http://your-app.com/
+            'handler' => \GuzzleHttp\HandlerStack::create(new \Hyperf\Guzzle\CoroutineHandler()),
+            'timeout' => 5,
+            'swoole' => [
+                'timeout' => 10,
+                'socket_buffer_size' => 1024 * 1024 * 2,
+            ],
+        ]);
+        $formParams=[
+            'grant_type' => 'authorization_code',
+            'client_id' => '5',
+            'client_secret' => 'HqD1wOvLc14DFkr7cckNNb1GD38d05PlBMVtA9TD',
+            'redirect_uri' => 'http://192.168.56.141:15403/demo/callback',
+            'code' => $code,
+        ];
+        $response = $client->post('/oauth/token',['form_params' => $formParams]);
+        $body = $response->getBody();
+        var_dump($body);
+        $bodyStr = (string)$body;
+        var_dump($bodyStr);
+        return json_decode($bodyStr,true);
+    }
 
 }
 ?>
