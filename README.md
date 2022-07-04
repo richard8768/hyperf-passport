@@ -7,7 +7,7 @@ hyperf 的 hyperf-passport 组件，支持对多种用户进行登录授权支�
 
 ## 安装前的准备 - before install
 
-PHP>=7.3
+PHP>=7.4
 安装依赖包
 ```bash
 #授权依赖包
