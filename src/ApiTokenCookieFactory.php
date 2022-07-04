@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Firebase\JWT\JWT;
 use Hyperf\Contract\ConfigInterface as Config;
 use HyperfExt\Encryption\EncryptionManager;
-use Symfony\Component\HttpFoundation\Cookie;
+use Hyperf\HttpMessage\Cookie\Cookie;
 
 class ApiTokenCookieFactory {
 
@@ -41,12 +41,12 @@ class ApiTokenCookieFactory {
      *
      * @param  mixed  $userId
      * @param  string  $csrfToken
-     * @return \Symfony\Component\HttpFoundation\Cookie
+     * @return \Hyperf\HttpMessage\Cookie\Cookie
      */
     public function make($userId, $csrfToken) {
         $configArray = $this->config->get('session');
 
-        $expiration = Carbon::now()->addMinutes($configArray['lifetime']);
+        $expiration = Carbon::now()->addMinutes($configArray['cookie_lifetime']);
         $passport = make(\Richard\HyperfPassport\Passport::class);
         return new Cookie(
                 $passport->cookie(),

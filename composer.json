@@ -61,7 +61,6 @@
         "phpstan/phpstan": "^0.12",
         "phpunit/phpunit": "^9.3",
         "swoole/ide-helper": "dev-master",
-        "swow/swow": "dev-develop",
         "symfony/var-dumper": "^5.1"
     },
     "prefer-stable": true,
