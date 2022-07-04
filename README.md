@@ -124,7 +124,9 @@ return [
             Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler::class,
             App\Exception\Handler\AppExceptionHandler::class,
             \Richard\HyperfPassport\Exception\Handler\SessionAuthenticationExceptionHandler::class,
-            \Richard\HyperfPassport\PassportExceptionHandler::class,
+            //you can use your own exception handler instead of \Richard\HyperfPassport\PassportExceptionHandler::class
+            //App\Exception\Handler\AppPassportExceptionHandler::class,//user defined PassportExceptionHandler to replace below one
+            \Richard\HyperfPassport\PassportExceptionHandler::class,      
         ],
     ],
 ];
