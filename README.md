@@ -346,13 +346,13 @@ class User extends Model implements Authenticatable {
 
 ##### 参数
 
-|参数名|必选|类型|说明|
-|:----    |:---|:----- |-----   |
-username |是  |string |用户名/邮箱/手机号  |
-password |是  |string |用户密码  |
-grant_type |是  |string |授权类型 一般填password  |
-client_id |是  |string |服务端分配的client_id  |
-client_secret |是  |string |服务端分配的client_id对应的密钥  |
+|参数名|必选|类型| 说明                                                                |
+|:----    |:---|:----- |-------------------------------------------------------------------|
+username |是  |string | 用户名/邮箱/手机号                                                        |
+password |是  |string | 用户密码                                                              |
+grant_type |是  |string | 授权类型 密码模式填password,personal access token模式填personal_access,授权码模式填authorization_code |
+client_id |是  |string | 服务端分配的client_id                                                   |
+client_secret |是  |string | 服务端分配的client_id对应的密钥                                              |
 
 ##### 响应信息 
 
