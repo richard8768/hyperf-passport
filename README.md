@@ -1,6 +1,6 @@
 # richard8768/hyperf-passport
 
-hyperf 的 hyperf-passport 组件，支持对多种用户进行登录授权支持Oauth2.0的四种授权模式，目前密码授权模式已完全可用。
+hyperf 的 hyperf-passport 组件，支持对多种用户进行登录授权,支持Oauth2.0的四种授权模式以及laravel passport的personal access token模式，目前所有授权模式已完全可用。
 本组件参考了 laravel 的 passport 组件设计，使用体验大体和 laravel 的 passport 差不多。
 
 > 任何问题请加QQ提问：444626008
