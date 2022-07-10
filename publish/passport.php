@@ -11,4 +11,5 @@ return [
     'refresh_token_days' => null,
     'person_token_days' => null,
     'database_connection' => env('DB_CONNECTION', 'default'),
+    'is_revoke_user_others_token' => true,//when user login if revoke user's all token except current one
 ];
