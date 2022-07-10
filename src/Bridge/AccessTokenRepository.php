@@ -53,6 +53,13 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface {
      * {@inheritdoc}
      */
     public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity) {
+        $isRevoke = config('passport.is_revoke_user_others_token');
+        if($isRevoke) {
+            $this->tokenRepository->revokeAccessTokenByConditons([
+                'user_id' => $accessTokenEntity->getUserIdentifier(),
+                'client_id' => $accessTokenEntity->getClient()->getIdentifier()
+            ]);
+        }
         $this->tokenRepository->create([
             'id' => $accessTokenEntity->getIdentifier(),
             'user_id' => $accessTokenEntity->getUserIdentifier(),

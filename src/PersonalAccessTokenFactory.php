@@ -3,6 +3,7 @@
 namespace Richard\HyperfPassport;
 
 use Lcobucci\JWT\Token\Parser as JwtParser;
+use Lcobucci\JWT\Encoding\JoseEncoder;
 use League\OAuth2\Server\AuthorizationServer;
 use Nyholm\Psr7\Response;
 use Nyholm\Psr7\ServerRequest;
@@ -46,14 +47,12 @@ class PersonalAccessTokenFactory {
      * @param  \League\OAuth2\Server\AuthorizationServer  $server
      * @param  \Richard\HyperfPassport\ClientRepository  $clients
      * @param  \Richard\HyperfPassport\TokenRepository  $tokens
-     * @param  \Lcobucci\JWT\Token\Parser  $jwt
      * @return void
      */
     public function __construct(AuthorizationServer $server,
             ClientRepository $clients,
-            TokenRepository $tokens,
-            JwtParser $jwt) {
-        $this->jwt = $jwt;
+            TokenRepository $tokens) {
+        $this->jwt = new JwtParser(new JoseEncoder());
         $this->tokens = $tokens;
         $this->server = $server;
         $this->clients = $clients;

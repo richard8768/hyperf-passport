@@ -59,6 +59,18 @@ class RefreshTokenRepository {
     }
 
     /**
+     * Revoke refresh tokens by conditions.
+     *
+     * @param  array  $conditions
+     * @return mixed
+     */
+    public function revokeRefreshTokensByConditons($conditions) {
+        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $accessTokenIdList = $passport->token()->where($conditions)->get(['id'])->toArray();
+        return $passport->refreshToken()->whereIn('access_token_id',$accessTokenIdList)->update(['revoked' => true]);
+    }
+
+    /**
      * Checks if the refresh token has been revoked.
      *
      * @param  string  $id

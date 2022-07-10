@@ -19,8 +19,9 @@ $ php bin/hyperf.php vendor:publish hyperf-ext/encryption
 $ composer require hyperf-ext/hashing
 $ php bin/hyperf.php vendor:publish hyperf-ext/hashing
 #模板引擎和视图
-$ composer require hyperf/view-engine
 $ composer require hyperf/view
+$ php bin/hyperf.php vendor:publish hyperf/view
+$ composer require league/plates
 #hyperf的session
 $ composer require hyperf/session
 $ php bin/hyperf.php vendor:publish hyperf/session
@@ -32,12 +33,12 @@ $ php bin/hyperf.php vendor:publish hyperf/session
 <?php
 declare(strict_types=1);
 
+use Hyperf\View\Engine\PlatesEngine;
 use Hyperf\View\Mode;
-use Hyperf\View\Engine\BladeEngine;
 
 return [
     // 使用的渲染引擎
-    'engine' => BladeEngine::class,
+    'engine' => PlatesEngine::class,
     // 不填写则默认为 Task 模式，推荐使用 Task 模式
     'mode' => Mode::TASK,
     'config' => [
@@ -224,10 +225,13 @@ php bin/hyperf.php passport:install  --force --length=4096
 
 php bin/hyperf.php passport:purge
 
-你还可以根据providers配置项里面的元素生成对应的client
+你还可以根据providers配置项里面的元素生成对应的client,默认生成授权码模式的client
 
 php bin/hyperf.php passport:client --password --name="your client name"//生成密码模式的client
 
+php bin/hyperf.php passport:client --personal --name="your client name"//生成Personal Access模式的client
+
+php bin/hyperf.php passport:client --client --name="your client name"//生成客户端模式的client
 
 如果有数据填充文件可以执行 php bin/hyperf.php db:seed --path=seeders/user_table_seeder.php
 

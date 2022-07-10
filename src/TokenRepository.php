@@ -88,6 +88,17 @@ class TokenRepository {
     }
 
     /**
+     * Revoke access tokens by conditions.
+     *
+     * @param  array $conditions
+     * @return mixed
+     */
+    public function revokeAccessTokenByConditons($conditions) {
+        $passport = make(\Richard\HyperfPassport\Passport::class);
+        return $passport->token()->where($conditions)->update(['revoked' => true]);
+    }
+
+    /**
      * Check if the access token has been revoked.
      *
      * @param  string  $id

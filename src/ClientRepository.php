@@ -127,13 +127,15 @@ class ClientRepository {
             return $resClient;
         }
         $passport = make(\Richard\HyperfPassport\Passport::class);
-        $client = $passport->personalAccessClient();
+        $client = $passport->client();
+        $client= $client->where('provider', $provider)->orderBy($client->getKeyName(), 'desc')->first();
 
         if (!$client->exists()) {
             throw new \Richard\HyperfPassport\Exception\PassportException('Personal access client not found. Please create one.');
         }
 
-        $clientRes = $client->where('provider', $provider)->orderBy($client->getKeyName(), 'desc')->first();
+        $personalClient = $passport->personalAccessClient();
+        $clientRes = $personalClient->orderBy($personalClient->getKeyName(), 'desc')->first();
         if (empty($clientRes)) {
             throw new \Richard\HyperfPassport\Exception\PassportException('Personal access client not found. Please create one..');
         }

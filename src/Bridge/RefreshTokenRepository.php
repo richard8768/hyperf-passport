@@ -47,6 +47,13 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface {
      * {@inheritdoc}
      */
     public function persistNewRefreshToken(RefreshTokenEntityInterface $refreshTokenEntity) {
+        $isRevoke = config('passport.is_revoke_user_others_token');
+        if($isRevoke){
+            $this->refreshTokenRepository->revokeRefreshTokensByConditons([
+                'user_id' => $refreshTokenEntity->getAccessToken()->getUserIdentifier(),
+                'client_id' => $refreshTokenEntity->getAccessToken()->getClient()->getIdentifier(),
+            ]);
+        }
         $this->refreshTokenRepository->create([
             'id' => $id = $refreshTokenEntity->getIdentifier(),
             'access_token_id' => $accessTokenId = $refreshTokenEntity->getAccessToken()->getIdentifier(),

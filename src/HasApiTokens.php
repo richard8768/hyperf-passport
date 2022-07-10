@@ -2,7 +2,6 @@
 
 namespace Richard\HyperfPassport;
 
-use Hyperf\Di\Container;
 
 trait HasApiTokens {
 
@@ -60,7 +59,7 @@ trait HasApiTokens {
      * @return \Richard\HyperfPassport\PersonalAccessTokenResult
      */
     public function createToken($name, array $scopes = [], $provider = 'users') {
-        return Container::getInstance()->make(PersonalAccessTokenFactory::class)->make(
+        return make(PersonalAccessTokenFactory::class)->make(
                         $this->getKey(), $name, $scopes, $provider
         );
     }
