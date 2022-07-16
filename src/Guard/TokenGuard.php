@@ -7,7 +7,6 @@ use Firebase\JWT\JWT;
 use HyperfExt\Encryption\EncryptionManager;
 use HyperfExt\Cookie\CookieValuePrefix;
 use HyperfExt\Cookie\Middleware\EncryptCookieMiddleware;
-use Hyperf\HttpServer\Request;
 use Richard\HyperfPassport\ClientRepository;
 use Richard\HyperfPassport\Passport;
 use Richard\HyperfPassport\TokenRepository;
@@ -20,7 +19,8 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 use Qbhy\HyperfAuth\Authenticatable;
 use Qbhy\HyperfAuth\UserProvider;
 
-class TokenGuard implements ExtendAuthGuard {
+class TokenGuard implements ExtendAuthGuard
+{
 
     /**
      * @var array
@@ -78,40 +78,45 @@ class TokenGuard implements ExtendAuthGuard {
     /**
      * Create a new token guard instance.
      *
-     * @param  \League\OAuth2\Server\ResourceServer  $server
-     * @param  \Qbhy\HyperfAuth\UserProvider  $userProvider
-     * @param  \Richard\HyperfPassport\TokenRepository  $tokens
-     * @param  \Richard\HyperfPassport\ClientRepository  $clients
-     * @param  \HyperfExt\Encryption\EncryptionManager  $encrypterManager
+     * @param array $config
+     * @param string $name
+     * @param \League\OAuth2\Server\ResourceServer $server
+     * @param \Qbhy\HyperfAuth\UserProvider $userProvider
+     * @param \Richard\HyperfPassport\TokenRepository $tokens
+     * @param \Richard\HyperfPassport\ClientRepository $clients
+     * @param \HyperfExt\Encryption\EncryptionManager $encrypterManager
+     * @param \Hyperf\HttpServer\Contract\RequestInterface $request
      * @return void
      */
     public function __construct(
-            array $config,
-            string $name,
-            UserProvider $userProvider,
-            RequestInterface $request,
-            ResourceServer $server,
-            TokenRepository $tokens,
-            ClientRepository $clients,
-            EncryptionManager $encrypterManager
-    ) {
+        array             $config,
+        string            $name,
+        ResourceServer    $server,
+        UserProvider      $userProvider,
+        TokenRepository   $tokens,
+        ClientRepository  $clients,
+        EncryptionManager $encrypterManager,
+        RequestInterface  $request
+    )
+    {
+        $this->config = $config;
+        $this->name = $name;
         $this->server = $server;
         $this->userProvider = $userProvider;
         $this->tokens = $tokens;
         $this->clients = $clients;
         $this->encrypter = $encrypterManager->getDriver();
         $this->request = $request;
-        $this->config = $config;
-        $this->name = $name;
     }
 
     /**
      * Determine if the requested provider matches the client's provider.
      *
-     * @param  \Hyperf\HttpServer\Request  $request
+     * @param \Hyperf\HttpServer\Contract\RequestInterface $request
      * @return bool
      */
-    protected function hasValidProvider(Request $request) {
+    protected function hasValidProvider(\Hyperf\HttpServer\Contract\RequestInterface $request)
+    {
         $client = $this->client($request);
 
         if ($client && !$client->provider) {
@@ -126,7 +131,8 @@ class TokenGuard implements ExtendAuthGuard {
      *
      * @return mixed
      */
-    public function user(): ?Authenticatable {
+    public function user(): ?Authenticatable
+    {
         $passport = make(\Richard\HyperfPassport\Passport::class);
         if ($this->bearerToken($this->request)) {
             return $this->authenticateViaBearerToken($this->request);
@@ -141,7 +147,8 @@ class TokenGuard implements ExtendAuthGuard {
      *
      * @return mixed
      */
-    public function client() {
+    public function client()
+    {
         $passport = make(\Richard\HyperfPassport\Passport::class);
         if ($this->bearerToken($this->request)) {
             if (!$psr = $this->getPsrRequestViaBearerToken($this->request)) {
@@ -149,7 +156,7 @@ class TokenGuard implements ExtendAuthGuard {
             }
 
             return $this->clients->findActive(
-                            $psr->getAttribute('oauth_client_id')
+                $psr->getAttribute('oauth_client_id')
             );
         } elseif ($this->request->cookie($passport->cookie())) {
             if ($token = $this->getTokenViaCookie($this->request)) {
@@ -161,10 +168,11 @@ class TokenGuard implements ExtendAuthGuard {
     /**
      * Authenticate the incoming request via the Bearer token.
      *
-     * @param  \Hyperf\HttpServer\Request  $request
+     * @param \Hyperf\HttpServer\Contract\RequestInterface $request
      * @return mixed
      */
-    protected function authenticateViaBearerToken(Request $request) {
+    protected function authenticateViaBearerToken(\Hyperf\HttpServer\Contract\RequestInterface $request)
+    {
         if (!$psr = $this->getPsrRequestViaBearerToken($request)) {
             return;
         }
@@ -176,11 +184,11 @@ class TokenGuard implements ExtendAuthGuard {
         // If the access token is valid we will retrieve the user according to the user ID
         // associated with the token. We will use the provider implementation which may
         // be used to retrieve users from Eloquent. Next, we'll be ready to continue.
-        $user = $this->userProvider->retrieveById(
-                $psr->getAttribute('oauth_user_id') ?: null
+        $currentUser = $this->userProvider->retrieveById(
+            $psr->getAttribute('oauth_user_id') ?: null
         );
 
-        if (!$user) {
+        if (!$currentUser) {
             return;
         }
 
@@ -188,7 +196,7 @@ class TokenGuard implements ExtendAuthGuard {
         // to determine if the token has a given scope, etc. This will be useful during
         // authorization such as within the developer's Laravel model policy classes.
         $token = $this->tokens->find(
-                $psr->getAttribute('oauth_access_token_id')
+            $psr->getAttribute('oauth_access_token_id')
         );
 
         $clientId = $psr->getAttribute('oauth_client_id');
@@ -200,23 +208,24 @@ class TokenGuard implements ExtendAuthGuard {
             return;
         }
 
-        return $token ? $user->withAccessToken($token) : null;
+        return $token ? $currentUser->withAccessToken($token) : null;
     }
 
     /**
      * Authenticate and get the incoming PSR-7 request via the Bearer token.
      *
-     * @param  \Hyperf\HttpServer\Request  $request
+     * @param \Hyperf\HttpServer\Contract\RequestInterface $request
      * @return \Psr\Http\Message\ServerRequestInterface
      */
-    protected function getPsrRequestViaBearerToken(Request $request) {
+    protected function getPsrRequestViaBearerToken(\Hyperf\HttpServer\Contract\RequestInterface $request)
+    {
         try {
             return $this->server->validateAuthenticatedRequest($request);
         } catch (OAuthServerException $e) {
             $newException = new \Richard\HyperfPassport\Exception\PassportException(
-                    $e->getMessage(),
-                    $this,
-                    $e
+                $e->getMessage(),
+                $this,
+                $e
             );
             throw $newException;
         }
@@ -225,10 +234,11 @@ class TokenGuard implements ExtendAuthGuard {
     /**
      * Authenticate the incoming request via the token cookie.
      *
-     * @param  \Hyperf\HttpServer\Request  $request
+     * @param \Hyperf\HttpServer\Contract\RequestInterface $request
      * @return mixed
      */
-    protected function authenticateViaCookie(Request $request) {
+    protected function authenticateViaCookie(\Hyperf\HttpServer\Contract\RequestInterface $request)
+    {
         if (!$token = $this->getTokenViaCookie($request)) {
             return;
         }
@@ -236,18 +246,19 @@ class TokenGuard implements ExtendAuthGuard {
         // If this user exists, we will return this user and attach a "transient" token to
         // the user model. The transient token assumes it has all scopes since the user
         // is physically logged into the application via the application's interface.
-        if ($user = $this->userProvider->retrieveById($token['sub'])) {
-            return $user->withAccessToken(new TransientToken);
+        if ($currentUser = $this->userProvider->retrieveById($token['sub'])) {
+            return $currentUser->withAccessToken(new TransientToken);
         }
     }
 
     /**
      * Get the token cookie via the incoming request.
      *
-     * @param  \Hyperf\HttpServer\Request  $request
+     * @param \Hyperf\HttpServer\Contract\RequestInterface $request
      * @return mixed
      */
-    protected function getTokenViaCookie(Request $request) {
+    protected function getTokenViaCookie(\Hyperf\HttpServer\Contract\RequestInterface $request)
+    {
         $passport = make(\Richard\HyperfPassport\Passport::class);
         // If we need to retrieve the token from the cookie, it'll be encrypted so we must
         // first decrypt the cookie and then attempt to find the token value within the
@@ -272,38 +283,41 @@ class TokenGuard implements ExtendAuthGuard {
     /**
      * Decode and decrypt the JWT token cookie.
      *
-     * @param  \Hyperf\HttpServer\Request  $request
+     * @param \Hyperf\HttpServer\Contract\RequestInterface $request
      * @return array
      */
-    protected function decodeJwtTokenCookie(Request $request) {
+    protected function decodeJwtTokenCookie(\Hyperf\HttpServer\Contract\RequestInterface $request)
+    {
         $passport = make(\Richard\HyperfPassport\Passport::class);
-        return (array) JWT::decode(
-                        CookieValuePrefix::remove($this->encrypter->decrypt($request->cookie($passport->cookie()), $passport->unserializesCookies)),
-                        $this->encrypter->getKey(),
-                        ['HS256']
+        return (array)JWT::decode(
+            CookieValuePrefix::remove($this->encrypter->decrypt($request->cookie($passport->cookie()), $passport->unserializesCookies)),
+            $this->encrypter->getKey(),
+            ['HS256']
         );
     }
 
     /**
      * Determine if the CSRF / header are valid and match.
      *
-     * @param  array  $token
-     * @param  \Hyperf\HttpServer\Request  $request
+     * @param array $token
+     * @param \Hyperf\HttpServer\Contract\RequestInterface $request
      * @return bool
      */
-    protected function validCsrf(array $token, Request $request) {
+    protected function validCsrf(array $token, \Hyperf\HttpServer\Contract\RequestInterface $request)
+    {
         return isset($token['csrf']) && hash_equals(
-                        $token['csrf'], (string) $this->getTokenFromRequest($request)
-        );
+                $token['csrf'], (string)$this->getTokenFromRequest($request)
+            );
     }
 
     /**
      * Get the CSRF token from the request.
      *
-     * @param  \Hyperf\HttpServer\Request  $request
+     * @param \Hyperf\HttpServer\Contract\RequestInterface $request
      * @return string
      */
-    protected function getTokenFromRequest(Request $request) {
+    protected function getTokenFromRequest(\Hyperf\HttpServer\Contract\RequestInterface $request)
+    {
         $token = $request->header('X-CSRF-TOKEN');
 
         if (!$token && $header = $request->header('X-XSRF-TOKEN')) {
@@ -318,46 +332,46 @@ class TokenGuard implements ExtendAuthGuard {
      *
      * @return bool
      */
-    public static function serialized() {
+    public static function serialized()
+    {
         return EncryptCookieMiddleware::serialized('XSRF-TOKEN');
     }
 
     /**
      * Get the bearer token from the request headers.
      *
+     * @param \Hyperf\HttpServer\Contract\RequestInterface $request
      * @return string|null
      */
-    public function bearerToken(Request $request) {
+    public function bearerToken(\Hyperf\HttpServer\Contract\RequestInterface $request)
+    {
 
-        $arrHeader = $request->getHeader('Authorization');
-        $header = (!empty($arrHeader)) ? $arrHeader[0] : '';
+        $header = $request->getHeaderLine('Authorization');
         if (Str::startsWith($header, 'Bearer ')) {
             return Str::substr($header, 7);
-        }
-
-        if ($request->has('token')) {
-            return $request->input('token');
         }
 
         return null;
     }
 
-    public function getName(): string {
+    public function getName(): string
+    {
         return $this->name;
     }
 
-    public function getProvider(): UserProvider {
+    public function getProvider(): UserProvider
+    {
         return $this->userProvider;
     }
 
-    public function login(Authenticatable $user) {
-        \Hyperf\Utils\Context::set('user', $user);
-        return $this;
+    public function login(Authenticatable $user)
+    {
+        //
     }
 
-    public function logout() {
-        \Hyperf\Utils\Context::set('user', null);
-        return $this;
+    public function logout()
+    {
+        //
     }
 
     /**
@@ -365,8 +379,9 @@ class TokenGuard implements ExtendAuthGuard {
      *
      * @return bool
      */
-    public function hasUser() {
-        return \Hyperf\Utils\Context::has('user');
+    public function hasUser()
+    {
+        //
     }
 
     /**
@@ -374,7 +389,8 @@ class TokenGuard implements ExtendAuthGuard {
      *
      * @return bool
      */
-    public function check(): bool {
+    public function check(): bool
+    {
         return !is_null($this->user());
     }
 
@@ -383,7 +399,8 @@ class TokenGuard implements ExtendAuthGuard {
      *
      * @return bool
      */
-    public function guest(): bool {
+    public function guest(): bool
+    {
         return !$this->check();
     }
 
@@ -392,25 +409,28 @@ class TokenGuard implements ExtendAuthGuard {
      *
      * @return int|null
      */
-    public function id() {
+    public function id()
+    {
         if ($this->user()) {
             return $this->user()->getKey();
         }
     }
 
-    public function validate(array $credentials = []): bool {
-        $user = $this->userProvider->retrieveByCredentials($credentials);
-        return $this->hasValidCredentials($user, $credentials);
+    public function validate(array $credentials = []): bool
+    {
+        $currentUser = $this->userProvider->retrieveByCredentials($credentials);
+        return $this->hasValidCredentials($currentUser, $credentials);
     }
 
     /**
      * Determine if the user matches the credentials.
      *
-     * @param  mixed  $user
-     * @param  array  $credentials
+     * @param mixed $user
+     * @param array $credentials
      * @return bool
      */
-    protected function hasValidCredentials(Authenticatable $user, array $credentials) {
+    protected function hasValidCredentials(Authenticatable $user, array $credentials)
+    {
         $validated = !is_null($user) && $this->userProvider->validateCredentials($user, $credentials);
         return $validated;
     }
