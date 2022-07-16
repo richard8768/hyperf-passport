@@ -12,7 +12,8 @@ use Qbhy\HyperfAuth\AuthGuard;
 use Qbhy\HyperfAuth\UserProvider;
 use Hyperf\Di\Annotation\Inject;
 
-class AuthManager extends QbhyAuthManager {
+class AuthManager extends QbhyAuthManager
+{
 
     /**
      * @Inject
@@ -24,9 +25,10 @@ class AuthManager extends QbhyAuthManager {
      * @throws GuardException
      * @throws UserProviderException
      */
-    public function guard(?string $name = null): AuthGuard {
+    public function guard(?string $name = null): AuthGuard
+    {
         $provider = '';
-        $clentId = $this->serverRequest->header('x-client-id') ?: ($this->serverRequest->input('X-Client-Id') ?: $this->serverRequest->input('x-client-id'));
+        $clentId = $this->serverRequest->header('X-Client-Id') ?: ($this->serverRequest->header('x-client-id') ?: ($this->serverRequest->input('X-Client-Id') ?: $this->serverRequest->input('x-client-id')));
         if (!empty($clentId)) {
             $clients = make(\Richard\HyperfPassport\ClientRepository::class);
             $clientInfo = $clients->findActive($clentId);
@@ -48,15 +50,16 @@ class AuthManager extends QbhyAuthManager {
         $userProvider = $this->provider($config['provider'] ?? $this->defaultDriver);
 
         return make(
-                $config['driver'],
-                compact('name', 'config', 'userProvider')
+            $config['driver'],
+            compact('name', 'config', 'userProvider')
         );
     }
 
     /**
      * @throws UserProviderException
      */
-    public function provider(?string $name = null): UserProvider {
+    public function provider(?string $name = null): UserProvider
+    {
         $name = $name ?? $this->defaultProvider();
         if (empty($this->config['providers'][$name])) {
             throw new UserProviderException("Does not support this provider: {$name}");
@@ -65,11 +68,11 @@ class AuthManager extends QbhyAuthManager {
         $config = $this->config['providers'][$name];
 
         return make(
-                $config['driver'],
-                [
-                    'config' => $config,
-                    'name' => $name,
-                ]
+            $config['driver'],
+            [
+                'config' => $config,
+                'name' => $name,
+            ]
         );
     }
 
