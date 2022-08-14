@@ -2,6 +2,7 @@
 
 namespace Richard\HyperfPassport;
 
+use Hyperf\Database\Model\Collection;
 use Hyperf\Utils\Str;
 use RuntimeException;
 
@@ -37,7 +38,7 @@ class ClientRepository {
      * Get a client by the given ID.
      *
      * @param  int  $id
-     * @return \Richard\HyperfPassport\Client|null
+     * @return Client|null
      */
     public function find($id) {
         $passport = make(\Richard\HyperfPassport\Passport::class);
@@ -50,7 +51,7 @@ class ClientRepository {
      * Get an active client by the given ID.
      *
      * @param  int  $id
-     * @return \Richard\HyperfPassport\Client|null
+     * @return Client|null
      */
     public function findActive($id) {
         $client = $this->find($id);
@@ -63,7 +64,7 @@ class ClientRepository {
      *
      * @param  int  $clientId
      * @param  mixed  $userId
-     * @return \Richard\HyperfPassport\Client|null
+     * @return Client|null
      */
     public function findForUser($clientId, $userId) {
         $passport = make(\Richard\HyperfPassport\Passport::class);
@@ -79,7 +80,7 @@ class ClientRepository {
      * Get the client instances for the given user ID.
      *
      * @param  mixed  $userId
-     * @return \Hyperf\Database\Model\Collection
+     * @return Collection
      */
     public function forUser($userId) {
         $passport = make(\Richard\HyperfPassport\Passport::class);
@@ -92,7 +93,7 @@ class ClientRepository {
      * Get the active client instances for the given user ID.
      *
      * @param  mixed  $userId
-     * @return \Hyperf\Database\Model\Collection
+     * @return Collection
      */
     public function activeForUser($userId) {
         return $this->forUser($userId)->reject(function ($client) {
@@ -114,7 +115,7 @@ class ClientRepository {
     /**
      * Get the personal access token client for the application.
      *
-     * @return \Richard\HyperfPassport\Client
+     * @return Client
      *
      * @throws \RuntimeException
      */
@@ -153,7 +154,7 @@ class ClientRepository {
      * @param  bool  $personalAccess
      * @param  bool  $password
      * @param  bool  $confidential
-     * @return \Richard\HyperfPassport\Client
+     * @return Client
      */
     public function create($userId, $name, $redirect, $provider = null, $personalAccess = false, $password = false, $confidential = true) {
         $passport = make(\Richard\HyperfPassport\Passport::class);
@@ -179,7 +180,7 @@ class ClientRepository {
      * @param  int  $userId
      * @param  string  $name
      * @param  string  $redirect
-     * @return \Richard\HyperfPassport\Client
+     * @return Client
      */
     public function createPersonalAccessClient($userId, $name, $redirect, $provider = null) {
         $passport = make(\Richard\HyperfPassport\Passport::class);
@@ -197,7 +198,7 @@ class ClientRepository {
      * @param  string  $name
      * @param  string  $redirect
      * @param  string|null  $provider
-     * @return \Richard\HyperfPassport\Client
+     * @return Client
      */
     public function createPasswordGrantClient($userId, $name, $redirect, $provider = null) {
         return $this->create($userId, $name, $redirect, $provider, false, true);
@@ -206,10 +207,10 @@ class ClientRepository {
     /**
      * Update the given client.
      *
-     * @param  \Richard\HyperfPassport\Client  $client
+     * @param Client $client
      * @param  string  $name
      * @param  string  $redirect
-     * @return \Richard\HyperfPassport\Client
+     * @return Client
      */
     public function update(Client $client, $name, $redirect) {
         $client->forceFill([
@@ -222,8 +223,8 @@ class ClientRepository {
     /**
      * Regenerate the client secret.
      *
-     * @param  \Richard\HyperfPassport\Client  $client
-     * @return \Richard\HyperfPassport\Client
+     * @param Client $client
+     * @return Client
      */
     public function regenerateSecret(Client $client) {
         $client->forceFill([
@@ -248,7 +249,7 @@ class ClientRepository {
     /**
      * Delete the given client.
      *
-     * @param  \Richard\HyperfPassport\Client  $client
+     * @param Client $client
      * @return void
      */
     public function delete(Client $client) {

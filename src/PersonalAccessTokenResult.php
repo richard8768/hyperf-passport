@@ -17,7 +17,7 @@ class PersonalAccessTokenResult implements Arrayable, Jsonable {
     /**
      * The token model instance.
      *
-     * @var \Richard\HyperfPassport\Token
+     * @var Token
      */
     public $token;
 
@@ -25,7 +25,7 @@ class PersonalAccessTokenResult implements Arrayable, Jsonable {
      * Create a new result instance.
      *
      * @param  string  $accessToken
-     * @param  \Richard\HyperfPassport\Token  $token
+     * @param Token $token
      * @return void
      */
     public function __construct($accessToken, $token) {

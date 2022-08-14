@@ -16,7 +16,7 @@ class DenyAuthorizationController
     /**
      * The response factory implementation.
      *
-     * @var \Hyperf\HttpServer\Response
+     * @var Response
      */
     protected $response;
     protected $session;
@@ -29,7 +29,7 @@ class DenyAuthorizationController
     /**
      * Create a new controller instance.
      *
-     * @param \Hyperf\HttpServer\Response $response
+     * @param Response $response
      * @return void
      */
     public function __construct(Response $response, SessionInterface $session, AuthManager $auth)
@@ -42,7 +42,7 @@ class DenyAuthorizationController
     /**
      * Deny the authorization request.
      *
-     * @param \Hyperf\HttpServer\Request $request
+     * @param Request $request
      */
     public function deny(Request $request)
     {

@@ -2,6 +2,7 @@
 
 namespace Richard\HyperfPassport\Controller;
 
+use Hyperf\HttpMessage\Server\Response;
 use Richard\HyperfPassport\TokenRepository;
 use League\OAuth2\Server\AuthorizationServer;
 use Nyholm\Psr7\Response as Psr7Response;
@@ -14,14 +15,12 @@ class AccessTokenController {
     /**
      * The authorization server.
      *
-     * @var \League\OAuth2\Server\AuthorizationServer
      */
     protected $server;
 
     /**
      * The token repository instance.
      *
-     * @var \Richard\HyperfPassport\TokenRepository
      */
     protected $tokens;
 
@@ -29,8 +28,8 @@ class AccessTokenController {
     /**
      * Create a new controller instance.
      *
-     * @param  \League\OAuth2\Server\AuthorizationServer  $server
-     * @param  \Richard\HyperfPassport\TokenRepository  $tokens
+     * @param  AuthorizationServer  $server
+     * @param  TokenRepository  $tokens
      * @return void
      */
     public function __construct(AuthorizationServer $server,
@@ -42,8 +41,8 @@ class AccessTokenController {
     /**
      * Authorize a client to access the user's account.
      *
-     * @param  \Psr\Http\Message\ServerRequestInterface  $request
-     * @return \Hyperf\HttpMessage\Server\Response
+     * @param  ServerRequestInterface  $request
+     * @return Response
      */
     public function issueToken(ServerRequestInterface $request) {
         return $this->withErrorHandling(function () use ($request) {

@@ -5,6 +5,7 @@ namespace Richard\HyperfPassport;
 use Carbon\Carbon;
 use Firebase\JWT\JWT;
 use Hyperf\Contract\ConfigInterface as Config;
+use HyperfExt\Encryption\Contract\DriverInterface;
 use HyperfExt\Encryption\EncryptionManager;
 use Hyperf\HttpMessage\Cookie\Cookie;
 
@@ -13,22 +14,22 @@ class ApiTokenCookieFactory {
     /**
      * The configuration repository implementation.
      *
-     * @var \Hyperf\Contract\ConfigInterface
+     * @var Config
      */
     protected $config;
 
     /**
      * The encrypter implementation.
      *
-     * @var \HyperfExt\Encryption\Contract\DriverInterface
+     * @var DriverInterface
      */
     protected $encrypter;
 
     /**
      * Create an API token cookie factory instance.
      *
-     * @param  \Hyperf\Contract\ConfigInterface  $config
-     * @param  \HyperfExt\Encryption\EncryptionManager  $encrypter
+     * @param Config $config
+     * @param  EncryptionManager  $encrypterManager
      * @return void
      */
     public function __construct(Config $config, EncryptionManager $encrypterManager) {
@@ -41,7 +42,7 @@ class ApiTokenCookieFactory {
      *
      * @param  mixed  $userId
      * @param  string  $csrfToken
-     * @return \Hyperf\HttpMessage\Cookie\Cookie
+     * @return Cookie
      */
     public function make($userId, $csrfToken) {
         $configArray = $this->config->get('session');
@@ -66,7 +67,7 @@ class ApiTokenCookieFactory {
      *
      * @param  mixed  $userId
      * @param  string  $csrfToken
-     * @param  \Carbon\Carbon  $expiration
+     * @param Carbon $expiration
      * @return string
      */
     protected function createToken($userId, $csrfToken, Carbon $expiration) {

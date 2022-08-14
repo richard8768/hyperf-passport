@@ -3,14 +3,15 @@
 namespace Richard\HyperfPassport\Controller;
 
 use Hyperf\HttpMessage\Server\Response;
+use Psr\Http\Message\ResponseInterface;
 
 trait ConvertsPsrResponses {
 
     /**
      * Convert a PSR7 response to  Response.
      *
-     * @param  \Psr\Http\Message\ResponseInterface  $psrResponse
-     * @return \Hyperf\HttpMessage\Server\Response
+     * @param  ResponseInterface  $psrResponse
+     * @return Response
      */
     public function convertResponse($psrResponse) {
         $headers = $psrResponse->getHeaders();
@@ -21,8 +22,6 @@ trait ConvertsPsrResponses {
             $exception->setStatusCode(400);
             throw $exception;
         }
-        //var_dump(json_decode($content->__toString(), true));
-        $contents = (string) $content;
         $response = new Response();
         return $response->withHeaders($headers)->withStatus($statusCode)->withBody(new \Hyperf\HttpMessage\Stream\SwooleStream($content));
     }

@@ -7,6 +7,7 @@ use Firebase\JWT\JWT;
 use HyperfExt\Encryption\EncryptionManager;
 use HyperfExt\Cookie\CookieValuePrefix;
 use HyperfExt\Cookie\Middleware\EncryptCookieMiddleware;
+use Psr\Http\Message\ServerRequestInterface;
 use Richard\HyperfPassport\ClientRepository;
 use Richard\HyperfPassport\Passport;
 use Richard\HyperfPassport\TokenRepository;
@@ -35,44 +36,48 @@ class TokenGuard implements ExtendAuthGuard
     /**
      * The currently authenticated user.
      *
-     * @var \Qbhy\HyperfAuth\Authenticatable
+     * @var Authenticatable
      */
     protected $user;
 
     /**
      * The resource server instance.
      *
-     * @var \League\OAuth2\Server\ResourceServer
+     * @var ResourceServer
      */
     protected $server;
 
     /**
      * The user provider implementation.
      *
-     * @var \Qbhy\HyperfAuth\UserProvider
+     * @var UserProvider
      */
     protected $userProvider;
 
     /**
      * The token repository instance.
      *
-     * @var \Richard\HyperfPassport\TokenRepository
+     * @var TokenRepository
      */
     protected $tokens;
 
     /**
      * The client repository instance.
      *
-     * @var \Richard\HyperfPassport\ClientRepository
+     * @var ClientRepository
      */
     protected $clients;
 
     /**
      * The encrypter implementation.
      *
-     * @var \HyperfExt\Encryption\EncryptionManager
+     * @var EncryptionManager
      */
     protected $encrypter;
+    /**
+     *
+     * @var RequestInterface
+     */
     protected $request;
 
     /**
@@ -80,12 +85,12 @@ class TokenGuard implements ExtendAuthGuard
      *
      * @param array $config
      * @param string $name
-     * @param \League\OAuth2\Server\ResourceServer $server
-     * @param \Qbhy\HyperfAuth\UserProvider $userProvider
-     * @param \Richard\HyperfPassport\TokenRepository $tokens
-     * @param \Richard\HyperfPassport\ClientRepository $clients
-     * @param \HyperfExt\Encryption\EncryptionManager $encrypterManager
-     * @param \Hyperf\HttpServer\Contract\RequestInterface $request
+     * @param ResourceServer $server
+     * @param UserProvider $userProvider
+     * @param TokenRepository $tokens
+     * @param ClientRepository $clients
+     * @param EncryptionManager $encrypterManager
+     * @param RequestInterface $request
      * @return void
      */
     public function __construct(
@@ -112,10 +117,10 @@ class TokenGuard implements ExtendAuthGuard
     /**
      * Determine if the requested provider matches the client's provider.
      *
-     * @param \Hyperf\HttpServer\Contract\RequestInterface $request
+     * @param RequestInterface $request
      * @return bool
      */
-    protected function hasValidProvider(\Hyperf\HttpServer\Contract\RequestInterface $request)
+    protected function hasValidProvider(RequestInterface $request)
     {
         $client = $this->client($request);
 
@@ -133,7 +138,7 @@ class TokenGuard implements ExtendAuthGuard
      */
     public function user(): ?Authenticatable
     {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         if ($this->bearerToken($this->request)) {
             return $this->authenticateViaBearerToken($this->request);
         } elseif ($this->request->cookie($passport->cookie())) {
@@ -149,7 +154,7 @@ class TokenGuard implements ExtendAuthGuard
      */
     public function client()
     {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         if ($this->bearerToken($this->request)) {
             if (!$psr = $this->getPsrRequestViaBearerToken($this->request)) {
                 return;
@@ -168,10 +173,10 @@ class TokenGuard implements ExtendAuthGuard
     /**
      * Authenticate the incoming request via the Bearer token.
      *
-     * @param \Hyperf\HttpServer\Contract\RequestInterface $request
+     * @param RequestInterface $request
      * @return mixed
      */
-    protected function authenticateViaBearerToken(\Hyperf\HttpServer\Contract\RequestInterface $request)
+    protected function authenticateViaBearerToken(RequestInterface $request)
     {
         if (!$psr = $this->getPsrRequestViaBearerToken($request)) {
             return;
@@ -214,10 +219,10 @@ class TokenGuard implements ExtendAuthGuard
     /**
      * Authenticate and get the incoming PSR-7 request via the Bearer token.
      *
-     * @param \Hyperf\HttpServer\Contract\RequestInterface $request
-     * @return \Psr\Http\Message\ServerRequestInterface
+     * @param RequestInterface $request
+     * @return ServerRequestInterface
      */
-    protected function getPsrRequestViaBearerToken(\Hyperf\HttpServer\Contract\RequestInterface $request)
+    protected function getPsrRequestViaBearerToken(RequestInterface $request)
     {
         try {
             return $this->server->validateAuthenticatedRequest($request);
@@ -234,10 +239,10 @@ class TokenGuard implements ExtendAuthGuard
     /**
      * Authenticate the incoming request via the token cookie.
      *
-     * @param \Hyperf\HttpServer\Contract\RequestInterface $request
+     * @param RequestInterface $request
      * @return mixed
      */
-    protected function authenticateViaCookie(\Hyperf\HttpServer\Contract\RequestInterface $request)
+    protected function authenticateViaCookie(RequestInterface $request)
     {
         if (!$token = $this->getTokenViaCookie($request)) {
             return;
@@ -254,13 +259,13 @@ class TokenGuard implements ExtendAuthGuard
     /**
      * Get the token cookie via the incoming request.
      *
-     * @param \Hyperf\HttpServer\Contract\RequestInterface $request
+     * @param RequestInterface $request
      * @return mixed
      */
-    protected function getTokenViaCookie(\Hyperf\HttpServer\Contract\RequestInterface $request)
+    protected function getTokenViaCookie(RequestInterface $request)
     {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
-        // If we need to retrieve the token from the cookie, it'll be encrypted so we must
+        $passport = make(Passport::class);
+        // If we need to retrieve the token from the cookie, it'll be encrypted , so we must
         // first decrypt the cookie and then attempt to find the token value within the
         // database. If we can't decrypt the value we'll bail out with a null return.
         try {
@@ -283,12 +288,12 @@ class TokenGuard implements ExtendAuthGuard
     /**
      * Decode and decrypt the JWT token cookie.
      *
-     * @param \Hyperf\HttpServer\Contract\RequestInterface $request
+     * @param RequestInterface $request
      * @return array
      */
-    protected function decodeJwtTokenCookie(\Hyperf\HttpServer\Contract\RequestInterface $request)
+    protected function decodeJwtTokenCookie(RequestInterface $request)
     {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         return (array)JWT::decode(
             CookieValuePrefix::remove($this->encrypter->decrypt($request->cookie($passport->cookie()), $passport->unserializesCookies)),
             $this->encrypter->getKey(),
@@ -300,10 +305,10 @@ class TokenGuard implements ExtendAuthGuard
      * Determine if the CSRF / header are valid and match.
      *
      * @param array $token
-     * @param \Hyperf\HttpServer\Contract\RequestInterface $request
+     * @param RequestInterface $request
      * @return bool
      */
-    protected function validCsrf(array $token, \Hyperf\HttpServer\Contract\RequestInterface $request)
+    protected function validCsrf(array $token, RequestInterface $request)
     {
         return isset($token['csrf']) && hash_equals(
                 $token['csrf'], (string)$this->getTokenFromRequest($request)
@@ -313,10 +318,10 @@ class TokenGuard implements ExtendAuthGuard
     /**
      * Get the CSRF token from the request.
      *
-     * @param \Hyperf\HttpServer\Contract\RequestInterface $request
+     * @param RequestInterface $request
      * @return string
      */
-    protected function getTokenFromRequest(\Hyperf\HttpServer\Contract\RequestInterface $request)
+    protected function getTokenFromRequest(RequestInterface $request)
     {
         $token = $request->header('X-CSRF-TOKEN');
 
@@ -340,10 +345,10 @@ class TokenGuard implements ExtendAuthGuard
     /**
      * Get the bearer token from the request headers.
      *
-     * @param \Hyperf\HttpServer\Contract\RequestInterface $request
+     * @param RequestInterface $request
      * @return string|null
      */
-    public function bearerToken(\Hyperf\HttpServer\Contract\RequestInterface $request)
+    public function bearerToken(RequestInterface $request)
     {
 
         $header = $request->getHeaderLine('Authorization');

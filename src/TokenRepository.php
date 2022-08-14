@@ -3,6 +3,8 @@
 namespace Richard\HyperfPassport;
 
 use Carbon\Carbon;
+use Hyperf\Database\Model\Collection;
+use Hyperf\DbConnection\Model\Model;
 
 class TokenRepository {
 
@@ -10,10 +12,10 @@ class TokenRepository {
      * Creates a new Access Token.
      *
      * @param  array  $attributes
-     * @return \Richard\HyperfPassport\Token
+     * @return Token
      */
     public function create($attributes) {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         return $passport->token()->create($attributes);
     }
 
@@ -21,10 +23,10 @@ class TokenRepository {
      * Get a token by the given ID.
      *
      * @param  string  $id
-     * @return \Richard\HyperfPassport\Token
+     * @return Token
      */
     public function find($id) {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         return $passport->token()->where('id', $id)->first();
     }
 
@@ -33,10 +35,10 @@ class TokenRepository {
      *
      * @param  string  $id
      * @param  int  $userId
-     * @return \Richard\HyperfPassport\Token|null
+     * @return Token|null
      */
     public function findForUser($id, $userId) {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         return $passport->token()->where('id', $id)->where('user_id', $userId)->first();
     }
 
@@ -44,19 +46,19 @@ class TokenRepository {
      * Get the token instances for the given user ID.
      *
      * @param  mixed  $userId
-     * @return \Hyperf\Database\Model\Collection
+     * @return Collection
      */
     public function forUser($userId) {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         return $passport->token()->where('user_id', $userId)->get();
     }
 
     /**
      * Get a valid token instance for the given user and client.
      *
-     * @param  \Hyperf\DbConnection\Model\Model  $user
-     * @param  \Richard\HyperfPassport\Client  $client
-     * @return \Richard\HyperfPassport\Token|null
+     * @param  Model  $user
+     * @param Client $client
+     * @return Token|null
      */
     public function getValidToken($user, $client) {
         return $client->tokens()
@@ -69,7 +71,7 @@ class TokenRepository {
     /**
      * Store the given token instance.
      *
-     * @param  \Richard\HyperfPassport\Token  $token
+     * @param Token $token
      * @return void
      */
     public function save(Token $token) {
@@ -83,7 +85,7 @@ class TokenRepository {
      * @return mixed
      */
     public function revokeAccessToken($id) {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         return $passport->token()->where('id', $id)->update(['revoked' => true]);
     }
 
@@ -94,7 +96,7 @@ class TokenRepository {
      * @return mixed
      */
     public function revokeAccessTokenByConditons($conditions) {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         return $passport->token()->where($conditions)->update(['revoked' => true]);
     }
 
@@ -115,9 +117,9 @@ class TokenRepository {
     /**
      * Find a valid token for the given user and client.
      *
-     * @param  \Hyperf\DbConnection\Model\Model  $user
-     * @param  \Richard\HyperfPassport\Client  $client
-     * @return \Richard\HyperfPassport\Token|null
+     * @param  Model  $user
+     * @param Client $client
+     * @return Token|null
      */
     public function findValidToken($user, $client) {
         return $client->tokens()

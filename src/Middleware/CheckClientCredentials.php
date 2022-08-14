@@ -2,19 +2,22 @@
 
 namespace Richard\HyperfPassport\Middleware;
 
+use Richard\HyperfPassport\Exception\PassportException;
+use Richard\HyperfPassport\Token;
+
 class CheckClientCredentials extends CheckCredentials {
 
     /**
      * Validate token credentials.
      *
-     * @param  \Richard\HyperfPassport\Token  $token
+     * @param  Token  $token
      * @return void
      *
-     * @throws \Richard\HyperfPassport\Exception\PassportException
+     * @throws PassportException
      */
     protected function validateCredentials($token) {
         if (!$token) {
-            $exception = new \Richard\HyperfPassport\Exception\PassportException('This action is unauthorized.');
+            $exception = new PassportException('This action is unauthorized.');
             throw $exception;
         }
     }
@@ -22,11 +25,11 @@ class CheckClientCredentials extends CheckCredentials {
     /**
      * Validate token credentials.
      *
-     * @param  \Richard\HyperfPassport\Token  $token
+     * @param  Token  $token
      * @param  array  $scopes
      * @return void
      *
-     * @throws \Richard\HyperfPassport\Exception\PassportException
+     * @throws PassportException
      */
     protected function validateScopes($token, $scopes) {
         if (in_array('*', $token->scopes)) {
@@ -35,7 +38,7 @@ class CheckClientCredentials extends CheckCredentials {
 
         foreach ($scopes as $scope) {
             if ($token->cant($scope)) {
-                $exception = new \Richard\HyperfPassport\Exception\PassportException('Invalid scope(s) provided.');
+                $exception = new PassportException('Invalid scope(s) provided.');
                 $exception->setScopes($scopes);
                 throw $exception;
             }

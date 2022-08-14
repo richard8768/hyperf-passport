@@ -18,22 +18,22 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface {
     /**
      * The token repository instance.
      *
-     * @var \Richard\HyperfPassport\TokenRepository
+     * @var TokenRepository
      */
     protected $tokenRepository;
 
     /**
      * The event dispatcher instance.
      *
-     * @var \Psr\EventDispatcher\EventDispatcherInterface
+     * @var EventDispatcherInterface
      */
     protected $events;
 
     /**
      * Create a new repository instance.
      *
-     * @param  \Richard\HyperfPassport\TokenRepository  $tokenRepository
-     * @param  \Psr\EventDispatcher\EventDispatcherInterface  $events
+     * @param TokenRepository $tokenRepository
+     * @param EventDispatcherInterface $events
      * @return void
      */
     public function __construct(TokenRepository $tokenRepository, EventDispatcherInterface $events, AuthManager $auth) {
@@ -75,12 +75,6 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface {
                         $accessTokenEntity->getUserIdentifier(),
                         $accessTokenEntity->getClient()->getIdentifier()
         ));
-//        $provider = $accessTokenEntity->getClient()->provider;
-//        $model = config('auth.providers.' . $provider . '.model');
-//        //var_dump($model);
-//        $user = (new $model)->where('id', $accessTokenEntity->getUserIdentifier())->first();
-//        //var_dump($user);
-//        $this->auth->guard('passport')->login($user);
     }
 
     /**

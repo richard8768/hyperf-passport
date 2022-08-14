@@ -2,10 +2,12 @@
 
 namespace Richard\HyperfPassport\Controller;
 
+use Hyperf\Database\Model\Collection;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface as ValidationFactory;
 use Hyperf\HttpServer\Request;
 use Hyperf\HttpMessage\Server\Response;
 use Richard\HyperfPassport\Passport;
+use Richard\HyperfPassport\PersonalAccessTokenResult;
 use Richard\HyperfPassport\TokenRepository;
 use Qbhy\HyperfAuth\AuthManager;
 
@@ -14,14 +16,14 @@ class PersonalAccessTokenController {
     /**
      * The token repository implementation.
      *
-     * @var \Richard\HyperfPassport\TokenRepository
+     * @var TokenRepository
      */
     protected $tokenRepository;
 
     /**
      * The validation factory implementation.
      *
-     * @var \Hyperf\Validation\Contract\ValidatorFactoryInterface
+     * @var ValidationFactory
      */
     protected $validation;
 
@@ -33,8 +35,9 @@ class PersonalAccessTokenController {
     /**
      * Create a controller instance.
      *
-     * @param  \Richard\HyperfPassport\TokenRepository  $tokenRepository
-     * @param  \Hyperf\Validation\Contract\ValidatorFactoryInterface  $validation
+     * @param  TokenRepository  $tokenRepository
+     * @param  ValidationFactory  $validation
+     * @param  AuthManager  $auth
      * @return void
      */
     public function __construct(TokenRepository $tokenRepository, ValidationFactory $validation, AuthManager $auth) {
@@ -44,10 +47,10 @@ class PersonalAccessTokenController {
     }
 
     /**
-     * Get all of the personal access tokens for the authenticated user.
+     * Get all the personal access tokens for the authenticated user.
      *
-     * @param  \Hyperf\HttpServer\Request  $request
-     * @return \Hyperf\Database\Model\Collection
+     * @param  Request  $request
+     * @return Collection
      */
     public function forUser(Request $request) {
         $user = $this->auth->guard('passport')->user();
@@ -61,11 +64,11 @@ class PersonalAccessTokenController {
     /**
      * Create a new personal access token for the user.
      *
-     * @param  \Hyperf\HttpServer\Request  $request
-     * @return \Richard\HyperfPassport\PersonalAccessTokenResult
+     * @param  Request  $request
+     * @return PersonalAccessTokenResult
      */
     public function store(Request $request) {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         $this->validation->make($request->all(), [
             'name' => 'required|max:191',
             'scopes' => 'array|in:' . implode(',', $passport->scopeIds()),
@@ -81,9 +84,9 @@ class PersonalAccessTokenController {
     /**
      * Delete the given token.
      *
-     * @param  \Hyperf\HttpServer\Request  $request
+     * @param  Request  $request
      * @param  string  $tokenId
-     * @return \Hyperf\HttpMessage\Server\Response
+     * @return Response
      */
     public function destroy(Request $request, $tokenId) {
         $user = $this->auth->guard('passport')->user();

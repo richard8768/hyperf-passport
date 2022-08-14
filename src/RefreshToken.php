@@ -2,6 +2,7 @@
 
 namespace Richard\HyperfPassport;
 
+use Hyperf\Database\Model\Relations\BelongsTo;
 use Hyperf\DbConnection\Model\Model;
 
 class RefreshToken extends Model {
@@ -62,10 +63,10 @@ class RefreshToken extends Model {
     /**
      * Get the access token that the refresh token belongs to.
      *
-     * @return \Hyperf\Database\Model\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function accessToken() {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         return $this->belongsTo($passport->tokenModel());
     }
 

@@ -29,7 +29,7 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface {
             'revoked' => false,
             'expires_at' => $authCodeEntity->getExpiryDateTime(),
         ];
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         $passport->authCode()->forceFill($attributes)->save();
     }
 
@@ -37,7 +37,7 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface {
      * {@inheritdoc}
      */
     public function revokeAuthCode($codeId) {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         $passport->authCode()->where('id', $codeId)->update(['revoked' => true]);
     }
 
@@ -45,7 +45,7 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface {
      * {@inheritdoc}
      */
     public function isAuthCodeRevoked($codeId) {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         return $passport->authCode()->where('id', $codeId)->where('revoked', 1)->exists();
     }
 

@@ -15,7 +15,7 @@ class TransientTokenController {
     /**
      * The cookie factory instance.
      *
-     * @var \Richard\HyperfPassport\ApiTokenCookieFactory
+     * @var ApiTokenCookieFactory
      */
     protected $cookieFactory;
 
@@ -27,7 +27,9 @@ class TransientTokenController {
     /**
      * Create a new controller instance.
      *
-     * @param  \Richard\HyperfPassport\ApiTokenCookieFactory  $cookieFactory
+     * @param  ApiTokenCookieFactory  $cookieFactory
+     * @param  SessionInterface  $session
+     * @param  AuthManager  $auth
      * @return void
      */
     public function __construct(ApiTokenCookieFactory $cookieFactory, SessionInterface $session, AuthManager $auth) {
@@ -39,8 +41,8 @@ class TransientTokenController {
     /**
      * Get a fresh transient token cookie for the authenticated user.
      *
-     * @param  \Hyperf\HttpServer\Request  $request
-     * @return \Hyperf\HttpMessage\Server\Response
+     * @param  Request  $request
+     * @return Response
      */
     public function refresh(Request $request) {
         $response = new Response();

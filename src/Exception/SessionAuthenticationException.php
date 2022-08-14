@@ -17,7 +17,7 @@ use Hyperf\Server\Exception\ServerException;
 class SessionAuthenticationException extends ServerException
 {
     /**
-     * All of the guards that were checked.
+     * All the guards that were checked.
      *
      * @var array
      */

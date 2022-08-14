@@ -11,14 +11,14 @@ class ClientRepository implements ClientRepositoryInterface {
     /**
      * The client model repository.
      *
-     * @var \Richard\HyperfPassport\ClientRepository
+     * @var ClientModelRepository
      */
     protected $clients;
 
     /**
      * Create a new repository instance.
      *
-     * @param  \Richard\HyperfPassport\ClientRepository  $clients
+     * @param ClientModelRepository $clients
      * @return void
      */
     public function __construct(ClientModelRepository $clients) {

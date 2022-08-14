@@ -2,7 +2,9 @@
 
 namespace Richard\HyperfPassport\Controller;
 
+use Hyperf\Database\Model\Model;
 use Hyperf\Di\Annotation\Inject;
+use Hyperf\HttpMessage\Server\Response;
 use Hyperf\View\Render;
 use Hyperf\HttpServer\Request;
 use Hyperf\Utils\Str;
@@ -16,6 +18,7 @@ use Nyholm\Psr7\Response as Psr7Response;
 use Psr\Http\Message\ServerRequestInterface;
 use Qbhy\HyperfAuth\AuthManager;
 use Hyperf\Contract\ConfigInterface;
+use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 
 class AuthorizationController {
 
@@ -23,14 +26,14 @@ class AuthorizationController {
 
     /**
      * @Inject
-     * @var \Hyperf\Contract\ConfigInterface
+     * @var ConfigInterface
      */
     protected $config;
 
     /**
      * The authorization server.
      *
-     * @var \League\OAuth2\Server\AuthorizationServer
+     * @var AuthorizationServer
      */
     protected $server;
 
@@ -48,9 +51,9 @@ class AuthorizationController {
     /**
      * Create a new controller instance.
      *
-     * @param  \League\OAuth2\Server\AuthorizationServer  $server
-     * @param  \Hyperf\View\RenderInterface  $render
-     * @param  \Hyperf\Contract\SessionInterface  $session
+     * @param  AuthorizationServer  $server
+     * @param  Render  $render
+     * @param  SessionInterface  $session
      * @return void
      */
     public function __construct(AuthorizationServer $server, Render $render, SessionInterface $session, AuthManager $auth) {
@@ -63,10 +66,10 @@ class AuthorizationController {
     /**
      * Authorize a client to access the user's account.
      *
-     * @param  \Psr\Http\Message\ServerRequestInterface  $psrRequest
-     * @param  \Hyperf\HttpServer\Request  $request
-     * @param  \Richard\HyperfPassport\ClientRepository  $clients
-     * @param  \Richard\HyperfPassport\TokenRepository  $tokens
+     * @param  ServerRequestInterface  $psrRequest
+     * @param  Request  $request
+     * @param  ClientRepository  $clients
+     * @param  TokenRepository  $tokens
      */
     public function authorize(ServerRequestInterface $psrRequest,
             Request $request,
@@ -104,13 +107,13 @@ class AuthorizationController {
     }
 
     /**
-     * Transform the authorization requests's scopes into Scope instances.
+     * Transform the authorization request's scopes into Scope instances.
      *
-     * @param  \League\OAuth2\Server\RequestTypes\AuthorizationRequest  $authRequest
+     * @param  AuthorizationRequest  $authRequest
      * @return array
      */
     protected function parseScopes($authRequest) {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         return $passport->scopesFor(
                         collect($authRequest->getScopes())->map(function ($scope) {
                             return $scope->getIdentifier();
@@ -121,9 +124,9 @@ class AuthorizationController {
     /**
      * Approve the authorization request.
      *
-     * @param  \League\OAuth2\Server\RequestTypes\AuthorizationRequest  $authRequest
-     * @param  \Hyperf\Database\Model\Model  $user
-     * @return  \Hyperf\HttpMessage\Server\Response
+     * @param  AuthorizationRequest  $authRequest
+     * @param  Model  $user
+     * @return  Response
      */
     protected function approveRequest($authRequest, $user) {
         $authRequest->setUser(new User($user->getKey()));

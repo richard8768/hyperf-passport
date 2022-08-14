@@ -2,6 +2,7 @@
 
 namespace Richard\HyperfPassport\Controller;
 
+use Hyperf\Database\Model\Collection;
 use Hyperf\HttpServer\Request;
 use Hyperf\HttpMessage\Server\Response;
 use Richard\HyperfPassport\RefreshTokenRepository;
@@ -13,14 +14,14 @@ class AuthorizedAccessTokenController {
     /**
      * The token repository implementation.
      *
-     * @var \Richard\HyperfPassport\TokenRepository
+     * @var TokenRepository
      */
     protected $tokenRepository;
 
     /**
      * The refresh token repository implementation.
      *
-     * @var \Richard\HyperfPassport\RefreshTokenRepository
+     * @var RefreshTokenRepository
      */
     protected $refreshTokenRepository;
 
@@ -32,8 +33,8 @@ class AuthorizedAccessTokenController {
     /**
      * Create a new controller instance.
      *
-     * @param  \Richard\HyperfPassport\TokenRepository  $tokenRepository
-     * @param  \Richard\HyperfPassport\RefreshTokenRepository  $refreshTokenRepository
+     * @param  TokenRepository  $tokenRepository
+     * @param  RefreshTokenRepository  $refreshTokenRepository
      * @return void
      */
     public function __construct(TokenRepository $tokenRepository, RefreshTokenRepository $refreshTokenRepository, AuthManager $auth) {
@@ -43,10 +44,10 @@ class AuthorizedAccessTokenController {
     }
 
     /**
-     * Get all of the authorized tokens for the authenticated user.
+     * Get all the authorized tokens for the authenticated user.
      *
-     * @param  \Hyperf\HttpServer\Request  $request
-     * @return \Hyperf\Database\Model\Collection
+     * @param  Request  $request
+     * @return Collection
      */
     public function forUser(Request $request) {
         $user = $this->auth->guard('passport')->user();
@@ -60,9 +61,9 @@ class AuthorizedAccessTokenController {
     /**
      * Delete the given token.
      *
-     * @param  \Hyperf\HttpServer\Request  $request
+     * @param  Request  $request
      * @param  string  $tokenId
-     * @return \Hyperf\HttpMessage\Server\Response
+     * @return Response
      */
     public function destroy(Request $request, $tokenId) {
         $user = $this->auth->guard('passport')->user();

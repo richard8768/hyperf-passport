@@ -9,7 +9,6 @@ class CreateOauthAuthCodesTable extends Migration {
     /**
      * The database schema.
      *
-     * @var \Hyperf\Database\Schema\Builder
      */
     protected $schema;
 

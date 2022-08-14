@@ -13,22 +13,20 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface {
     /**
      * The refresh token repository instance.
      *
-     * @var \Hyperf\Database\Connection
      */
     protected $refreshTokenRepository;
 
     /**
      * The event dispatcher instance.
      *
-     * @var \Psr\EventDispatcher\EventDispatcherInterface
      */
     protected $events;
 
     /**
      * Create a new repository instance.
      *
-     * @param  \Richard\HyperfPassport\RefreshTokenRepository  $refreshTokenRepository
-     * @param  \Psr\EventDispatcher\EventDispatcherInterface  $events
+     * @param  PassportRefreshTokenRepository  $refreshTokenRepository
+     * @param  EventDispatcherInterface  $events
      * @return void
      */
     public function __construct(PassportRefreshTokenRepository $refreshTokenRepository, EventDispatcherInterface $events) {

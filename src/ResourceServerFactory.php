@@ -9,6 +9,7 @@ use Hyperf\Contract\ConfigInterface;
 use Psr\Container\ContainerInterface;
 use League\OAuth2\Server\ResourceServer;
 use League\OAuth2\Server\CryptKey;
+use Richard\HyperfPassport\Bridge\AccessTokenRepository;
 
 class ResourceServerFactory {
 
@@ -25,8 +26,8 @@ class ResourceServerFactory {
     protected $config;
 
     /**
-     * @param  \Psr\Container\ContainerInterface  $container
-     * @param  \Hyperf\Contract\ConfigInterface  $config
+     * @param ContainerInterface $container
+     * @param ConfigInterface $config
      * @return void
      */
     public function __construct(ContainerInterface $container, ConfigInterface $config) {
@@ -36,7 +37,7 @@ class ResourceServerFactory {
 
     public function __invoke() {
         return new ResourceServer(
-                make(\Richard\HyperfPassport\Bridge\AccessTokenRepository::class),
+                make(AccessTokenRepository::class),
                 $this->makeCryptKey('public')
         );
     }
@@ -44,11 +45,11 @@ class ResourceServerFactory {
     /**
      * Create a CryptKey instance without permissions check.
      *
-     * @param  string  $key
-     * @return \League\OAuth2\Server\CryptKey
+     * @param  string  $type
+     * @return CryptKey
      */
     protected function makeCryptKey($type) {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         $key = str_replace('\\n', "\n", file_get_contents($passport->keyPath('oauth-'.$type.'.key')));
 
         return new CryptKey($key, null, false);

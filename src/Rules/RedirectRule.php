@@ -10,14 +10,14 @@ class RedirectRule implements Rule {
     /**
      * The validator instance.
      *
-     * @var \Hyperf\Validation\Contract\ValidatorFactoryInterface
+     * @var Factory
      */
     protected $validator;
 
     /**
      * Create a new rule instance.
      *
-     * @param  \Hyperf\Validation\Contract\ValidatorFactoryInterface  $validator
+     * @param  Factory  $validator
      * @return void
      */
     public function __construct(Factory $validator) {

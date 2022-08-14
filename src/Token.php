@@ -2,6 +2,7 @@
 
 namespace Richard\HyperfPassport;
 
+use Hyperf\Database\Model\Relations\BelongsTo;
 use Hyperf\DbConnection\Model\Model;
 
 class Token extends Model {
@@ -63,17 +64,17 @@ class Token extends Model {
     /**
      * Get the client that the token belongs to.
      *
-     * @return \Hyperf\Database\Model\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function client() {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         return $this->belongsTo($passport->clientModel());
     }
 
     /**
      * Get the user that the token belongs to.
      *
-     * @return \Hyperf\Database\Model\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function user() {
         $provider = config('auth.guards.passport.provider');
@@ -93,7 +94,7 @@ class Token extends Model {
         if (in_array('*', $this->scopes)) {
             return true;
         }
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         $scopes = $passport->withInheritedScopes ? $this->resolveInheritedScopes($scope) : [$scope];
 
         foreach ($scopes as $scope) {

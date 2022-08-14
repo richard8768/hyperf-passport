@@ -5,6 +5,7 @@ namespace Richard\HyperfPassport;
 use Carbon\Carbon;
 use DateInterval;
 use DateTimeInterface;
+use Hyperf\Utils\Collection;
 use League\OAuth2\Server\ResourceServer;
 use Mockery;
 use Psr\Http\Message\ServerRequestInterface;
@@ -26,7 +27,7 @@ class Passport {
     public $defaultScope;
 
     /**
-     * All of the scopes defined for the application.
+     * All the scopes defined for the application.
      *
      * @var array
      */
@@ -165,7 +166,7 @@ class Passport {
     }
 
     /**
-     * Get all of the defined scope IDs.
+     * Get all  the defined scope IDs.
      *
      * @return array
      */
@@ -184,9 +185,9 @@ class Passport {
     }
 
     /**
-     * Get all of the scopes defined for the application.
+     * Get all  the scopes defined for the application.
      *
-     * @return \Hyperf\Utils\Collection
+     * @return Collection
      */
     public function scopes() {
         return collect($this->scopes)->map(function ($description, $id) {
@@ -195,7 +196,7 @@ class Passport {
     }
 
     /**
-     * Get all of the scopes matching the given IDs.
+     * Get all  the scopes matching the given IDs.
      *
      * @param  array  $ids
      * @return array
@@ -340,7 +341,7 @@ class Passport {
     /**
      * Get a new auth code model instance.
      *
-     * @return \Richard\HyperfPassport\AuthCode
+     * @return AuthCode
      */
     public function authCode() {
         return new $this->authCodeModel;
@@ -368,7 +369,7 @@ class Passport {
     /**
      * Get a new client model instance.
      *
-     * @return \Richard\HyperfPassport\Client
+     * @return Client
      */
     public function client() {
         return new $this->clientModel;
@@ -415,7 +416,7 @@ class Passport {
     /**
      * Get a new personal access client model instance.
      *
-     * @return \Richard\HyperfPassport\PersonalAccessClient
+     * @return PersonalAccessClient
      */
     public function personalAccessClient() {
         return new $this->personalAccessClientModel;
@@ -443,7 +444,7 @@ class Passport {
     /**
      * Get a new personal access client model instance.
      *
-     * @return \Richard\HyperfPassport\Token
+     * @return Token
      */
     public function token() {
         return new $this->tokenModel;
@@ -471,7 +472,7 @@ class Passport {
     /**
      * Get a new refresh token model instance.
      *
-     * @return \Richard\HyperfPassport\RefreshToken
+     * @return RefreshToken
      */
     public function refreshToken() {
         return new $this->refreshTokenModel;

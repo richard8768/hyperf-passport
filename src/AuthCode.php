@@ -2,6 +2,7 @@
 
 namespace Richard\HyperfPassport;
 
+use Hyperf\Database\Model\Relations\BelongsTo;
 use Hyperf\DbConnection\Model\Model;
 
 class AuthCode extends Model {
@@ -62,10 +63,10 @@ class AuthCode extends Model {
     /**
      * Get the client that owns the authentication code.
      *
-     * @return \Hyperf\Database\Model\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function client() {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         return $this->belongsTo($passport->clientModel());
     }
 

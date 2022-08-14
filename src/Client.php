@@ -2,6 +2,8 @@
 
 namespace Richard\HyperfPassport;
 
+use Hyperf\Database\Model\Relations\BelongsTo;
+use Hyperf\Database\Model\Relations\HasMany;
 use Hyperf\DbConnection\Model\Model;
 use Hyperf\Utils\Str;
 use Hyperf\Database\Model\Events\Creating;
@@ -70,7 +72,7 @@ class Client extends Model {
     /**
      * Get the user that the client belongs to.
      *
-     * @return \Hyperf\Database\Model\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function user() {
         $provider = $this->provider ?: config('auth.guards.passport.provider');
@@ -81,22 +83,22 @@ class Client extends Model {
     }
 
     /**
-     * Get all of the authentication codes for the client.
+     * Get all  the authentication codes for the client.
      *
-     * @return \Hyperf\Database\Model\Relations\HasMany
+     * @return HasMany
      */
     public function authCodes() {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         return $this->hasMany($passport->authCodeModel(), 'client_id');
     }
 
     /**
-     * Get all of the tokens that belong to the client.
+     * Get all  the tokens that belong to the client.
      *
-     * @return \Hyperf\Database\Model\Relations\HasMany
+     * @return HasMany
      */
     public function tokens() {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         return $this->hasMany($passport->tokenModel(), 'client_id');
     }
 
@@ -119,7 +121,7 @@ class Client extends Model {
      */
     public function setSecretAttribute($value) {
         $this->plainSecret = $value;
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         if (is_null($value) || !$passport->hashesClientSecrets) {
             $this->attributes['secret'] = $value;
 
@@ -162,7 +164,7 @@ class Client extends Model {
      * @return string
      */
     public function getKeyType() {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         return $passport->clientUuids() ? 'string' : $this->keyType;
     }
 
@@ -172,7 +174,7 @@ class Client extends Model {
      * @return bool
      */
     public function getIncrementing() {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         return $passport->clientUuids() ? false : $this->incrementing;
     }
 

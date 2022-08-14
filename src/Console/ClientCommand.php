@@ -34,11 +34,10 @@ class ClientCommand extends Command {
     /**
      * Execute the console command.
      *
-     * @param  \Richard\HyperfPassport\ClientRepository  $clients
      * @return void
      */
     public function handle() {
-        $clients = make(\Richard\HyperfPassport\ClientRepository::class);
+        $clients = make(ClientRepository::class);
         if ($this->input->getOption('personal')) {
             $this->createPersonalClient($clients);
         } elseif ($this->input->getOption('password')) {
@@ -53,7 +52,7 @@ class ClientCommand extends Command {
     /**
      * Create a new personal access client.
      *
-     * @param  \Richard\HyperfPassport\ClientRepository  $clients
+     * @param ClientRepository $clients
      * @return void
      */
     protected function createPersonalClient(ClientRepository $clients) {
@@ -82,7 +81,7 @@ class ClientCommand extends Command {
     /**
      * Create a new password grant client.
      *
-     * @param  \Richard\HyperfPassport\ClientRepository  $clients
+     * @param ClientRepository $clients
      * @return void
      */
     protected function createPasswordClient(ClientRepository $clients) {
@@ -111,7 +110,7 @@ class ClientCommand extends Command {
     /**
      * Create a client credentials grant client.
      *
-     * @param  \Richard\HyperfPassport\ClientRepository  $clients
+     * @param ClientRepository $clients
      * @return void
      */
     protected function createClientCredentialsClient(ClientRepository $clients) {
@@ -140,7 +139,7 @@ class ClientCommand extends Command {
     /**
      * Create a authorization code client.
      *
-     * @param  \Richard\HyperfPassport\ClientRepository  $clients
+     * @param ClientRepository $clients
      * @return void
      */
     protected function createAuthCodeClient(ClientRepository $clients) {
@@ -177,11 +176,11 @@ class ClientCommand extends Command {
     /**
      * Output the client's ID and secret key.
      *
-     * @param  \Richard\HyperfPassport\Client  $client
+     * @param Client $client
      * @return void
      */
     protected function outputClientDetails(Client $client) {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         if ($passport->hashesClientSecrets) {
             $this->line('<comment>Here is your new client secret. This is the only time it will be shown so don\'t lose it!</comment>');
             $this->line('');

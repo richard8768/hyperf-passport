@@ -5,19 +5,21 @@ declare(strict_types=1);
 namespace Richard\HyperfPassport;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\HttpServer\Contract\RequestInterface;
 use Qbhy\HyperfAuth\Exception\GuardException;
 use Qbhy\HyperfAuth\Exception\UserProviderException;
 use Qbhy\HyperfAuth\AuthManager as QbhyAuthManager;
 use Qbhy\HyperfAuth\AuthGuard;
 use Qbhy\HyperfAuth\UserProvider;
 use Hyperf\Di\Annotation\Inject;
+use Richard\HyperfPassport\ClientRepository;
 
 class AuthManager extends QbhyAuthManager
 {
 
     /**
      * @Inject
-     * @var \Hyperf\HttpServer\Contract\RequestInterface
+     * @var RequestInterface
      */
     protected $serverRequest;
 
@@ -30,7 +32,7 @@ class AuthManager extends QbhyAuthManager
         $provider = '';
         $clentId = $this->serverRequest->header('X-Client-Id') ?: ($this->serverRequest->header('x-client-id') ?: ($this->serverRequest->input('X-Client-Id') ?: $this->serverRequest->input('x-client-id')));
         if (!empty($clentId)) {
-            $clients = make(\Richard\HyperfPassport\ClientRepository::class);
+            $clients = make(ClientRepository::class);
             $clientInfo = $clients->findActive($clentId);
             $tmpProvider = (!empty($clientInfo)) ? $clientInfo->provider : '';
             $configProviders = $this->config['providers'];

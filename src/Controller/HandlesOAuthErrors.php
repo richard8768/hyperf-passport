@@ -3,6 +3,7 @@
 namespace Richard\HyperfPassport\Controller;
 
 use League\OAuth2\Server\Exception\OAuthServerException as LeagueException;
+use Richard\HyperfPassport\Exception\PassportException;
 
 trait HandlesOAuthErrors {
 
@@ -14,13 +15,13 @@ trait HandlesOAuthErrors {
      * @param  \Closure  $callback
      * @return mixed
      *
-     * @throws \Richard\HyperfPassport\Exception\PassportException
+     * @throws PassportException
      */
     protected function withErrorHandling($callback) {
         try {
             return $callback();
         } catch (LeagueException $e) {
-            $exception = new \Richard\HyperfPassport\Exception\PassportException($e->getMessage());
+            $exception = new PassportException($e->getMessage());
             $exception->setStatusCode($e->getCode());
             throw $exception;
         }

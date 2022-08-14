@@ -2,9 +2,11 @@
 
 namespace Richard\HyperfPassport\Controller;
 
-use Hyperf\Validation\ValidatorFactoryFactory as ValidationFactory;
+use Hyperf\Database\Model\Collection;
+use Hyperf\Validation\Contract\ValidatorFactoryInterface as ValidationFactory;
 use Hyperf\HttpServer\Request;
 use Hyperf\HttpMessage\Server\Response;
+use Richard\HyperfPassport\Client;
 use Richard\HyperfPassport\ClientRepository;
 use Richard\HyperfPassport\Rules\RedirectRule;
 use Richard\HyperfPassport\Passport;
@@ -15,21 +17,21 @@ class ClientController {
     /**
      * The client repository instance.
      *
-     * @var \Richard\HyperfPassport\ClientRepository
+     * @var ClientRepository
      */
     protected $clients;
 
     /**
      * The validation factory implementation.
      *
-     * @var \Hyperf\Validation\ValidatorFactoryFactory
+     * @var ValidationFactory
      */
     protected $validation;
 
     /**
      * The redirect validation rule.
      *
-     * @var \Richard\HyperfPassport\Rules\RedirectRule
+     * @var RedirectRule
      */
     protected $redirectRule;
 
@@ -41,9 +43,9 @@ class ClientController {
     /**
      * Create a client controller instance.
      *
-     * @param  \Richard\HyperfPassport\ClientRepository  $clients
-     * @param  \Hyperf\Validation\ValidatorFactoryFactory  $validation
-     * @param  \Richard\HyperfPassport\Rules\RedirectRule  $redirectRule
+     * @param  ClientRepository  $clients
+     * @param  ValidationFactory  $validation
+     * @param  RedirectRule  $redirectRule
      * @return void
      */
     public function __construct(
@@ -59,13 +61,13 @@ class ClientController {
     }
 
     /**
-     * Get all of the clients for the authenticated user.
+     * Get all the clients for the authenticated user.
      *
-     * @param  \Hyperf\HttpServer\Request  $request
-     * @return \Hyperf\Database\Model\Collection
+     * @param  Request  $request
+     * @return Collection
      */
     public function forUser(Request $request) {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         $user = $this->auth->guard('passport')->user();
         $userId = $user->getKey();
 
@@ -81,11 +83,11 @@ class ClientController {
     /**
      * Store a new client.
      *
-     * @param  \Hyperf\HttpServer\Request  $request
-     * @return \Richard\HyperfPassport\Client|array
+     * @param  Request  $request
+     * @return Client|array
      */
     public function store(Request $request) {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         $this->validation->make($request->all(), [
             'name' => 'required|max:191',
             'redirect' => ['required', $this->redirectRule],
@@ -107,9 +109,9 @@ class ClientController {
     /**
      * Update the given client.
      *
-     * @param  \Hyperf\HttpServer\Request  $request
+     * @param  Request  $request
      * @param  string  $clientId
-     * @return \Hyperf\HttpMessage\Server\Response|\Richard\HyperfPassport\Client
+     * @return Response|Client
      */
     public function update(Request $request, $clientId) {
         $user = $this->auth->guard('passport')->user();
@@ -133,9 +135,9 @@ class ClientController {
     /**
      * Delete the given client.
      *
-     * @param  \Hyperf\HttpServer\Request  $request
+     * @param  Request  $request
      * @param  string  $clientId
-     * @return \Hyperf\HttpMessage\Server\Response
+     * @return Response
      */
     public function destroy(Request $request, $clientId) {
         $user = $this->auth->guard('passport')->user();

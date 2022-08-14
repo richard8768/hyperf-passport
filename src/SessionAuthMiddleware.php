@@ -9,6 +9,8 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ResponseInterface as Psr7ResponseInterface;
 use Hyperf\HttpServer\Contract\RequestInterface as HttpRequest;
 use Hyperf\Contract\SessionInterface;
+use Qbhy\HyperfAuth\AuthManager;
+use Richard\HyperfPassport\Exception\SessionAuthenticationException;
 
 class SessionAuthMiddleware implements MiddlewareInterface
 {
@@ -16,7 +18,7 @@ class SessionAuthMiddleware implements MiddlewareInterface
 
     /**
      * @Inject
-     * @var \Qbhy\HyperfAuth\AuthManager
+     * @var AuthManager
      */
     protected $auth;
 
@@ -64,7 +66,7 @@ class SessionAuthMiddleware implements MiddlewareInterface
         if ($intended) {
             $this->session->set('url.intended', $intended);
         }
-        throw new \Richard\HyperfPassport\Exception\SessionAuthenticationException(
+        throw new SessionAuthenticationException(
             'Unauthenticated user .', $this->guards, $this->redirectTo($request)
         );
     }

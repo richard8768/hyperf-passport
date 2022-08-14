@@ -29,7 +29,7 @@ class PurgeCommand extends Command {
      */
     public function handle() {
         $expired = Carbon::now()->subDays(7);
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         if (($this->input->getOption('revoked') && $this->input->getOption('expired')) ||
                 (!$this->input->getOption('revoked') && !$this->input->getOption('expired'))) {
             $passport->token()->where('revoked', 1)->orWhereDate('expires_at', '<', $expired)->delete();

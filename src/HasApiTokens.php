@@ -3,39 +3,41 @@
 namespace Richard\HyperfPassport;
 
 
+use Hyperf\Database\Model\Relations\HasMany;
+
 trait HasApiTokens {
 
     /**
      * The current access token for the authentication user.
      *
-     * @var \Richard\HyperfPassport\Token
+     * @var Token
      */
     protected $accessToken;
 
     /**
-     * Get all of the user's registered OAuth clients.
+     * Get all  the user's registered OAuth clients.
      *
-     * @return \Hyperf\Database\Model\Relations\HasMany
+     * @return HasMany
      */
     public function clients() {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         return $this->hasMany($passport->clientModel(), 'user_id');
     }
 
     /**
-     * Get all of the access tokens for the user.
+     * Get all  the access tokens for the user.
      *
-     * @return \Hyperf\Database\Model\Relations\HasMany
+     * @return HasMany
      */
     public function tokens() {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         return $this->hasMany($passport->tokenModel(), 'user_id')->orderBy('created_at', 'desc');
     }
 
     /**
      * Get the current access token being used by the user.
      *
-     * @return \Richard\HyperfPassport\Token|null
+     * @return Token|null
      */
     public function token() {
         return $this->accessToken;
@@ -56,7 +58,7 @@ trait HasApiTokens {
      *
      * @param  string  $name
      * @param  array  $scopes
-     * @return \Richard\HyperfPassport\PersonalAccessTokenResult
+     * @return PersonalAccessTokenResult
      */
     public function createToken($name, array $scopes = [], $provider = 'users') {
         return make(PersonalAccessTokenFactory::class)->make(
@@ -67,7 +69,7 @@ trait HasApiTokens {
     /**
      * Set the current access token for the user.
      *
-     * @param  \Richard\HyperfPassport\Token  $accessToken
+     * @param Token $accessToken
      * @return $this
      */
     public function withAccessToken($accessToken) {

@@ -4,6 +4,7 @@ namespace Richard\HyperfPassport\Middleware;
 
 use Closure;
 use Hyperf\HttpMessage\Server\Response;
+use Hyperf\HttpServer\Request;
 use Richard\HyperfPassport\ApiTokenCookieFactory;
 use Hyperf\Contract\SessionInterface;
 use Qbhy\HyperfAuth\AuthManager;
@@ -15,7 +16,7 @@ class CreateFreshApiToken {
     /**
      * The API token cookie factory instance.
      *
-     * @var \Richard\HyperfPassport\ApiTokenCookieFactory
+     * @var ApiTokenCookieFactory
      */
     protected $cookieFactory;
 
@@ -27,7 +28,7 @@ class CreateFreshApiToken {
     /**
      * Create a new middleware instance.
      *
-     * @param  \Richard\HyperfPassport\ApiTokenCookieFactory  $cookieFactory
+     * @param ApiTokenCookieFactory $cookieFactory
      * @return void
      */
     public function __construct(ApiTokenCookieFactory $cookieFactory, SessionInterface $session, AuthManager $auth) {
@@ -39,7 +40,7 @@ class CreateFreshApiToken {
     /**
      * Handle an incoming request.
      *
-     * @param  \Hyperf\HttpServer\Request  $request
+     * @param  Request  $request
      * @param  \Closure  $next
      * @param  string|null  $guard
      * @return mixed
@@ -62,8 +63,8 @@ class CreateFreshApiToken {
     /**
      * Determine if the given request should receive a fresh token.
      *
-     * @param  \Hyperf\HttpServer\Request  $request
-     * @param  \Hyperf\HttpMessage\Server\Response  $response
+     * @param  Request  $request
+     * @param Response $response
      * @return bool
      */
     protected function shouldReceiveFreshToken($request, $response) {
@@ -74,7 +75,7 @@ class CreateFreshApiToken {
     /**
      * Determine if the request should receive a fresh token.
      *
-     * @param  \Hyperf\HttpServer\Request  $request
+     * @param  Request  $request
      * @return bool
      */
     protected function requestShouldReceiveFreshToken($request) {
@@ -85,7 +86,7 @@ class CreateFreshApiToken {
     /**
      * Determine if the response should receive a fresh token.
      *
-     * @param  \Hyperf\HttpMessage\Server\Response  $response
+     * @param Response $response
      * @return bool
      */
     protected function responseShouldReceiveFreshToken($response) {
@@ -98,7 +99,7 @@ class CreateFreshApiToken {
      *
      * This avoids us overwriting a just "refreshed" token.
      *
-     * @param  \Hyperf\HttpMessage\Server\Response  $response
+     * @param Response $response
      * @return bool
      */
     protected function alreadyContainsToken($response) {
