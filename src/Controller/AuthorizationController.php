@@ -20,43 +20,40 @@ use Qbhy\HyperfAuth\AuthManager;
 use Hyperf\Contract\ConfigInterface;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 
-class AuthorizationController {
-
+class AuthorizationController
+{
     use HandlesOAuthErrors;
 
-    /**
-     * @Inject
-     * @var ConfigInterface
-     */
-    protected $config;
-
+    #[Inject]
+    protected ConfigInterface $config;
     /**
      * The authorization server.
      *
      * @var AuthorizationServer
      */
-    protected $server;
+    protected AuthorizationServer $server;
 
     /**
      * @var Render
      */
-    protected $render;
-    protected $session;
+    protected Render $render;
+    protected SessionInterface $session;
 
     /**
      * @var AuthManager
      */
-    protected $auth;
+    protected AuthManager $auth;
 
     /**
      * Create a new controller instance.
      *
-     * @param  AuthorizationServer  $server
-     * @param  Render  $render
-     * @param  SessionInterface  $session
+     * @param AuthorizationServer $server
+     * @param Render $render
+     * @param SessionInterface $session
      * @return void
      */
-    public function __construct(AuthorizationServer $server, Render $render, SessionInterface $session, AuthManager $auth) {
+    public function __construct(AuthorizationServer $server, Render $render, SessionInterface $session, AuthManager $auth)
+    {
         $this->server = $server;
         $this->render = $render;
         $this->session = $session;
@@ -66,28 +63,20 @@ class AuthorizationController {
     /**
      * Authorize a client to access the user's account.
      *
-     * @param  ServerRequestInterface  $psrRequest
-     * @param  Request  $request
-     * @param  ClientRepository  $clients
-     * @param  TokenRepository  $tokens
+     * @param ServerRequestInterface $psrRequest
+     * @param Request $request
+     * @param ClientRepository $clients
+     * @param TokenRepository $tokens
      */
-    public function authorize(ServerRequestInterface $psrRequest,
-            Request $request,
-            ClientRepository $clients,
-            TokenRepository $tokens) {
+    public function authorize(ServerRequestInterface $psrRequest, Request $request, ClientRepository $clients, TokenRepository $tokens)
+    {
         $authRequest = $this->withErrorHandling(function () use ($psrRequest) {
             return $this->server->validateAuthorizationRequest($psrRequest);
         });
 
         $scopes = $this->parseScopes($authRequest);
-
-        $token = $tokens->findValidToken(
-                $user = $this->auth->guard('session')->user(),
-                $client = $clients->find($authRequest->getClient()->getIdentifier())
-        );
-
-        if (($token && $token->scopes === collect($scopes)->pluck('id')->all()) ||
-                $client->skipsAuthorization()) {
+        $token = $tokens->findValidToken($user = $this->auth->guard('session')->user(), $client = $clients->find($authRequest->getClient()->getIdentifier()));
+        if ($token && $token->scopes === collect($scopes)->pluck('id')->all() || $client->skipsAuthorization()) {
             return $this->approveRequest($authRequest, $user);
         }
 
@@ -95,49 +84,38 @@ class AuthorizationController {
         $this->session->set('authToken', $authToken);
         $this->session->set('authRequest', $authRequest);
         $appname = $this->config->get('app_name');
-
-        return $this->render->render('passport.authorize', [
-                    'client' => $client,
-                    'user' => $user,
-                    'scopes' => $scopes,
-                    'request' => $request,
-                    'authToken' => $authToken,
-                    'appname' => $appname,
-        ]);
+        return $this->render->render('passport.authorize', ['client' => $client, 'user' => $user, 'scopes' => $scopes, 'request' => $request, 'authToken' => $authToken, 'appname' => $appname]);
     }
 
     /**
      * Transform the authorization request's scopes into Scope instances.
      *
-     * @param  AuthorizationRequest  $authRequest
+     * @param AuthorizationRequest $authRequest
      * @return array
      */
-    protected function parseScopes($authRequest) {
+    protected function parseScopes($authRequest)
+    {
         $passport = make(Passport::class);
-        return $passport->scopesFor(
-                        collect($authRequest->getScopes())->map(function ($scope) {
-                            return $scope->getIdentifier();
-                        })->unique()->all()
-        );
+        return $passport->scopesFor(collect($authRequest->getScopes())->map(function ($scope) {
+            return $scope->getIdentifier();
+        })->unique()->all());
     }
 
     /**
      * Approve the authorization request.
      *
-     * @param  AuthorizationRequest  $authRequest
-     * @param  Model  $user
+     * @param AuthorizationRequest $authRequest
+     * @param Model $user
      * @return  Response
      */
-    protected function approveRequest($authRequest, $user) {
+    protected function approveRequest($authRequest, $user)
+    {
         $authRequest->setUser(new User($user->getKey()));
 
         $authRequest->setAuthorizationApproved(true);
-
         return $this->withErrorHandling(function () use ($authRequest) {
-                    return $this->convertResponse(
-                                    $this->server->completeAuthorizationRequest($authRequest, new Psr7Response)
-                    );
-                });
+            return $this->convertResponse($this->server->completeAuthorizationRequest($authRequest, new Psr7Response()));
+        });
     }
 
 }

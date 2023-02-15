@@ -5,15 +5,17 @@ namespace Richard\HyperfPassport\Controller;
 use Hyperf\HttpMessage\Server\Response;
 use Psr\Http\Message\ResponseInterface;
 
-trait ConvertsPsrResponses {
+trait ConvertsPsrResponses
+{
 
     /**
      * Convert a PSR7 response to  Response.
      *
-     * @param  ResponseInterface  $psrResponse
+     * @param ResponseInterface $psrResponse
      * @return Response
      */
-    public function convertResponse($psrResponse) {
+    public function convertResponse($psrResponse)
+    {
         $headers = $psrResponse->getHeaders();
         $content = $psrResponse->getBody();
         $statusCode = $psrResponse->getStatusCode();

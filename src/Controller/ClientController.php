@@ -12,48 +12,50 @@ use Richard\HyperfPassport\Rules\RedirectRule;
 use Richard\HyperfPassport\Passport;
 use Qbhy\HyperfAuth\AuthManager;
 
-class ClientController {
+class ClientController
+{
 
     /**
      * The client repository instance.
      *
      * @var ClientRepository
      */
-    protected $clients;
+    protected ClientRepository $clients;
 
     /**
      * The validation factory implementation.
      *
      * @var ValidationFactory
      */
-    protected $validation;
+    protected ValidationFactory $validation;
 
     /**
      * The redirect validation rule.
      *
      * @var RedirectRule
      */
-    protected $redirectRule;
+    protected RedirectRule $redirectRule;
 
     /**
      * @var AuthManager
      */
-    protected $auth;
+    protected AuthManager $auth;
 
     /**
      * Create a client controller instance.
      *
-     * @param  ClientRepository  $clients
-     * @param  ValidationFactory  $validation
-     * @param  RedirectRule  $redirectRule
+     * @param ClientRepository $clients
+     * @param ValidationFactory $validation
+     * @param RedirectRule $redirectRule
      * @return void
      */
     public function __construct(
-            ClientRepository $clients,
-            ValidationFactory $validation,
-            RedirectRule $redirectRule,
-            AuthManager $auth
-    ) {
+        ClientRepository  $clients,
+        ValidationFactory $validation,
+        RedirectRule      $redirectRule,
+        AuthManager       $auth
+    )
+    {
         $this->clients = $clients;
         $this->validation = $validation;
         $this->redirectRule = $redirectRule;
@@ -63,10 +65,11 @@ class ClientController {
     /**
      * Get all the clients for the authenticated user.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return Collection
      */
-    public function forUser(Request $request) {
+    public function forUser(Request $request)
+    {
         $passport = make(Passport::class);
         $user = $this->auth->guard('passport')->user();
         $userId = $user->getKey();
@@ -83,10 +86,11 @@ class ClientController {
     /**
      * Store a new client.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return Client|array
      */
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         $passport = make(Passport::class);
         $this->validation->make($request->all(), [
             'name' => 'required|max:191',
@@ -95,8 +99,8 @@ class ClientController {
         ])->validate();
         $user = $this->auth->guard('passport')->user();
         $client = $this->clients->create(
-                $user->getKey(), $request->name, $request->redirect,
-                null, false, false, (bool) $request->input('confidential', true)
+            $user->getKey(), $request->name, $request->redirect,
+            null, false, false, (bool)$request->input('confidential', true)
         );
 
         if ($passport->hashesClientSecrets) {
@@ -109,11 +113,12 @@ class ClientController {
     /**
      * Update the given client.
      *
-     * @param  Request  $request
-     * @param  string  $clientId
+     * @param Request $request
+     * @param string $clientId
      * @return Response|Client
      */
-    public function update(Request $request, $clientId) {
+    public function update(Request $request, $clientId)
+    {
         $user = $this->auth->guard('passport')->user();
         $client = $this->clients->findForUser($clientId, $user->getKey());
 
@@ -128,18 +133,19 @@ class ClientController {
         ])->validate();
 
         return $this->clients->update(
-                        $client, $request->name, $request->redirect
+            $client, $request->name, $request->redirect
         );
     }
 
     /**
      * Delete the given client.
      *
-     * @param  Request  $request
-     * @param  string  $clientId
+     * @param Request $request
+     * @param string $clientId
      * @return Response
      */
-    public function destroy(Request $request, $clientId) {
+    public function destroy(Request $request, $clientId)
+    {
         $user = $this->auth->guard('passport')->user();
         $client = $this->clients->findForUser($clientId, $user->getKey());
 

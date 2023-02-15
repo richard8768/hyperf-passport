@@ -4,7 +4,8 @@ namespace Richard\HyperfPassport\Contracts;
 
 use Qbhy\HyperfAuth\AuthGuard;
 
-interface ExtendAuthGuard extends AuthGuard {
+interface ExtendAuthGuard extends AuthGuard
+{
 
     /**
      * Get the ID for the currently authenticated user.

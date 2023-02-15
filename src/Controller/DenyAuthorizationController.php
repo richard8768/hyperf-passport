@@ -18,13 +18,13 @@ class DenyAuthorizationController
      *
      * @var Response
      */
-    protected $response;
-    protected $session;
+    protected Response $response;
+    protected SessionInterface $session;
 
     /**
      * @var AuthManager
      */
-    protected $auth;
+    protected AuthManager $auth;
 
     /**
      * Create a new controller instance.

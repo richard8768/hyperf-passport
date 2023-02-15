@@ -7,20 +7,17 @@ use Richard\HyperfPassport\Passport;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Contract\ConfigInterface;
 
-class InstallCommand extends Command {
+class InstallCommand extends Command
+{
 
-    /**
-     * @Inject
-     * @var ConfigInterface
-     */
-    protected $config;
-
+    #[Inject]
+    protected ConfigInterface $config;
     /**
      * The name and signature of the console command.
      *
-     * @var string
+     * @var null|string
      */
-    protected $signature = 'passport:install
+    protected ?string $signature = 'passport:install
                             {--uuids : Use UUIDs for all client IDs}
                             {--force : Overwrite keys they already exist}
                             {--length=4096 : The length of the private key}';
@@ -30,14 +27,15 @@ class InstallCommand extends Command {
      *
      * @var string
      */
-    protected $description = 'Run the commands necessary to prepare Passport for use';
+    protected string $description = 'Run the commands necessary to prepare Passport for use';
 
     /**
      * Execute the console command.
      *
      * @return void
      */
-    public function handle() {
+    public function handle()
+    {
         $provider = in_array('users', array_keys(config('auth.providers'))) ? 'users' : null;
 
         $this->call('passport:keys', ['--force' => $this->input->getOption('force'), '--length' => $this->input->getOption('length')]);
@@ -55,7 +53,8 @@ class InstallCommand extends Command {
      *
      * @return void
      */
-    protected function configureUuids() {
+    protected function configureUuids()
+    {
         $this->call('vendor:publish', ['package' => 'richard/hyperf-passport', '--id' => 'config', '--force']);
         $this->call('vendor:publish', ['package' => 'richard/hyperf-passport', '--id' => 'migrations', '--force']);
         $passport = make(Passport::class);
@@ -78,19 +77,18 @@ class InstallCommand extends Command {
     /**
      * Replace a given string in a given file.
      *
-     * @param  string  $path
-     * @param  string  $search
-     * @param  string  $replace
+     * @param string $path
+     * @param string $search
+     * @param string $replace
      * @return void
      */
-    protected function replaceInFile($path, $search, $replace) {
-        file_put_contents(
-                $path,
-                str_replace($search, $replace, file_get_contents($path))
-        );
+    protected function replaceInFile($path, $search, $replace)
+    {
+        file_put_contents($path, str_replace($search, $replace, file_get_contents($path)));
     }
 
-    protected function configure() {
+    protected function configure()
+    {
         $this->setDescription($this->description);
     }
 

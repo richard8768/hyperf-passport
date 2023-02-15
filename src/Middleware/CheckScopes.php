@@ -7,32 +7,35 @@ use Hyperf\HttpServer\Request;
 use Qbhy\HyperfAuth\AuthManager;
 use Richard\HyperfPassport\Exception\PassportException;
 
-class CheckScopes {
+class CheckScopes
+{
 
     /**
      * @var AuthManager
      */
-    protected $auth;
+    protected AuthManager $auth;
 
     /**
      * Create a new middleware instance.
      * @return void
      */
-    public function __construct(AuthManager $auth) {
+    public function __construct(AuthManager $auth)
+    {
         $this->auth = $auth;
     }
 
     /**
      * Handle the incoming request.
      *
-     * @param  Request  $request
-     * @param  \Closure  $next
-     * @param  mixed  ...$scopes
+     * @param Request $request
+     * @param \Closure $next
+     * @param mixed ...$scopes
      * @return Response
      *
      * @throws PassportException
      */
-    public function handle($request, $next, ...$scopes) {
+    public function handle($request, $next, ...$scopes)
+    {
         $user = $this->auth->guard('passport')->user();
         if (!$user || !$user->token()) {
             $exception = new PassportException('This action is unauthorized.');

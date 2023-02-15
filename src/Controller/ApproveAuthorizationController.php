@@ -20,13 +20,13 @@ class ApproveAuthorizationController
      *
      * @var AuthorizationServer
      */
-    protected $server;
-    protected $session;
+    protected AuthorizationServer $server;
+    protected SessionInterface $session;
 
     /**
      * @var AuthManager
      */
-    protected $auth;
+    protected AuthManager $auth;
 
     /**
      * Create a new controller instance.

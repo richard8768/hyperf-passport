@@ -5,42 +5,43 @@ namespace Richard\HyperfPassport;
 use Hyperf\Database\Model\Relations\BelongsTo;
 use Hyperf\DbConnection\Model\Model;
 
-class Token extends Model {
+class Token extends Model
+{
 
     /**
      * The database table used by the model.
      *
-     * @var string
+     * @var null|string
      */
-    protected $table = 'oauth_access_tokens';
+    protected ?string $table = 'oauth_access_tokens';
 
     /**
      * The "type" of the primary key ID.
      *
      * @var string
      */
-    protected $keyType = 'string';
+    protected string $keyType = 'string';
 
     /**
      * Indicates if the IDs are auto-incrementing.
      *
      * @var bool
      */
-    public $incrementing = false;
+    public bool $incrementing = false;
 
     /**
      * The guarded attributes on the model.
      *
      * @var array
      */
-    protected $guarded = [];
+    protected array $guarded = [];
 
     /**
      * The attributes that should be cast to native types.
      *
      * @var array
      */
-    protected $casts = [
+    protected array $casts = [
         'scopes' => 'array',
         'revoked' => 'bool',
     ];
@@ -50,7 +51,7 @@ class Token extends Model {
      *
      * @var array
      */
-    protected $dates = [
+    protected array $dates = [
         'expires_at',
     ];
 
@@ -59,14 +60,15 @@ class Token extends Model {
      *
      * @var bool
      */
-    public $timestamps = false;
+    public bool $timestamps = false;
 
     /**
      * Get the client that the token belongs to.
      *
      * @return BelongsTo
      */
-    public function client() {
+    public function client()
+    {
         $passport = make(Passport::class);
         return $this->belongsTo($passport->clientModel());
     }
@@ -76,7 +78,8 @@ class Token extends Model {
      *
      * @return BelongsTo
      */
-    public function user() {
+    public function user()
+    {
         $provider = config('auth.guards.passport.provider');
 
         $model = config('auth.providers.' . $provider . '.model');
@@ -87,10 +90,11 @@ class Token extends Model {
     /**
      * Determine if the token has a given scope.
      *
-     * @param  string  $scope
+     * @param string $scope
      * @return bool
      */
-    public function can($scope) {
+    public function can($scope)
+    {
         if (in_array('*', $this->scopes)) {
             return true;
         }
@@ -109,10 +113,11 @@ class Token extends Model {
     /**
      * Resolve all possible scopes.
      *
-     * @param  string  $scope
+     * @param string $scope
      * @return array
      */
-    protected function resolveInheritedScopes($scope) {
+    protected function resolveInheritedScopes($scope)
+    {
         $parts = explode(':', $scope);
 
         $partsCount = count($parts);
@@ -129,10 +134,11 @@ class Token extends Model {
     /**
      * Determine if the token is missing a given scope.
      *
-     * @param  string  $scope
+     * @param string $scope
      * @return bool
      */
-    public function cant($scope) {
+    public function cant($scope)
+    {
         return !$this->can($scope);
     }
 
@@ -141,7 +147,8 @@ class Token extends Model {
      *
      * @return bool
      */
-    public function revoke() {
+    public function revoke()
+    {
         return $this->forceFill(['revoked' => true])->save();
     }
 
@@ -150,7 +157,8 @@ class Token extends Model {
      *
      * @return bool
      */
-    public function transient() {
+    public function transient()
+    {
         return false;
     }
 
@@ -159,7 +167,8 @@ class Token extends Model {
      *
      * @return string|null
      */
-    public function getConnectionName() {
+    public function getConnectionName()
+    {
         return config('passport.database_connection') ?? $this->connection;
     }
 

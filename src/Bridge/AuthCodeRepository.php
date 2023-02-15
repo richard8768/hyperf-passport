@@ -6,21 +6,24 @@ use Richard\HyperfPassport\Passport;
 use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 
-class AuthCodeRepository implements AuthCodeRepositoryInterface {
+class AuthCodeRepository implements AuthCodeRepositoryInterface
+{
 
     use FormatsScopesForStorage;
 
     /**
      * {@inheritdoc}
      */
-    public function getNewAuthCode() {
+    public function getNewAuthCode()
+    {
         return new AuthCode;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntity) {
+    public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntity)
+    {
         $attributes = [
             'id' => $authCodeEntity->getIdentifier(),
             'user_id' => $authCodeEntity->getUserIdentifier(),
@@ -36,7 +39,8 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface {
     /**
      * {@inheritdoc}
      */
-    public function revokeAuthCode($codeId) {
+    public function revokeAuthCode($codeId)
+    {
         $passport = make(Passport::class);
         $passport->authCode()->where('id', $codeId)->update(['revoked' => true]);
     }
@@ -44,7 +48,8 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface {
     /**
      * {@inheritdoc}
      */
-    public function isAuthCodeRevoked($codeId) {
+    public function isAuthCodeRevoked($codeId)
+    {
         $passport = make(Passport::class);
         return $passport->authCode()->where('id', $codeId)->where('revoked', 1)->exists();
     }

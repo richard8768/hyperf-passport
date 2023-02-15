@@ -2,14 +2,16 @@
 
 namespace Richard\HyperfPassport\Auth;
 
-trait AuthenticatableTrait {
+trait AuthenticatableTrait
+{
 
     /**
      * Get the name of the unique identifier for the user.
      *
      * @return string
      */
-    public function getAuthIdentifierName() {
+    public function getAuthIdentifierName()
+    {
         return $this->getKeyName();
     }
 
@@ -18,7 +20,8 @@ trait AuthenticatableTrait {
      *
      * @return mixed
      */
-    public function getAuthIdentifier() {
+    public function getAuthIdentifier()
+    {
         return $this->{$this->getAuthIdentifierName()};
     }
 
@@ -27,7 +30,8 @@ trait AuthenticatableTrait {
      *
      * @return string
      */
-    public function getAuthPassword() {
+    public function getAuthPassword()
+    {
         return $this->password;
     }
 

@@ -5,21 +5,23 @@ namespace Richard\HyperfPassport;
 
 use Hyperf\Database\Model\Relations\HasMany;
 
-trait HasApiTokens {
+trait HasApiTokens
+{
 
     /**
      * The current access token for the authentication user.
      *
      * @var Token
      */
-    protected $accessToken;
+    protected Token $accessToken;
 
     /**
      * Get all  the user's registered OAuth clients.
      *
      * @return HasMany
      */
-    public function clients() {
+    public function clients()
+    {
         $passport = make(Passport::class);
         return $this->hasMany($passport->clientModel(), 'user_id');
     }
@@ -29,7 +31,8 @@ trait HasApiTokens {
      *
      * @return HasMany
      */
-    public function tokens() {
+    public function tokens()
+    {
         $passport = make(Passport::class);
         return $this->hasMany($passport->tokenModel(), 'user_id')->orderBy('created_at', 'desc');
     }
@@ -39,30 +42,33 @@ trait HasApiTokens {
      *
      * @return Token|null
      */
-    public function token() {
+    public function token()
+    {
         return $this->accessToken;
     }
 
     /**
      * Determine if the current API token has a given scope.
      *
-     * @param  string  $scope
+     * @param string $scope
      * @return bool
      */
-    public function tokenCan($scope) {
+    public function tokenCan($scope)
+    {
         return $this->accessToken ? $this->accessToken->can($scope) : false;
     }
 
     /**
      * Create a new personal access token for the user.
      *
-     * @param  string  $name
-     * @param  array  $scopes
+     * @param string $name
+     * @param array $scopes
      * @return PersonalAccessTokenResult
      */
-    public function createToken($name, array $scopes = [], $provider = 'users') {
+    public function createToken($name, array $scopes = [], $provider = 'users')
+    {
         return make(PersonalAccessTokenFactory::class)->make(
-                        $this->getKey(), $name, $scopes, $provider
+            $this->getKey(), $name, $scopes, $provider
         );
     }
 
@@ -72,7 +78,8 @@ trait HasApiTokens {
      * @param Token $accessToken
      * @return $this
      */
-    public function withAccessToken($accessToken) {
+    public function withAccessToken($accessToken)
+    {
         $this->accessToken = $accessToken;
 
         return $this;

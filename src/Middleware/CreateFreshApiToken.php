@@ -9,21 +9,22 @@ use Richard\HyperfPassport\ApiTokenCookieFactory;
 use Hyperf\Contract\SessionInterface;
 use Qbhy\HyperfAuth\AuthManager;
 
-class CreateFreshApiToken {
+class CreateFreshApiToken
+{
 
-    protected $session;
+    protected SessionInterface $session;
 
     /**
      * The API token cookie factory instance.
      *
      * @var ApiTokenCookieFactory
      */
-    protected $cookieFactory;
+    protected ApiTokenCookieFactory $cookieFactory;
 
     /**
      * @var AuthManager
      */
-    protected $auth;
+    protected AuthManager $auth;
 
     /**
      * Create a new middleware instance.
@@ -31,7 +32,8 @@ class CreateFreshApiToken {
      * @param ApiTokenCookieFactory $cookieFactory
      * @return void
      */
-    public function __construct(ApiTokenCookieFactory $cookieFactory, SessionInterface $session, AuthManager $auth) {
+    public function __construct(ApiTokenCookieFactory $cookieFactory, SessionInterface $session, AuthManager $auth)
+    {
         $this->cookieFactory = $cookieFactory;
         $this->session = $session;
         $this->auth = $auth;
@@ -40,12 +42,13 @@ class CreateFreshApiToken {
     /**
      * Handle an incoming request.
      *
-     * @param  Request  $request
-     * @param  \Closure  $next
-     * @param  string|null  $guard
+     * @param Request $request
+     * @param \Closure $next
+     * @param string|null $guard
      * @return mixed
      */
-    public function handle($request, Closure $next, $guard = null) {
+    public function handle($request, Closure $next, $guard = null)
+    {
         $this->guard = $guard;
 
         $response = $next($request);
@@ -53,7 +56,7 @@ class CreateFreshApiToken {
         $user = $this->auth->guard('passport')->user();
         if ($this->shouldReceiveFreshToken($request, $response)) {
             $response->withCookie($this->cookieFactory->make(
-                            $user->getKey(), $this->session->token()
+                $user->getKey(), $this->session->token()
             ));
         }
 
@@ -63,22 +66,24 @@ class CreateFreshApiToken {
     /**
      * Determine if the given request should receive a fresh token.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @param Response $response
      * @return bool
      */
-    protected function shouldReceiveFreshToken($request, $response) {
+    protected function shouldReceiveFreshToken($request, $response)
+    {
         return $this->requestShouldReceiveFreshToken($request) &&
-                $this->responseShouldReceiveFreshToken($response);
+            $this->responseShouldReceiveFreshToken($response);
     }
 
     /**
      * Determine if the request should receive a fresh token.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return bool
      */
-    protected function requestShouldReceiveFreshToken($request) {
+    protected function requestShouldReceiveFreshToken($request)
+    {
         $user = $this->auth->guard('passport')->user();
         return $request->isMethod('GET') && $user;
     }
@@ -89,9 +94,10 @@ class CreateFreshApiToken {
      * @param Response $response
      * @return bool
      */
-    protected function responseShouldReceiveFreshToken($response) {
-        return ($response instanceof Response ) &&
-                !$this->alreadyContainsToken($response);
+    protected function responseShouldReceiveFreshToken($response)
+    {
+        return ($response instanceof Response) &&
+            !$this->alreadyContainsToken($response);
     }
 
     /**
@@ -102,7 +108,8 @@ class CreateFreshApiToken {
      * @param Response $response
      * @return bool
      */
-    protected function alreadyContainsToken($response) {
+    protected function alreadyContainsToken($response)
+    {
         $passport = make(\Richard\HyperfPassport\Passport::class);
         foreach ($response->headers->getCookies() as $cookie) {
             if ($cookie->getName() === $passport->cookie()) {

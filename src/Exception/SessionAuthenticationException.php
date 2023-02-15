@@ -21,14 +21,14 @@ class SessionAuthenticationException extends ServerException
      *
      * @var array
      */
-    protected $guards;
+    protected array $guards;
 
     /**
      * The path the user should be redirected to.
      *
-     * @var string
+     * @var null|string
      */
-    protected $redirectTo;
+    protected ?string $redirectTo;
 
     /**
      * Create a new authentication exception.

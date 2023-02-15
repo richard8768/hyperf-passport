@@ -8,31 +8,33 @@ use Richard\HyperfPassport\ApiTokenCookieFactory;
 use Hyperf\Contract\SessionInterface;
 use Qbhy\HyperfAuth\AuthManager;
 
-class TransientTokenController {
+class TransientTokenController
+{
 
-    protected $session;
+    protected SessionInterface $session;
 
     /**
      * The cookie factory instance.
      *
      * @var ApiTokenCookieFactory
      */
-    protected $cookieFactory;
+    protected ApiTokenCookieFactory $cookieFactory;
 
     /**
      * @var AuthManager
      */
-    protected $auth;
+    protected AuthManager $auth;
 
     /**
      * Create a new controller instance.
      *
-     * @param  ApiTokenCookieFactory  $cookieFactory
-     * @param  SessionInterface  $session
-     * @param  AuthManager  $auth
+     * @param ApiTokenCookieFactory $cookieFactory
+     * @param SessionInterface $session
+     * @param AuthManager $auth
      * @return void
      */
-    public function __construct(ApiTokenCookieFactory $cookieFactory, SessionInterface $session, AuthManager $auth) {
+    public function __construct(ApiTokenCookieFactory $cookieFactory, SessionInterface $session, AuthManager $auth)
+    {
         $this->cookieFactory = $cookieFactory;
         $this->session = $session;
         $this->auth = $auth;
@@ -41,16 +43,17 @@ class TransientTokenController {
     /**
      * Get a fresh transient token cookie for the authenticated user.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return Response
      */
-    public function refresh(Request $request) {
+    public function refresh(Request $request)
+    {
         $response = new Response();
         $user = $this->auth->guard('passport')->user();
         return $response->withBody(new \Hyperf\HttpMessage\Stream\SwooleStream('Refreshed.'))
-                        ->withCookie($this->cookieFactory->make(
-                                        $user->getKey(), $this->session->token()
-        ));
+            ->withCookie($this->cookieFactory->make(
+                $user->getKey(), $this->session->token()
+            ));
     }
 
 }

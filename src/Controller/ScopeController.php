@@ -5,14 +5,16 @@ namespace Richard\HyperfPassport\Controller;
 use Hyperf\Utils\Collection;
 use Richard\HyperfPassport\Passport;
 
-class ScopeController {
+class ScopeController
+{
 
     /**
      * Get all the available scopes for the application.
      *
      * @return Collection
      */
-    public function all() {
+    public function all()
+    {
         $passport = make(Passport::class);
         return $passport->scopes();
     }

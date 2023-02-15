@@ -5,19 +5,21 @@ namespace Richard\HyperfPassport;
 use Richard\HyperfPassport\Contracts\ExtendUserProvider;
 use Qbhy\HyperfAuth\Authenticatable;
 
-class PassportUserProvider implements ExtendUserProvider {
+class PassportUserProvider implements ExtendUserProvider
+{
 
     /**
      * @var array
      */
-    protected $config;
+    protected array $config;
 
     /**
      * @var string
      */
-    protected $name;
+    protected string $name;
 
-    public function __construct(array $config, string $name) {
+    public function __construct(array $config, string $name)
+    {
         $this->config = $config;
         $this->name = $name;
     }
@@ -25,28 +27,32 @@ class PassportUserProvider implements ExtendUserProvider {
     /**
      * {@inheritdoc}
      */
-    public function retrieveById($identifier) {
+    public function retrieveById($identifier)
+    {
         return call_user_func_array([$this->config['model'], 'retrieveById'], [$identifier]);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function retrieveByToken($identifier, $token) {
+    public function retrieveByToken($identifier, $token)
+    {
         return call_user_func_array([$this->config['model'], 'retrieveById'], [$identifier, $token]);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function retrieveByCredentials($credentials) {
+    public function retrieveByCredentials($credentials): null|Authenticatable
+    {
         return call_user_func_array([$this->config['model'], 'retrieveById'], [$credentials]);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function validateCredentials(Authenticatable $user, $credentials): bool {
+    public function validateCredentials(Authenticatable $user, $credentials): bool
+    {
         return $user->getId() === $credentials;
     }
 
@@ -55,8 +61,8 @@ class PassportUserProvider implements ExtendUserProvider {
      *
      * @return string
      */
-    public function getProviderName() {
-        //var_dump($this->name);
+    public function getProviderName()
+    {
         return $this->name;
     }
 

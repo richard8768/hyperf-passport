@@ -2,15 +2,17 @@
 
 namespace Richard\HyperfPassport;
 
-class RefreshTokenRepository {
+class RefreshTokenRepository
+{
 
     /**
      * Creates a new refresh token.
      *
-     * @param  array  $attributes
+     * @param array $attributes
      * @return RefreshToken
      */
-    public function create($attributes) {
+    public function create($attributes)
+    {
         $passport = make(Passport::class);
         return $passport->refreshToken()->create($attributes);
     }
@@ -18,10 +20,11 @@ class RefreshTokenRepository {
     /**
      * Gets a refresh token by the given ID.
      *
-     * @param  string  $id
+     * @param string $id
      * @return RefreshToken
      */
-    public function find($id) {
+    public function find($id)
+    {
         $passport = make(Passport::class);
         return $passport->refreshToken()->where('id', $id)->first();
     }
@@ -32,17 +35,19 @@ class RefreshTokenRepository {
      * @param RefreshToken $token
      * @return void
      */
-    public function save(RefreshToken $token) {
+    public function save(RefreshToken $token)
+    {
         $token->save();
     }
 
     /**
      * Revokes the refresh token.
      *
-     * @param  string  $id
+     * @param string $id
      * @return mixed
      */
-    public function revokeRefreshToken($id) {
+    public function revokeRefreshToken($id)
+    {
         $passport = make(Passport::class);
         return $passport->refreshToken()->where('id', $id)->update(['revoked' => true]);
     }
@@ -50,10 +55,11 @@ class RefreshTokenRepository {
     /**
      * Revokes refresh tokens by access token id.
      *
-     * @param  string  $tokenId
+     * @param string $tokenId
      * @return void
      */
-    public function revokeRefreshTokensByAccessTokenId($tokenId) {
+    public function revokeRefreshTokensByAccessTokenId($tokenId)
+    {
         $passport = make(Passport::class);
         $passport->refreshToken()->where('access_token_id', $tokenId)->update(['revoked' => true]);
     }
@@ -61,22 +67,24 @@ class RefreshTokenRepository {
     /**
      * Revoke refresh tokens by conditions.
      *
-     * @param  array  $conditions
+     * @param array $conditions
      * @return mixed
      */
-    public function revokeRefreshTokensByConditons($conditions) {
+    public function revokeRefreshTokensByConditons($conditions)
+    {
         $passport = make(Passport::class);
         $accessTokenIdList = $passport->token()->where($conditions)->get(['id'])->toArray();
-        return $passport->refreshToken()->whereIn('access_token_id',$accessTokenIdList)->update(['revoked' => true]);
+        return $passport->refreshToken()->whereIn('access_token_id', $accessTokenIdList)->update(['revoked' => true]);
     }
 
     /**
      * Checks if the refresh token has been revoked.
      *
-     * @param  string  $id
+     * @param string $id
      * @return bool
      */
-    public function isRefreshTokenRevoked($id) {
+    public function isRefreshTokenRevoked($id)
+    {
         if ($token = $this->find($id)) {
             return $token->revoked;
         }

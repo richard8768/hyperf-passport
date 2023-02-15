@@ -26,59 +26,59 @@ class TokenGuard implements ExtendAuthGuard
     /**
      * @var array
      */
-    protected $config;
+    protected array $config;
 
     /**
      * @var string
      */
-    protected $name;
+    protected string $name;
 
     /**
      * The currently authenticated user.
      *
      * @var Authenticatable
      */
-    protected $user;
+    protected Authenticatable $user;
 
     /**
      * The resource server instance.
      *
      * @var ResourceServer
      */
-    protected $server;
+    protected ResourceServer $server;
 
     /**
      * The user provider implementation.
      *
      * @var UserProvider
      */
-    protected $userProvider;
+    protected UserProvider $userProvider;
 
     /**
      * The token repository instance.
      *
      * @var TokenRepository
      */
-    protected $tokens;
+    protected TokenRepository $tokens;
 
     /**
      * The client repository instance.
      *
      * @var ClientRepository
      */
-    protected $clients;
+    protected ClientRepository $clients;
 
     /**
      * The encrypter implementation.
      *
      * @var EncryptionManager
      */
-    protected $encrypter;
+    protected EncryptionManager $encrypter;
     /**
      *
      * @var RequestInterface
      */
-    protected $request;
+    protected RequestInterface $request;
 
     /**
      * Create a new token guard instance.

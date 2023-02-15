@@ -5,28 +5,30 @@ namespace Richard\HyperfPassport\Console;
 use Hyperf\Command\Command;
 use Richard\HyperfPassport\Passport;
 
-class HashCommand extends Command {
+class HashCommand extends Command
+{
 
     /**
      * The name and signature of the console command.
      *
-     * @var string
+     * @var null|string
      */
-    protected $signature = 'passport:hash {--force : Force the operation to run without confirmation prompt}';
+    protected ?string $signature = 'passport:hash {--force : Force the operation to run without confirmation prompt}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Hash all of the existing secrets in the clients table';
+    protected string $description = 'Hash all of the existing secrets in the clients table';
 
     /**
      * Execute the console command.
      *
      * @return void
      */
-    public function handle() {
+    public function handle()
+    {
         $passport = make(Passport::class);
         if (!$passport->hashesClientSecrets) {
             $this->warn('Please enable client hashing yet in your AppServiceProvider before continuing.');
@@ -53,7 +55,8 @@ class HashCommand extends Command {
         }
     }
 
-    protected function configure() {
+    protected function configure()
+    {
         $this->setDescription($this->description);
     }
 

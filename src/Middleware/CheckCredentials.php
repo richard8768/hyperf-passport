@@ -11,21 +11,22 @@ use Richard\HyperfPassport\TokenRepository;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
 
-abstract class CheckCredentials {
+abstract class CheckCredentials
+{
 
     /**
      * The Resource Server instance.
      *
      * @var ResourceServer
      */
-    protected $server;
+    protected ResourceServer $server;
 
     /**
      * Token Repository.
      *
      * @var TokenRepository
      */
-    protected $repository;
+    protected TokenRepository $repository;
 
     /**
      * Create a new middleware instance.
@@ -34,7 +35,8 @@ abstract class CheckCredentials {
      * @param TokenRepository $repository
      * @return void
      */
-    public function __construct(ResourceServer $server, TokenRepository $repository) {
+    public function __construct(ResourceServer $server, TokenRepository $repository)
+    {
         $this->server = $server;
         $this->repository = $repository;
     }
@@ -42,14 +44,15 @@ abstract class CheckCredentials {
     /**
      * Handle an incoming request.
      *
-     * @param  Request  $request
-     * @param  \Closure  $next
-     * @param  mixed  ...$scopes
+     * @param Request $request
+     * @param \Closure $next
+     * @param mixed ...$scopes
      * @return mixed
      *
      * @throws PassportException
      */
-    public function handle($request, Closure $next, ...$scopes) {
+    public function handle($request, Closure $next, ...$scopes)
+    {
         $psr = $request;
 
         try {
@@ -68,13 +71,14 @@ abstract class CheckCredentials {
     /**
      * Validate the scopes and token on the incoming request.
      *
-     * @param  ServerRequestInterface $psr
-     * @param  array  $scopes
+     * @param ServerRequestInterface $psr
+     * @param array $scopes
      * @return void
      *
      * @throws PassportException
      */
-    protected function validate($psr, $scopes) {
+    protected function validate($psr, $scopes)
+    {
         $token = $this->repository->find($psr->getAttribute('oauth_access_token_id'));
 
         $this->validateCredentials($token);
@@ -85,7 +89,7 @@ abstract class CheckCredentials {
     /**
      * Validate token credentials.
      *
-     * @param  Token  $token
+     * @param Token $token
      * @return void
      *
      * @throws PassportException
@@ -95,8 +99,8 @@ abstract class CheckCredentials {
     /**
      * Validate token scopes.
      *
-     * @param  Token  $token
-     * @param  array  $scopes
+     * @param Token $token
+     * @param array $scopes
      * @return void
      *
      * @throws PassportException

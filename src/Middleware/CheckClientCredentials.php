@@ -5,17 +5,19 @@ namespace Richard\HyperfPassport\Middleware;
 use Richard\HyperfPassport\Exception\PassportException;
 use Richard\HyperfPassport\Token;
 
-class CheckClientCredentials extends CheckCredentials {
+class CheckClientCredentials extends CheckCredentials
+{
 
     /**
      * Validate token credentials.
      *
-     * @param  Token  $token
+     * @param Token $token
      * @return void
      *
      * @throws PassportException
      */
-    protected function validateCredentials($token) {
+    protected function validateCredentials($token)
+    {
         if (!$token) {
             $exception = new PassportException('This action is unauthorized.');
             throw $exception;
@@ -25,13 +27,14 @@ class CheckClientCredentials extends CheckCredentials {
     /**
      * Validate token credentials.
      *
-     * @param  Token  $token
-     * @param  array  $scopes
+     * @param Token $token
+     * @param array $scopes
      * @return void
      *
      * @throws PassportException
      */
-    protected function validateScopes($token, $scopes) {
+    protected function validateScopes($token, $scopes)
+    {
         if (in_array('*', $token->scopes)) {
             return;
         }

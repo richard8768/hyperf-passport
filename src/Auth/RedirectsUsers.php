@@ -18,8 +18,9 @@ trait RedirectsUsers
         return property_exists($this, 'redirectTo') ? $this->redirectTo : '/';
     }
 
-    public function getRedirectPath(){
-       return  $this->session->get('url.intended', $this->redirectPath());
+    public function getRedirectPath()
+    {
+        return $this->session->get('url.intended', $this->redirectPath());
     }
 
 }

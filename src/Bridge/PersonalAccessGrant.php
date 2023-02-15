@@ -14,9 +14,10 @@ class PersonalAccessGrant extends AbstractGrant
      */
     public function respondToAccessTokenRequest(
         ServerRequestInterface $request,
-        ResponseTypeInterface $responseType,
-        DateInterval $accessTokenTTL
-    ) {
+        ResponseTypeInterface  $responseType,
+        DateInterval           $accessTokenTTL
+    )
+    {
         // Validate request
         $client = $this->validateClient($request);
         $scopes = $this->validateScopes($this->getRequestParameter('scope', $request));

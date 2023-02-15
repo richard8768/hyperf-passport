@@ -5,30 +5,32 @@ namespace Richard\HyperfPassport;
 use Hyperf\Utils\Contracts\Arrayable;
 use Richard\HyperfPassport\Contracts\Jsonable;
 
-class PersonalAccessTokenResult implements Arrayable, Jsonable {
+class PersonalAccessTokenResult implements Arrayable, Jsonable
+{
 
     /**
      * The access token.
      *
      * @var string
      */
-    public $accessToken;
+    public string $accessToken;
 
     /**
      * The token model instance.
      *
      * @var Token
      */
-    public $token;
+    public Token $token;
 
     /**
      * Create a new result instance.
      *
-     * @param  string  $accessToken
+     * @param string $accessToken
      * @param Token $token
      * @return void
      */
-    public function __construct($accessToken, $token) {
+    public function __construct($accessToken, $token)
+    {
         $this->token = $token;
         $this->accessToken = $accessToken;
     }
@@ -38,7 +40,8 @@ class PersonalAccessTokenResult implements Arrayable, Jsonable {
      *
      * @return array
      */
-    public function toArray(): array {
+    public function toArray(): array
+    {
         return [
             'accessToken' => $this->accessToken,
             'token' => $this->token,
@@ -48,10 +51,11 @@ class PersonalAccessTokenResult implements Arrayable, Jsonable {
     /**
      * Convert the object to its JSON representation.
      *
-     * @param  int  $options
+     * @param int $options
      * @return string
      */
-    public function toJson($options = 0) {
+    public function toJson($options = 0)
+    {
         return json_encode($this->toArray(), $options);
     }
 

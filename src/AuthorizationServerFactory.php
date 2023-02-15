@@ -23,31 +23,27 @@ use Richard\HyperfPassport\Bridge\ScopeRepository;
 use Richard\HyperfPassport\Bridge\AuthCodeRepository;
 use Richard\HyperfPassport\Bridge\UserRepository;
 
-class AuthorizationServerFactory {
-
-    /**
-     * @Inject
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @Inject
-     * @var ConfigInterface
-     */
-    protected $config;
-
+class AuthorizationServerFactory
+{
+    
+    #[Inject]
+    protected ContainerInterface $container;
+    
+    #[Inject]
+    protected ConfigInterface $config;
     /**
      * @param ContainerInterface $container
      * @param ConfigInterface $config
      * @return void
      */
-    public function __construct(ContainerInterface $container, ConfigInterface $config) {
+    public function __construct(ContainerInterface $container, ConfigInterface $config)
+    {
         $this->container = $container;
         $this->config = $config;
     }
-
-    public function __invoke() {
+    
+    public function __invoke()
+    {
         $tokenExpireDays = new \DateInterval('P7D');
         $refreashTokenExpireDays = new \DateInterval('P60D');
         $personTokenDays = new \DateInterval('P7D');
@@ -58,31 +54,13 @@ class AuthorizationServerFactory {
         $passport->personalAccessTokensExpireIn($this->config->get('passport.person_token_days', $personTokenDays));
         return tap($this->makeAuthorizationServer(), function (AuthorizationServer $server)use($passport) {
             $server->setDefaultScope($passport->defaultScope);
-
-            $server->enableGrantType(
-                    $this->makeAuthCodeGrant(), $passport->tokensExpireIn()
-            );
-
-            $server->enableGrantType(
-                    $this->makeRefreshTokenGrant(), $passport->tokensExpireIn()
-            );
-
-            $server->enableGrantType(
-                    $this->makePasswordGrant(), $passport->tokensExpireIn()
-            );
-
-            $server->enableGrantType(
-                    new PersonalAccessGrant, $passport->personalAccessTokensExpireIn()
-            );
-
-            $server->enableGrantType(
-                    new ClientCredentialsGrant, $passport->tokensExpireIn()
-            );
-
+            $server->enableGrantType($this->makeAuthCodeGrant(), $passport->tokensExpireIn());
+            $server->enableGrantType($this->makeRefreshTokenGrant(), $passport->tokensExpireIn());
+            $server->enableGrantType($this->makePasswordGrant(), $passport->tokensExpireIn());
+            $server->enableGrantType(new PersonalAccessGrant(), $passport->personalAccessTokensExpireIn());
+            $server->enableGrantType(new ClientCredentialsGrant(), $passport->tokensExpireIn());
             if ($passport->implicitGrantEnabled) {
-                $server->enableGrantType(
-                        $this->makeImplicitGrant(), $passport->tokensExpireIn()
-                );
+                $server->enableGrantType($this->makeImplicitGrant(), $passport->tokensExpireIn());
             }
             return $server;
         });
@@ -93,7 +71,8 @@ class AuthorizationServerFactory {
      *
      * @return AuthCodeGrant
      */
-    protected function makeAuthCodeGrant() {
+    protected function makeAuthCodeGrant()
+    {
         $passport = make(Passport::class);
         return tap($this->buildAuthCodeGrant(), function ($grant) use($passport) {
             $grant->setRefreshTokenTTL($passport->refreshTokensExpireIn());
@@ -105,34 +84,31 @@ class AuthorizationServerFactory {
      *
      * @return AuthCodeGrant
      */
-    protected function buildAuthCodeGrant() {
-        return new AuthCodeGrant(
-                make(AuthCodeRepository::class),
-                make(RefreshTokenRepository::class),
-                new \DateInterval('PT10M')
-        );
+    protected function buildAuthCodeGrant()
+    {
+        return new AuthCodeGrant(make(AuthCodeRepository::class), make(RefreshTokenRepository::class), new \DateInterval('PT10M'));
     }
-
-    public function makeRefreshTokenGrant() {
+    
+    public function makeRefreshTokenGrant()
+    {
         $repository = make(RefreshTokenRepository::class);
         $passport = make(Passport::class);
         return tap(new RefreshTokenGrant($repository), function ($grant) use($passport) {
             $grant->setRefreshTokenTTL($passport->refreshTokensExpireIn());
         });
     }
-
-    public function makePasswordGrant() {
-        $grant = new PasswordGrant(
-                make(UserRepository::class),
-                make(RefreshTokenRepository::class)
-        );
+    
+    public function makePasswordGrant()
+    {
+        $grant = new PasswordGrant(make(UserRepository::class), make(RefreshTokenRepository::class));
         $passport = make(Passport::class);
         $grant->setRefreshTokenTTL($passport->refreshTokensExpireIn());
 
         return $grant;
     }
-
-    protected function makeImplicitGrant() {
+    
+    protected function makeImplicitGrant()
+    {
         $passport = make(Passport::class);
         return new ImplicitGrant($passport->tokensExpireIn());
     }
@@ -142,14 +118,9 @@ class AuthorizationServerFactory {
      *
      * @return AuthorizationServer
      */
-    public function makeAuthorizationServer() {
-        return new AuthorizationServer(
-                make(ClientRepository::class),
-                make(AccessTokenRepository::class),
-                make(ScopeRepository::class),
-                $this->makeCryptKey('private'),
-                $this->config->get('passport.key', 'E3Wxizr8gUXuBuyG7CecmGX9E9lbRzdFmqQpG2yP85eDuXzqOj')
-        );
+    public function makeAuthorizationServer()
+    {
+        return new AuthorizationServer(make(ClientRepository::class), make(AccessTokenRepository::class), make(ScopeRepository::class), $this->makeCryptKey('private'), $this->config->get('passport.key', 'E3Wxizr8gUXuBuyG7CecmGX9E9lbRzdFmqQpG2yP85eDuXzqOj'));
     }
 
     /**
@@ -158,7 +129,8 @@ class AuthorizationServerFactory {
      * @param  string  $type
      * @return CryptKey
      */
-    protected function makeCryptKey($type) {
+    protected function makeCryptKey($type)
+    {
         $passport = make(Passport::class);
         $key = str_replace('\\n', "\n", file_get_contents($passport->keyPath('oauth-'.$type.'.key')));
 

@@ -5,42 +5,43 @@ namespace Richard\HyperfPassport;
 use Hyperf\Database\Model\Relations\BelongsTo;
 use Hyperf\DbConnection\Model\Model;
 
-class RefreshToken extends Model {
+class RefreshToken extends Model
+{
 
     /**
      * The database table used by the model.
      *
-     * @var string
+     * @var null|string
      */
-    protected $table = 'oauth_refresh_tokens';
+    protected ?string $table = 'oauth_refresh_tokens';
 
     /**
      * Indicates if the IDs are auto-incrementing.
      *
      * @var bool
      */
-    public $incrementing = false;
+    public bool $incrementing = false;
 
     /**
      * The "type" of the primary key ID.
      *
      * @var string
      */
-    protected $keyType = 'string';
+    protected string $keyType = 'string';
 
     /**
      * The guarded attributes on the model.
      *
      * @var array
      */
-    protected $guarded = [];
+    protected array $guarded = [];
 
     /**
      * The attributes that should be cast to native types.
      *
      * @var array
      */
-    protected $casts = [
+    protected array $casts = [
         'revoked' => 'bool',
     ];
 
@@ -49,7 +50,7 @@ class RefreshToken extends Model {
      *
      * @var array
      */
-    protected $dates = [
+    protected array $dates = [
         'expires_at',
     ];
 
@@ -58,14 +59,15 @@ class RefreshToken extends Model {
      *
      * @var bool
      */
-    public $timestamps = false;
+    public bool $timestamps = false;
 
     /**
      * Get the access token that the refresh token belongs to.
      *
      * @return BelongsTo
      */
-    public function accessToken() {
+    public function accessToken()
+    {
         $passport = make(Passport::class);
         return $this->belongsTo($passport->tokenModel());
     }
@@ -75,7 +77,8 @@ class RefreshToken extends Model {
      *
      * @return bool
      */
-    public function revoke() {
+    public function revoke()
+    {
         return $this->forceFill(['revoked' => true])->save();
     }
 
@@ -84,7 +87,8 @@ class RefreshToken extends Model {
      *
      * @return bool
      */
-    public function transient() {
+    public function transient()
+    {
         return false;
     }
 
@@ -93,7 +97,8 @@ class RefreshToken extends Model {
      *
      * @return string|null
      */
-    public function getConnectionName() {
+    public function getConnectionName()
+    {
         return config('passport.database_connection') ?? $this->connection;
     }
 

@@ -12,7 +12,7 @@ class Scope implements ScopeEntityInterface
     /**
      * Create a new scope instance.
      *
-     * @param  string  $name
+     * @param string $name
      * @return void
      */
     public function __construct($name)

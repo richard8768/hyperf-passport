@@ -11,36 +11,38 @@ use Richard\HyperfPassport\PersonalAccessTokenResult;
 use Richard\HyperfPassport\TokenRepository;
 use Qbhy\HyperfAuth\AuthManager;
 
-class PersonalAccessTokenController {
+class PersonalAccessTokenController
+{
 
     /**
      * The token repository implementation.
      *
      * @var TokenRepository
      */
-    protected $tokenRepository;
+    protected TokenRepository $tokenRepository;
 
     /**
      * The validation factory implementation.
      *
      * @var ValidationFactory
      */
-    protected $validation;
+    protected ValidationFactory $validation;
 
     /**
      * @var AuthManager
      */
-    protected $auth;
+    protected AuthManager $auth;
 
     /**
      * Create a controller instance.
      *
-     * @param  TokenRepository  $tokenRepository
-     * @param  ValidationFactory  $validation
-     * @param  AuthManager  $auth
+     * @param TokenRepository $tokenRepository
+     * @param ValidationFactory $validation
+     * @param AuthManager $auth
      * @return void
      */
-    public function __construct(TokenRepository $tokenRepository, ValidationFactory $validation, AuthManager $auth) {
+    public function __construct(TokenRepository $tokenRepository, ValidationFactory $validation, AuthManager $auth)
+    {
         $this->validation = $validation;
         $this->tokenRepository = $tokenRepository;
         $this->auth = $auth;
@@ -49,25 +51,27 @@ class PersonalAccessTokenController {
     /**
      * Get all the personal access tokens for the authenticated user.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return Collection
      */
-    public function forUser(Request $request) {
+    public function forUser(Request $request)
+    {
         $user = $this->auth->guard('passport')->user();
         $tokens = $this->tokenRepository->forUser($user->getKey());
 
         return $tokens->load('client')->filter(function ($token) {
-                    return $token->client->personal_access_client && !$token->revoked;
-                })->values();
+            return $token->client->personal_access_client && !$token->revoked;
+        })->values();
     }
 
     /**
      * Create a new personal access token for the user.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return PersonalAccessTokenResult
      */
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         $passport = make(Passport::class);
         $this->validation->make($request->all(), [
             'name' => 'required|max:191',
@@ -77,21 +81,22 @@ class PersonalAccessTokenController {
         $provider = $passportGuard->getProvider()->getProviderName();
         $user = $passportGuard->user();
         return $user->createToken(
-                        $request->input('name'), $request->input('scopes') ?: [], $provider
+            $request->input('name'), $request->input('scopes') ?: [], $provider
         );
     }
 
     /**
      * Delete the given token.
      *
-     * @param  Request  $request
-     * @param  string  $tokenId
+     * @param Request $request
+     * @param string $tokenId
      * @return Response
      */
-    public function destroy(Request $request, $tokenId) {
+    public function destroy(Request $request, $tokenId)
+    {
         $user = $this->auth->guard('passport')->user();
         $token = $this->tokenRepository->findForUser(
-                $tokenId, $user->getKey()
+            $tokenId, $user->getKey()
         );
 
         if (is_null($token)) {

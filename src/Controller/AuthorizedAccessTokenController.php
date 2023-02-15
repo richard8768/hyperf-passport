@@ -9,35 +9,37 @@ use Richard\HyperfPassport\RefreshTokenRepository;
 use Richard\HyperfPassport\TokenRepository;
 use Qbhy\HyperfAuth\AuthManager;
 
-class AuthorizedAccessTokenController {
+class AuthorizedAccessTokenController
+{
 
     /**
      * The token repository implementation.
      *
      * @var TokenRepository
      */
-    protected $tokenRepository;
+    protected TokenRepository $tokenRepository;
 
     /**
      * The refresh token repository implementation.
      *
      * @var RefreshTokenRepository
      */
-    protected $refreshTokenRepository;
+    protected RefreshTokenRepository $refreshTokenRepository;
 
     /**
      * @var AuthManager
      */
-    protected $auth;
+    protected AuthManager $auth;
 
     /**
      * Create a new controller instance.
      *
-     * @param  TokenRepository  $tokenRepository
-     * @param  RefreshTokenRepository  $refreshTokenRepository
+     * @param TokenRepository $tokenRepository
+     * @param RefreshTokenRepository $refreshTokenRepository
      * @return void
      */
-    public function __construct(TokenRepository $tokenRepository, RefreshTokenRepository $refreshTokenRepository, AuthManager $auth) {
+    public function __construct(TokenRepository $tokenRepository, RefreshTokenRepository $refreshTokenRepository, AuthManager $auth)
+    {
         $this->tokenRepository = $tokenRepository;
         $this->refreshTokenRepository = $refreshTokenRepository;
         $this->auth = $auth;
@@ -46,29 +48,31 @@ class AuthorizedAccessTokenController {
     /**
      * Get all the authorized tokens for the authenticated user.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return Collection
      */
-    public function forUser(Request $request) {
+    public function forUser(Request $request)
+    {
         $user = $this->auth->guard('passport')->user();
         $tokens = $this->tokenRepository->forUser($user->getKey());
 
         return $tokens->load('client')->filter(function ($token) {
-                    return !$token->client->firstParty() && !$token->revoked;
-                })->values();
+            return !$token->client->firstParty() && !$token->revoked;
+        })->values();
     }
 
     /**
      * Delete the given token.
      *
-     * @param  Request  $request
-     * @param  string  $tokenId
+     * @param Request $request
+     * @param string $tokenId
      * @return Response
      */
-    public function destroy(Request $request, $tokenId) {
+    public function destroy(Request $request, $tokenId)
+    {
         $user = $this->auth->guard('passport')->user();
         $token = $this->tokenRepository->findForUser(
-                $tokenId, $user->getKey()
+            $tokenId, $user->getKey()
         );
 
         if (is_null($token)) {

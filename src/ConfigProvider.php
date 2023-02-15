@@ -20,24 +20,24 @@ class ConfigProvider
         return [
             'dependencies' => [
                 \Hyperf\HttpServer\Router\DispatcherFactory::class => DispatcherFactory::class,
-                \Hyperf\Session\Session::class                     => Session::class,
-                \Qbhy\HyperfAuth\AuthManager::class                => AuthManager::class,
-                \League\OAuth2\Server\AuthorizationServer::class   => AuthorizationServerFactory::class,
-                \League\OAuth2\Server\ResourceServer::class        => ResourceServerFactory::class,
+                \Hyperf\Session\Session::class => Session::class,
+                \Qbhy\HyperfAuth\AuthManager::class => AuthManager::class,
+                \League\OAuth2\Server\AuthorizationServer::class => AuthorizationServerFactory::class,
+                \League\OAuth2\Server\ResourceServer::class => ResourceServerFactory::class,
             ],
-            'listeners'    => [
+            'listeners' => [
                 //
             ],
-            'commands'     => [
+            'commands' => [
                 \Richard\HyperfPassport\Console\InstallCommand::class,
                 \Richard\HyperfPassport\Console\ClientCommand::class,
                 \Richard\HyperfPassport\Console\KeysCommand::class,
                 \Richard\HyperfPassport\Console\HashCommand::class,
                 \Richard\HyperfPassport\Console\PurgeCommand::class,
             ],
-            'annotations'  => [
+            'annotations' => [
                 'scan' => [
-                    'paths'      => [
+                    'paths' => [
                         __DIR__,
                     ],
                     'collectors' => [
@@ -45,23 +45,23 @@ class ConfigProvider
                     ],
                 ],
             ],
-            'publish'      => [
+            'publish' => [
                 [
-                    'id'          => 'config',
+                    'id' => 'config',
                     'description' => 'The config for passport.',
-                    'source'      => __DIR__ . '/../publish/passport.php',
+                    'source' => __DIR__ . '/../publish/passport.php',
                     'destination' => BASE_PATH . '/config/autoload/passport.php',
                 ],
                 [
-                    'id'          => 'migration',
+                    'id' => 'migration',
                     'description' => 'The migration for passport.',
-                    'source'      => __DIR__ . '/../migrations',
+                    'source' => __DIR__ . '/../migrations',
                     'destination' => BASE_PATH . '/migrations',
                 ],
                 [
-                    'id'          => 'view',
+                    'id' => 'view',
                     'description' => 'The view for passport.',
-                    'source'      => __DIR__ . '/../resources/views',
+                    'source' => __DIR__ . '/../resources/views',
                     'destination' => BASE_PATH . '/storage/view',
                 ],
             ],

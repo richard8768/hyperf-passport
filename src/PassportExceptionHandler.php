@@ -22,16 +22,15 @@ use Hyperf\Di\Annotation\Inject;
 use Qbhy\HyperfAuth\Exception\GuardException;
 use Qbhy\HyperfAuth\Exception\UserProviderException;
 
-class PassportExceptionHandler extends ExceptionHandler {
+class PassportExceptionHandler extends ExceptionHandler
+{
 
-    /**
-     * @Inject
-     * @var RequestInterface
-     */
-    protected $requests;
+    #[Inject]
+    protected RequestInterface $requests;
 
-    public function handle(Throwable $throwable, ResponseInterface $response) {
-        if (($throwable instanceof PassportException) || ($throwable instanceof GuardException) || ($throwable instanceof UserProviderException)) {
+    public function handle(Throwable $throwable, ResponseInterface $response)
+    {
+        if ($throwable instanceof PassportException || $throwable instanceof GuardException || $throwable instanceof UserProviderException) {
             $this->stopPropagation();
             $handleData = $this->getHandleMsg();
             $emptyObj = new \stdClass();
@@ -40,19 +39,20 @@ class PassportExceptionHandler extends ExceptionHandler {
             } else {
                 $data = ['status' => $handleData['status'] ?? 999999, 'data' => $handleData['data'] ?? $emptyObj, 'message' => $throwable->getMessage()];
             }
-            return $response->withHeader('Content-Type', 'application/json;charset=utf-8')
-                            ->withStatus($throwable->getStatusCode())->withBody(new SwooleStream(json_encode($data)));
+            return $response->withHeader('Content-Type', 'application/json;charset=utf-8')->withStatus($throwable->getStatusCode())->withBody(new SwooleStream(json_encode($data)));
         }
 
         // 交给下一个异常处理器
         return $response;
     }
 
-    public function isValid(Throwable $throwable): bool {
+    public function isValid(Throwable $throwable): bool
+    {
         return $throwable instanceof PassportException;
     }
 
-    protected function getHandleMsg(): array {
+    protected function getHandleMsg(): array
+    {
         return [];
     }
 

@@ -8,18 +8,21 @@ use RuntimeException;
 use Hyperf\Di\Annotation\Inject;
 use HyperfExt\Hashing\HashManager as HashingHashManager;
 
-class UserRepository implements UserRepositoryInterface {
+class UserRepository implements UserRepositoryInterface
+{
 
-    protected $hasher;
+    protected HashingHashManager $hasher;
 
-    public function __construct(HashingHashManager $hasher) {
+    public function __construct(HashingHashManager $hasher)
+    {
         $this->hasher = $hasher;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getUserEntityByUserCredentials($username, $password, $grantType, ClientEntityInterface $clientEntity) {
+    public function getUserEntityByUserCredentials($username, $password, $grantType, ClientEntityInterface $clientEntity)
+    {
         $provider = $clientEntity->provider ?: config('auth.guards.passport.provider');
 
         if (is_null($model = config('auth.providers.' . $provider . '.model'))) {

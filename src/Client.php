@@ -8,28 +8,29 @@ use Hyperf\DbConnection\Model\Model;
 use Hyperf\Utils\Str;
 use Hyperf\Database\Model\Events\Creating;
 
-class Client extends Model {
+class Client extends Model
+{
 
     /**
      * The database table used by the model.
      *
-     * @var string
+     * @var null|string
      */
-    protected $table = 'oauth_clients';
+    protected ?string $table = 'oauth_clients';
 
     /**
      * The guarded attributes on the model.
      *
      * @var array
      */
-    protected $guarded = [];
+    protected array $guarded = [];
 
     /**
      * The attributes excluded from the model's JSON form.
      *
      * @var array
      */
-    protected $hidden = [
+    protected array $hidden = [
         'secret',
     ];
 
@@ -38,7 +39,7 @@ class Client extends Model {
      *
      * @var array
      */
-    protected $casts = [
+    protected array $casts = [
         'grant_types' => 'array',
         'personal_access_client' => 'bool',
         'password_client' => 'bool',
@@ -50,21 +51,23 @@ class Client extends Model {
      *
      * @var string|null
      */
-    protected $plainSecret;
+    protected ?string $plainSecret;
 
     /**
      * Bootstrap the model and its traits.
      *
      * @return void
      */
-    public function boot(): void {
+    public function boot(): void
+    {
         parent::boot();
     }
 
-    public function creating(Creating $event) {
+    public function creating(Creating $event)
+    {
         return function ($model) {
             if (config('passport.client_uuids')) {
-                $model->{$model->getKeyName()} = $model->{$model->getKeyName()} ?: (string) Str::orderedUuid();
+                $model->{$model->getKeyName()} = $model->{$model->getKeyName()} ?: (string)Str::orderedUuid();
             }
         };
     }
@@ -74,11 +77,12 @@ class Client extends Model {
      *
      * @return BelongsTo
      */
-    public function user() {
+    public function user()
+    {
         $provider = $this->provider ?: config('auth.guards.passport.provider');
 
         return $this->belongsTo(
-                        config("auth.providers.{$provider}.model")
+            config("auth.providers.{$provider}.model")
         );
     }
 
@@ -87,7 +91,8 @@ class Client extends Model {
      *
      * @return HasMany
      */
-    public function authCodes() {
+    public function authCodes()
+    {
         $passport = make(Passport::class);
         return $this->hasMany($passport->authCodeModel(), 'client_id');
     }
@@ -97,7 +102,8 @@ class Client extends Model {
      *
      * @return HasMany
      */
-    public function tokens() {
+    public function tokens()
+    {
         $passport = make(Passport::class);
         return $this->hasMany($passport->tokenModel(), 'client_id');
     }
@@ -109,17 +115,19 @@ class Client extends Model {
      *
      * @return string|null
      */
-    public function getPlainSecretAttribute() {
+    public function getPlainSecretAttribute()
+    {
         return $this->plainSecret;
     }
 
     /**
      * Set the value of the secret attribute.
      *
-     * @param  string|null  $value
+     * @param string|null $value
      * @return void
      */
-    public function setSecretAttribute($value) {
+    public function setSecretAttribute($value)
+    {
         $this->plainSecret = $value;
         $passport = make(Passport::class);
         if (is_null($value) || !$passport->hashesClientSecrets) {
@@ -136,7 +144,8 @@ class Client extends Model {
      *
      * @return bool
      */
-    public function firstParty() {
+    public function firstParty()
+    {
         return $this->personal_access_client || $this->password_client;
     }
 
@@ -145,7 +154,8 @@ class Client extends Model {
      *
      * @return bool
      */
-    public function skipsAuthorization() {
+    public function skipsAuthorization()
+    {
         return false;
     }
 
@@ -154,7 +164,8 @@ class Client extends Model {
      *
      * @return bool
      */
-    public function confidential() {
+    public function confidential()
+    {
         return !empty($this->secret);
     }
 
@@ -163,7 +174,8 @@ class Client extends Model {
      *
      * @return string
      */
-    public function getKeyType() {
+    public function getKeyType()
+    {
         $passport = make(Passport::class);
         return $passport->clientUuids() ? 'string' : $this->keyType;
     }
@@ -173,7 +185,8 @@ class Client extends Model {
      *
      * @return bool
      */
-    public function getIncrementing() {
+    public function getIncrementing()
+    {
         $passport = make(Passport::class);
         return $passport->clientUuids() ? false : $this->incrementing;
     }
@@ -183,7 +196,8 @@ class Client extends Model {
      *
      * @return string|null
      */
-    public function getConnectionName() {
+    public function getConnectionName()
+    {
         return config('passport.database_connection') ?? $this->connection;
     }
 

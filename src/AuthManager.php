@@ -17,11 +17,8 @@ use Richard\HyperfPassport\ClientRepository;
 class AuthManager extends QbhyAuthManager
 {
 
-    /**
-     * @Inject
-     * @var RequestInterface
-     */
-    protected $serverRequest;
+    #[Inject]
+    protected RequestInterface $serverRequest;
 
     /**
      * @throws GuardException
@@ -34,9 +31,9 @@ class AuthManager extends QbhyAuthManager
         if (!empty($clentId)) {
             $clients = make(ClientRepository::class);
             $clientInfo = $clients->findActive($clentId);
-            $tmpProvider = (!empty($clientInfo)) ? $clientInfo->provider : '';
+            $tmpProvider = !empty($clientInfo) ? $clientInfo->provider : '';
             $configProviders = $this->config['providers'];
-            $provider = (!empty($tmpProvider) && $configProviders[$tmpProvider]) ? $tmpProvider : '';
+            $provider = !empty($tmpProvider) && $configProviders[$tmpProvider] ? $tmpProvider : '';
         }
 
         $name = $name ?? $this->defaultGuard();
@@ -50,11 +47,7 @@ class AuthManager extends QbhyAuthManager
         }
 
         $userProvider = $this->provider($config['provider'] ?? $this->defaultDriver);
-
-        return make(
-            $config['driver'],
-            compact('name', 'config', 'userProvider')
-        );
+        return make($config['driver'], compact('name', 'config', 'userProvider'));
     }
 
     /**
@@ -68,14 +61,7 @@ class AuthManager extends QbhyAuthManager
         }
 
         $config = $this->config['providers'][$name];
-
-        return make(
-            $config['driver'],
-            [
-                'config' => $config,
-                'name' => $name,
-            ]
-        );
+        return make($config['driver'], ['config' => $config, 'name' => $name]);
     }
 
 }

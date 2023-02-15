@@ -25,12 +25,12 @@ class SessionAuthenticationExceptionHandler extends ExceptionHandler
     /**
      * @var StdoutLoggerInterface
      */
-    protected $logger;
+    protected StdoutLoggerInterface $logger;
 
     /**
-     * @Inject
      * @var HttpResponse
      */
+    #[Inject]
     protected HttpResponse $httpResponse;
 
     public function __construct(StdoutLoggerInterface $logger)
@@ -56,9 +56,7 @@ class SessionAuthenticationExceptionHandler extends ExceptionHandler
 
     public function isValid(Throwable $throwable): bool
     {
-        if (
-            $throwable instanceof SessionAuthenticationException
-        ) {
+        if ($throwable instanceof SessionAuthenticationException) {
             return true;
         }
         return false;

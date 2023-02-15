@@ -8,7 +8,8 @@ use League\OAuth2\Server\AuthorizationServer;
 use Nyholm\Psr7\Response as Psr7Response;
 use Psr\Http\Message\ServerRequestInterface;
 
-class AccessTokenController {
+class AccessTokenController
+{
 
     use HandlesOAuthErrors;
 
@@ -16,24 +17,25 @@ class AccessTokenController {
      * The authorization server.
      *
      */
-    protected $server;
+    protected AuthorizationServer $server;
 
     /**
      * The token repository instance.
      *
      */
-    protected $tokens;
+    protected TokenRepository $tokens;
 
 
     /**
      * Create a new controller instance.
      *
-     * @param  AuthorizationServer  $server
-     * @param  TokenRepository  $tokens
+     * @param AuthorizationServer $server
+     * @param TokenRepository $tokens
      * @return void
      */
     public function __construct(AuthorizationServer $server,
-            TokenRepository $tokens) {
+                                TokenRepository     $tokens)
+    {
         $this->server = $server;
         $this->tokens = $tokens;
     }
@@ -41,15 +43,16 @@ class AccessTokenController {
     /**
      * Authorize a client to access the user's account.
      *
-     * @param  ServerRequestInterface  $request
+     * @param ServerRequestInterface $request
      * @return Response
      */
-    public function issueToken(ServerRequestInterface $request) {
+    public function issueToken(ServerRequestInterface $request)
+    {
         return $this->withErrorHandling(function () use ($request) {
-                    return $this->convertResponse(
-                                    $this->server->respondToAccessTokenRequest($request, new Psr7Response)
-                    );
-                });
+            return $this->convertResponse(
+                $this->server->respondToAccessTokenRequest($request, new Psr7Response)
+            );
+        });
     }
 
 }

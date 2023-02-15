@@ -4,7 +4,8 @@ use Hyperf\Database\Schema\Schema;
 use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Database\Migrations\Migration;
 
-class CreateOauthAccessTokensTable extends Migration {
+class CreateOauthAccessTokensTable extends Migration
+{
 
     /**
      * The database schema.
@@ -17,7 +18,8 @@ class CreateOauthAccessTokensTable extends Migration {
      *
      * @return void
      */
-    public function __construct() {
+    public function __construct()
+    {
         $this->schema = (new Schema())->connection($this->getConnection())->getSchemaBuilder();
     }
 
@@ -26,7 +28,8 @@ class CreateOauthAccessTokensTable extends Migration {
      *
      * @return void
      */
-    public function up() {
+    public function up()
+    {
         $this->schema->create('oauth_access_tokens', function (Blueprint $table) {
             $table->string('id', 100)->primary();
             $table->unsignedBigInteger('user_id')->nullable()->index();
@@ -44,16 +47,18 @@ class CreateOauthAccessTokensTable extends Migration {
      *
      * @return void
      */
-    public function down() {
+    public function down()
+    {
         $this->schema->dropIfExists('oauth_access_tokens');
     }
 
     /**
      * Get the migration connection name.
      *
-     * @return string|null
+     * @return string
      */
-    public function getConnection() {
+    public function getConnection(): string
+    {
         return config('passport.database_connection');
     }
 

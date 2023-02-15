@@ -4,7 +4,8 @@ use Hyperf\Database\Schema\Schema;
 use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Database\Migrations\Migration;
 
-class CreateOauthPersonalAccessClientsTable extends Migration {
+class CreateOauthPersonalAccessClientsTable extends Migration
+{
 
     /**
      * The database schema.
@@ -17,7 +18,8 @@ class CreateOauthPersonalAccessClientsTable extends Migration {
      *
      * @return void
      */
-    public function __construct() {
+    public function __construct()
+    {
         $this->schema = (new Schema())->connection($this->getConnection())->getSchemaBuilder();
     }
 
@@ -26,7 +28,8 @@ class CreateOauthPersonalAccessClientsTable extends Migration {
      *
      * @return void
      */
-    public function up() {
+    public function up()
+    {
         $this->schema->create('oauth_personal_access_clients', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('client_id');
@@ -39,16 +42,18 @@ class CreateOauthPersonalAccessClientsTable extends Migration {
      *
      * @return void
      */
-    public function down() {
+    public function down()
+    {
         $this->schema->dropIfExists('oauth_personal_access_clients');
     }
 
     /**
      * Get the migration connection name.
      *
-     * @return string|null
+     * @return string
      */
-    public function getConnection() {
+    public function getConnection(): string
+    {
         return config('passport.database_connection');
     }
 

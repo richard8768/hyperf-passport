@@ -14,25 +14,23 @@ use Richard\HyperfPassport\Exception\SessionAuthenticationException;
 
 class SessionAuthMiddleware implements MiddlewareInterface
 {
-    protected $guards = ['session']; // 支持多个 guard
 
-    /**
-     * @Inject
-     * @var AuthManager
-     */
-    protected $auth;
+    protected array $guards = ['session'];
+    // 支持多个 guard
 
+    #[Inject]
+    protected AuthManager $auth;
     /**
-     * @Inject
      * @var HttpRequest
      */
+    #[Inject]
     protected HttpRequest $httpRequest;
 
 
     /**
-     * @Inject
      * @var SessionInterface
      */
+    #[Inject]
     private SessionInterface $session;
 
 
@@ -58,22 +56,16 @@ class SessionAuthMiddleware implements MiddlewareInterface
 
     protected function unauthenticated($request)
     {
-        $intended = $this->httpRequest->getMethod() === 'GET' &&
-        (!(('XMLHttpRequest' == $this->httpRequest->getHeaderLine('X-Requested-With')) &&
-            (!($this->httpRequest->getHeaderLine('X-PJAX') == true))))
-            ? $this->httpRequest->fullUrl()
-            : $this->httpRequest->getHeaderLine('referer') ?? ($this->session->previousUrl() ?? '/');
+        $intended = $this->httpRequest->getMethod() === 'GET' && !('XMLHttpRequest' == $this->httpRequest->getHeaderLine('X-Requested-With') && !($this->httpRequest->getHeaderLine('X-PJAX') == true)) ? $this->httpRequest->fullUrl() : $this->httpRequest->getHeaderLine('referer') ?? $this->session->previousUrl() ?? '/';
         if ($intended) {
             $this->session->set('url.intended', $intended);
         }
-        throw new SessionAuthenticationException(
-            'Unauthenticated user .', $this->guards, $this->redirectTo($request)
-        );
+        throw new SessionAuthenticationException('Unauthenticated user .', $this->guards, $this->redirectTo($request));
     }
 
     protected function redirectTo($request): string
     {
-        return config('passport.session_user_login_uri')??'/';
+        return config('passport.session_user_login_uri') ?? '/';
     }
 
 }
