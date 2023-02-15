@@ -15,6 +15,8 @@ use League\OAuth2\Server\Grant\ImplicitGrant;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
+use Richard\HyperfPassport\Bridge\ClientRepository;
+use Richard\HyperfPassport\Bridge\RefreshTokenRepository;
 use Richard\HyperfPassport\Bridge\PersonalAccessGrant;
 use Richard\HyperfPassport\Bridge\AccessTokenRepository;
 use Richard\HyperfPassport\Bridge\ScopeRepository;

@@ -5,6 +5,8 @@
     "keywords": [
         "php",
         "hyperf",
+        "oauth",
+        "oauth2",
         "passport"
     ],
     "description": "Hyperf Passport provides OAuth2 server support to Hyperf",
@@ -50,6 +52,7 @@
         "hyperf/validation": "^2.2",
         "hyperf/view": "^2.2",
         "hyperf/view-engine": "^2.2",
+        "league/plates": "^3.4",
         "lcobucci/jwt": "^4.0",
         "league/oauth2-server": "^8.2",
         "nesbot/carbon": "^2.0",
@@ -64,6 +67,7 @@
         "swoole/ide-helper": "dev-master",
         "symfony/var-dumper": "^5.1"
     },
+    "minimum-stability": "dev",
     "prefer-stable": true,
     "config": {
         "optimize-autoloader": true,
