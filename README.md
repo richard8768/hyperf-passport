@@ -10,7 +10,7 @@ hyperf 的 hyperf-passport 组件，支持对多种用户进行登录授权,支�
 PHP>=7.4
 
 
-## 安装与发布 - install & publish
+## 安装与发布 - install && publish
 
 
 ```bash
