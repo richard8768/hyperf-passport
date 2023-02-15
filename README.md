@@ -8,24 +8,30 @@ hyperf 的 hyperf-passport 组件，支持对多种用户进行登录授权,支�
 ## 安装前的准备 - before install
 
 PHP>=7.4
-安装依赖包
+
+
+## 安装与发布 - install & publish
+
+
 ```bash
-#授权依赖包
-$ composer require 96qbhy/hyperf-auth
+$ composer require richard8768/hyperf-passport
+
 $ php bin/hyperf.php vendor:publish 96qbhy/hyperf-auth
-#加密依赖包
-$ composer require hyperf-ext/encryption
+
 $ php bin/hyperf.php vendor:publish hyperf-ext/encryption
-$ composer require hyperf-ext/hashing
+
 $ php bin/hyperf.php vendor:publish hyperf-ext/hashing
-#模板引擎和视图
-$ composer require hyperf/view
+
 $ php bin/hyperf.php vendor:publish hyperf/view
-$ composer require league/plates
-#hyperf的session
-$ composer require hyperf/session
+
 $ php bin/hyperf.php vendor:publish hyperf/session
+
+$ php bin/hyperf.php vendor:publish richard8768/hyperf-passport
 ```
+
+
+## 配置 - configuration
+
 使用 php bin/hyperf.php gen:key 命令来生成密钥,并将KEY值复制到文件 config/autoload/encryption.php中的env('AES_KEY', 'place_to_hold_key')
 
 编辑文件config/autoload/view.php配置视图默认引擎:
@@ -60,17 +66,6 @@ return [
 ];
 ?>
 ```
-
-
-## 安装 - install
-
-
-```bash
-$ composer require richard8768/hyperf-passport
-php bin/hyperf.php vendor:publish richard8768/hyperf-passport
-```
-
-## 配置 - configuration
 
 编辑文件 config/autoload/passport.php
 
