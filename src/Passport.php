@@ -231,7 +231,7 @@ class Passport
      * Get or set when access tokens expire.
      *
      * @param \DateTimeInterface|null $date
-     * @return \DateInterval
+     * @return Passport|\DateInterval
      */
     public function tokensExpireIn(DateTimeInterface $date = null)
     {
@@ -247,7 +247,7 @@ class Passport
      * Get or set when refresh tokens expire.
      *
      * @param \DateTimeInterface|null $date
-     * @return \DateInterval
+     * @return Passport|\DateInterval
      */
     public function refreshTokensExpireIn(DateTimeInterface $date = null)
     {
@@ -265,7 +265,7 @@ class Passport
      * Get or set when personal access tokens expire.
      *
      * @param \DateTimeInterface|null $date
-     * @return \DateInterval
+     * @return Passport|\DateInterval
      */
     public function personalAccessTokensExpireIn(DateTimeInterface $date = null)
     {
@@ -283,7 +283,7 @@ class Passport
      * Get or set the name for API token cookies.
      *
      * @param string|null $cookie
-     * @return string
+     * @return Passport|string
      */
     public function cookie($cookie = null)
     {
