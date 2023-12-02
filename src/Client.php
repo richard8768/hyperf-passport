@@ -5,7 +5,7 @@ namespace Richard\HyperfPassport;
 use Hyperf\Database\Model\Relations\BelongsTo;
 use Hyperf\Database\Model\Relations\HasMany;
 use Hyperf\DbConnection\Model\Model;
-use Hyperf\Utils\Str;
+use Richard\HyperfPassport\Utils\Str;
 use Hyperf\Database\Model\Events\Creating;
 
 class Client extends Model {

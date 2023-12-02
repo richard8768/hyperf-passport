@@ -104,7 +104,7 @@ class CreateFreshApiToken {
      */
     protected function alreadyContainsToken($response) {
         $passport = make(\Richard\HyperfPassport\Passport::class);
-        foreach ($response->headers->getCookies() as $cookie) {
+        foreach ($response->getCookies() as $cookie) {
             if ($cookie->getName() === $passport->cookie()) {
                 return true;
             }
