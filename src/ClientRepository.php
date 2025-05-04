@@ -3,7 +3,7 @@
 namespace Richard\HyperfPassport;
 
 use Hyperf\Database\Model\Collection;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use RuntimeException;
 
 class ClientRepository

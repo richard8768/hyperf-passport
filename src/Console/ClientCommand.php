@@ -204,10 +204,10 @@ class ClientCommand extends Command
 
     protected function genUrl(string $toUrl)
     {
-        if (!\Hyperf\Utils\ApplicationContext::hasContainer() || \Hyperf\Utils\Str::startsWith($toUrl, ['http://', 'https://'])) {
+        if (!\Hyperf\Utils\ApplicationContext::hasContainer() || \Hyperf\Stringable\Str::startsWith($toUrl, ['http://', 'https://'])) {
             return $toUrl;
         }
-        return 'http://localhost' . (\Hyperf\Utils\Str::startsWith($toUrl, '/') ? $toUrl : '/' . $toUrl);
+        return 'http://localhost' . (\Hyperf\Stringable\Str::startsWith($toUrl, '/') ? $toUrl : '/' . $toUrl);
     }
 
 }

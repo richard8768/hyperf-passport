@@ -2,7 +2,7 @@
 
 namespace Richard\HyperfPassport;
 
-use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Contract\Arrayable;
 use Richard\HyperfPassport\Contracts\Jsonable;
 
 class Scope implements Arrayable, Jsonable

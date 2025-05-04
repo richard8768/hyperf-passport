@@ -14,7 +14,7 @@ use Richard\HyperfPassport\TokenRepository;
 use Richard\HyperfPassport\TransientToken;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Richard\HyperfPassport\Contracts\ExtendAuthGuard;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Qbhy\HyperfAuth\Authenticatable;

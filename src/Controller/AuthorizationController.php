@@ -7,7 +7,7 @@ use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpMessage\Server\Response;
 use Hyperf\View\Render;
 use Hyperf\HttpServer\Request;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Richard\HyperfPassport\Bridge\User;
 use Richard\HyperfPassport\ClientRepository;
 use Richard\HyperfPassport\Passport;

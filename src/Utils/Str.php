@@ -2,7 +2,7 @@
 
 namespace Richard\HyperfPassport\Utils;
 
-use Hyperf\Utils\Str as HyperfStr;
+use Hyperf\Stringable\Str as HyperfStr;
 use Ramsey\Uuid\Codec\TimestampFirstCombCodec;
 use Ramsey\Uuid\Generator\CombGenerator;
 use Ramsey\Uuid\Uuid;
