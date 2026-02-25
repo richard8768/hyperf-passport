@@ -2,3 +2,5 @@
 composer.lock
 *.cache
 *.log
+/.idea
+/.github
