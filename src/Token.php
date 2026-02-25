@@ -67,7 +67,7 @@ class Token extends Model
      *
      * @return BelongsTo
      */
-    public function client()
+    public function client(): BelongsTo
     {
         $passport = make(Passport::class);
         return $this->belongsTo($passport->clientModel());
@@ -78,7 +78,7 @@ class Token extends Model
      *
      * @return BelongsTo
      */
-    public function user()
+    public function user(): BelongsTo
     {
         $provider = config('auth.guards.passport.provider');
 
@@ -93,7 +93,7 @@ class Token extends Model
      * @param string $scope
      * @return bool
      */
-    public function can($scope)
+    public function can(string $scope): bool
     {
         if (in_array('*', $this->scopes)) {
             return true;
@@ -101,8 +101,8 @@ class Token extends Model
         $passport = make(Passport::class);
         $scopes = $passport->withInheritedScopes ? $this->resolveInheritedScopes($scope) : [$scope];
 
-        foreach ($scopes as $scope) {
-            if (array_key_exists($scope, array_flip($this->scopes))) {
+        foreach ($scopes as $loopScope) {
+            if (array_key_exists($loopScope, array_flip($this->scopes))) {
                 return true;
             }
         }
@@ -116,7 +116,7 @@ class Token extends Model
      * @param string $scope
      * @return array
      */
-    protected function resolveInheritedScopes($scope)
+    protected function resolveInheritedScopes(string $scope): array
     {
         $parts = explode(':', $scope);
 
@@ -137,7 +137,7 @@ class Token extends Model
      * @param string $scope
      * @return bool
      */
-    public function cant($scope)
+    public function cant(string $scope): bool
     {
         return !$this->can($scope);
     }
@@ -147,7 +147,7 @@ class Token extends Model
      *
      * @return bool
      */
-    public function revoke()
+    public function revoke(): bool
     {
         return $this->forceFill(['revoked' => true])->save();
     }
@@ -157,7 +157,7 @@ class Token extends Model
      *
      * @return bool
      */
-    public function transient()
+    public function transient(): bool
     {
         return false;
     }
@@ -167,7 +167,7 @@ class Token extends Model
      *
      * @return string|null
      */
-    public function getConnectionName()
+    public function getConnectionName(): ?string
     {
         return config('passport.database_connection') ?? $this->connection;
     }

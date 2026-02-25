@@ -2,20 +2,22 @@
 
 namespace Richard\HyperfPassport\Utils;
 
+use DateTimeInterface;
 use Hyperf\Stringable\Str as HyperfStr;
 use Ramsey\Uuid\Codec\TimestampFirstCombCodec;
 use Ramsey\Uuid\Generator\CombGenerator;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidFactory;
+use Ramsey\Uuid\UuidInterface;
 
 class Str extends HyperfStr
 {
     /**
      * Generate a UUID (version 4).
      *
-     * @return \Ramsey\Uuid\UuidInterface
+     * @return UuidInterface
      */
-    public static function uuid(): \Ramsey\Uuid\UuidInterface
+    public static function uuid(): UuidInterface
     {
         return Uuid::uuid4();
     }
@@ -23,10 +25,10 @@ class Str extends HyperfStr
     /**
      * Generate a time-ordered UUID (version 4).
      *
-     * @param \DateTimeInterface|null $time
-     * @return \Ramsey\Uuid\UuidInterface
+     * @param DateTimeInterface|null $time
+     * @return UuidInterface
      */
-    public static function orderedUuid(\DateTimeInterface|null $time = null): \Ramsey\Uuid\UuidInterface
+    public static function orderedUuid(DateTimeInterface|null $time = null): UuidInterface
     {
         $factory = new UuidFactory;
 

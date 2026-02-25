@@ -2,10 +2,12 @@
 
 namespace Richard\HyperfPassport\Controller;
 
+use Exception;
 use Hyperf\HttpServer\Response;
 use Hyperf\HttpServer\Request;
-use Hyperf\Utils\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\SessionInterface;
+use Psr\Http\Message\ResponseInterface;
 use Qbhy\HyperfAuth\AuthManager;
 
 class DenyAuthorizationController
@@ -30,7 +32,8 @@ class DenyAuthorizationController
      * Create a new controller instance.
      *
      * @param Response $response
-     * @return void
+     * @param SessionInterface $session
+     * @param AuthManager $auth
      */
     public function __construct(Response $response, SessionInterface $session, AuthManager $auth)
     {
@@ -43,8 +46,10 @@ class DenyAuthorizationController
      * Deny the authorization request.
      *
      * @param Request $request
+     * @return ResponseInterface
+     * @throws Exception
      */
-    public function deny(Request $request)
+    public function deny(Request $request): ResponseInterface
     {
         $this->assertValidAuthToken($request);
 
@@ -56,7 +61,7 @@ class DenyAuthorizationController
             $uri = Arr::first($clientUris);
         }
 
-        $separator = $authRequest->getGrantTypeId() === 'implicit' ? '#' : (strstr($uri, '?') ? '&' : '?');
+        $separator = ($authRequest->getGrantTypeId() === 'implicit') ? '#' : (str_contains($uri, '?') ? '&' : '?');
 
         return $this->response->redirect(
             $uri . $separator . 'error=access_denied&state=' . $request->input('state')

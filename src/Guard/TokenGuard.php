@@ -4,11 +4,14 @@ namespace Richard\HyperfPassport\Guard;
 
 use Exception;
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 use HyperfExt\Encryption\EncryptionManager;
 use HyperfExt\Cookie\CookieValuePrefix;
 use HyperfExt\Cookie\Middleware\EncryptCookieMiddleware;
 use Psr\Http\Message\ServerRequestInterface;
+use Richard\HyperfPassport\Client;
 use Richard\HyperfPassport\ClientRepository;
+use Richard\HyperfPassport\Exception\PassportException;
 use Richard\HyperfPassport\Passport;
 use Richard\HyperfPassport\TokenRepository;
 use Richard\HyperfPassport\TransientToken;
@@ -19,6 +22,7 @@ use Richard\HyperfPassport\Contracts\ExtendAuthGuard;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Qbhy\HyperfAuth\Authenticatable;
 use Qbhy\HyperfAuth\UserProvider;
+use stdClass;
 
 class TokenGuard implements ExtendAuthGuard
 {
@@ -117,12 +121,11 @@ class TokenGuard implements ExtendAuthGuard
     /**
      * Determine if the requested provider matches the client's provider.
      *
-     * @param RequestInterface $request
      * @return bool
      */
-    protected function hasValidProvider(RequestInterface $request)
+    protected function hasValidProvider( ): bool
     {
-        $client = $this->client($request);
+        $client = $this->client();
 
         if ($client && !$client->provider) {
             return true;
@@ -134,14 +137,16 @@ class TokenGuard implements ExtendAuthGuard
     /**
      * Get the user for the incoming request.
      *
-     * @return mixed
+     * @return Authenticatable|null
      */
     public function user(): ?Authenticatable
     {
         $passport = make(Passport::class);
         if ($this->bearerToken($this->request)) {
             return $this->authenticateViaBearerToken($this->request);
-        } elseif ($this->request->cookie($passport->cookie())) {
+        }
+
+        if ($this->request->cookie($passport->cookie())) {
             return $this->authenticateViaCookie($this->request);
         }
         return null;
@@ -150,24 +155,25 @@ class TokenGuard implements ExtendAuthGuard
     /**
      * Get the client for the incoming request.
      *
-     * @return mixed
+     * @return Client|null
      */
     public function client()
     {
         $passport = make(Passport::class);
         if ($this->bearerToken($this->request)) {
             if (!$psr = $this->getPsrRequestViaBearerToken($this->request)) {
-                return;
+                return null;
             }
 
             return $this->clients->findActive(
                 $psr->getAttribute('oauth_client_id')
             );
-        } elseif ($this->request->cookie($passport->cookie())) {
-            if ($token = $this->getTokenViaCookie($this->request)) {
-                return $this->clients->findActive($token['aud']);
-            }
         }
+
+        if ($this->request->cookie($passport->cookie()) && $token = $this->getTokenViaCookie($this->request)) {
+            return $this->clients->findActive($token['aud']);
+        }
+        return null;
     }
 
     /**
@@ -176,14 +182,14 @@ class TokenGuard implements ExtendAuthGuard
      * @param RequestInterface $request
      * @return mixed
      */
-    protected function authenticateViaBearerToken(RequestInterface $request)
+    protected function authenticateViaBearerToken(RequestInterface $request): mixed
     {
         if (!$psr = $this->getPsrRequestViaBearerToken($request)) {
-            return;
+            return null;
         }
 
         if (!$this->hasValidProvider($request)) {
-            return;
+            return null;
         }
 
         // If the access token is valid we will retrieve the user according to the user ID
@@ -194,7 +200,7 @@ class TokenGuard implements ExtendAuthGuard
         );
 
         if (!$currentUser) {
-            return;
+            return null;
         }
 
         // Next, we will assign a token instance to this user which the developers may use
@@ -210,7 +216,7 @@ class TokenGuard implements ExtendAuthGuard
         // its tokens may still be used. If not, we will bail out since we don't want a
         // user to be able to send access tokens for deleted or revoked applications.
         if ($this->clients->revoked($clientId)) {
-            return;
+            return null;
         }
 
         return $token ? $currentUser->withAccessToken($token) : null;
@@ -220,19 +226,18 @@ class TokenGuard implements ExtendAuthGuard
      * Authenticate and get the incoming PSR-7 request via the Bearer token.
      *
      * @param RequestInterface $request
-     * @return ServerRequestInterface
+     * @return ServerRequestInterface|null
      */
-    protected function getPsrRequestViaBearerToken(RequestInterface $request)
+    protected function getPsrRequestViaBearerToken(RequestInterface $request): ?ServerRequestInterface
     {
         try {
             return $this->server->validateAuthenticatedRequest($request);
         } catch (OAuthServerException $e) {
-            $newException = new \Richard\HyperfPassport\Exception\PassportException(
+            throw new PassportException(
                 $e->getMessage(),
                 $this,
                 $e
             );
-            throw $newException;
         }
     }
 
@@ -242,10 +247,10 @@ class TokenGuard implements ExtendAuthGuard
      * @param RequestInterface $request
      * @return mixed
      */
-    protected function authenticateViaCookie(RequestInterface $request)
+    protected function authenticateViaCookie(RequestInterface $request): mixed
     {
         if (!$token = $this->getTokenViaCookie($request)) {
-            return;
+            return null;
         }
 
         // If this user exists, we will return this user and attach a "transient" token to
@@ -254,15 +259,16 @@ class TokenGuard implements ExtendAuthGuard
         if ($currentUser = $this->userProvider->retrieveById($token['sub'])) {
             return $currentUser->withAccessToken(new TransientToken);
         }
+        return null;
     }
 
     /**
      * Get the token cookie via the incoming request.
      *
      * @param RequestInterface $request
-     * @return mixed
+     * @return array|null
      */
-    protected function getTokenViaCookie(RequestInterface $request)
+    protected function getTokenViaCookie(RequestInterface $request): ?array
     {
         $passport = make(Passport::class);
         // If we need to retrieve the token from the cookie, it'll be encrypted , so we must
@@ -271,7 +277,7 @@ class TokenGuard implements ExtendAuthGuard
         try {
             $token = $this->decodeJwtTokenCookie($request);
         } catch (Exception $e) {
-            return;
+            return null;
         }
 
         // We will compare the CSRF token in the decoded API token against the CSRF header
@@ -279,7 +285,7 @@ class TokenGuard implements ExtendAuthGuard
         // a valid source and we won't authenticate the request for further handling.
         if (!$passport->ignoreCsrfToken && (!$this->validCsrf($token, $request) ||
                 time() >= $token['expiry'])) {
-            return;
+            return null;
         }
 
         return $token;
@@ -291,13 +297,14 @@ class TokenGuard implements ExtendAuthGuard
      * @param RequestInterface $request
      * @return array
      */
-    protected function decodeJwtTokenCookie(RequestInterface $request)
+    protected function decodeJwtTokenCookie(RequestInterface $request): array
     {
         $passport = make(Passport::class);
+        $headers = new stdClass();
         return (array)JWT::decode(
             CookieValuePrefix::remove($this->encrypter->decrypt($request->cookie($passport->cookie()), $passport->unserializesCookies)),
-            $this->encrypter->getKey(),
-            ['HS256']
+            new Key($this->encrypter->getKey(), 'HS256'),
+            $headers
         );
     }
 
@@ -308,7 +315,7 @@ class TokenGuard implements ExtendAuthGuard
      * @param RequestInterface $request
      * @return bool
      */
-    protected function validCsrf(array $token, RequestInterface $request)
+    protected function validCsrf(array $token, RequestInterface $request): bool
     {
         return isset($token['csrf']) && hash_equals(
                 $token['csrf'], (string)$this->getTokenFromRequest($request)
@@ -321,7 +328,7 @@ class TokenGuard implements ExtendAuthGuard
      * @param RequestInterface $request
      * @return string
      */
-    protected function getTokenFromRequest(RequestInterface $request)
+    protected function getTokenFromRequest(RequestInterface $request): string
     {
         $token = $request->header('X-CSRF-TOKEN');
 
@@ -337,7 +344,7 @@ class TokenGuard implements ExtendAuthGuard
      *
      * @return bool
      */
-    public static function serialized()
+    public static function serialized(): bool
     {
         return EncryptCookieMiddleware::serialized('XSRF-TOKEN');
     }
@@ -348,7 +355,7 @@ class TokenGuard implements ExtendAuthGuard
      * @param RequestInterface $request
      * @return string|null
      */
-    public function bearerToken(RequestInterface $request)
+    public function bearerToken(RequestInterface $request): ?string
     {
 
         $header = $request->getHeaderLine('Authorization');
@@ -412,13 +419,14 @@ class TokenGuard implements ExtendAuthGuard
     /**
      * Get the ID for the currently authenticated user.
      *
-     * @return int|null
+     * @return int|string|null
      */
-    public function id()
+    public function id(): int|string|null
     {
         if ($this->user()) {
             return $this->user()->getKey();
         }
+        return null;
     }
 
     public function validate(array $credentials = []): bool
@@ -434,10 +442,9 @@ class TokenGuard implements ExtendAuthGuard
      * @param array $credentials
      * @return bool
      */
-    protected function hasValidCredentials(Authenticatable $user, array $credentials)
+    protected function hasValidCredentials(Authenticatable $user, array $credentials): bool
     {
-        $validated = !is_null($user) && $this->userProvider->validateCredentials($user, $credentials);
-        return $validated;
+        return !is_null($user) && $this->userProvider->validateCredentials($user, $credentials);
     }
 
 }

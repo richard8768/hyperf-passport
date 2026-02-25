@@ -2,6 +2,7 @@
 
 namespace Richard\HyperfPassport\Controller;
 
+use Closure;
 use League\OAuth2\Server\Exception\OAuthServerException as LeagueException;
 use Richard\HyperfPassport\Exception\PassportException;
 
@@ -13,12 +14,11 @@ trait HandlesOAuthErrors
     /**
      * Perform the given callback with exception handling.
      *
-     * @param \Closure $callback
-     * @return mixed
+     * @param Closure $callback
      *
-     * @throws PassportException
+     * @return mixed
      */
-    protected function withErrorHandling($callback)
+    protected function withErrorHandling(Closure $callback): mixed
     {
         try {
             return $callback();

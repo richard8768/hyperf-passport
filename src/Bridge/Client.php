@@ -34,7 +34,7 @@ class Client implements ClientEntityInterface
      * @param string|null $provider
      * @return void
      */
-    public function __construct($identifier, $name, $redirectUri, $isConfidential = false, $provider = null)
+    public function __construct(string $identifier, string $name, string $redirectUri, bool $isConfidential = false, string $provider = null)
     {
         $this->setIdentifier((string)$identifier);
 
@@ -49,7 +49,7 @@ class Client implements ClientEntityInterface
      *
      * @return string
      */
-    public function getIdentifier()
+    public function getIdentifier(): string
     {
         return (string)$this->identifier;
     }
@@ -60,7 +60,7 @@ class Client implements ClientEntityInterface
      * @param string $identifier
      * @return void
      */
-    public function setIdentifier($identifier)
+    public function setIdentifier(string $identifier): void
     {
         $this->identifier = $identifier;
     }

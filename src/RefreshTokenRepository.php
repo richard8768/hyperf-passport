@@ -11,7 +11,7 @@ class RefreshTokenRepository
      * @param array $attributes
      * @return RefreshToken
      */
-    public function create($attributes)
+    public function create(array $attributes): RefreshToken
     {
         $passport = make(Passport::class);
         return $passport->refreshToken()->create($attributes);
@@ -23,7 +23,7 @@ class RefreshTokenRepository
      * @param string $id
      * @return RefreshToken
      */
-    public function find($id)
+    public function find(string $id): RefreshToken
     {
         $passport = make(Passport::class);
         return $passport->refreshToken()->where('id', $id)->first();
@@ -35,7 +35,7 @@ class RefreshTokenRepository
      * @param RefreshToken $token
      * @return void
      */
-    public function save(RefreshToken $token)
+    public function save(RefreshToken $token): void
     {
         $token->save();
     }
@@ -46,7 +46,7 @@ class RefreshTokenRepository
      * @param string $id
      * @return mixed
      */
-    public function revokeRefreshToken($id)
+    public function revokeRefreshToken(string $id): mixed
     {
         $passport = make(Passport::class);
         return $passport->refreshToken()->where('id', $id)->update(['revoked' => true]);
@@ -58,7 +58,7 @@ class RefreshTokenRepository
      * @param string $tokenId
      * @return void
      */
-    public function revokeRefreshTokensByAccessTokenId($tokenId)
+    public function revokeRefreshTokensByAccessTokenId(string $tokenId): void
     {
         $passport = make(Passport::class);
         $passport->refreshToken()->where('access_token_id', $tokenId)->update(['revoked' => true]);
@@ -70,7 +70,7 @@ class RefreshTokenRepository
      * @param array $conditions
      * @return mixed
      */
-    public function revokeRefreshTokensByConditons($conditions)
+    public function revokeRefreshTokensByConditons(array $conditions): mixed
     {
         $passport = make(Passport::class);
         $accessTokenIdList = $passport->token()->where($conditions)->get(['id'])->toArray();
@@ -83,7 +83,7 @@ class RefreshTokenRepository
      * @param string $id
      * @return bool
      */
-    public function isRefreshTokenRevoked($id)
+    public function isRefreshTokenRevoked(string $id): bool
     {
         if ($token = $this->find($id)) {
             return $token->revoked;

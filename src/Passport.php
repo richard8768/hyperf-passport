@@ -5,10 +5,8 @@ namespace Richard\HyperfPassport;
 use Carbon\Carbon;
 use DateInterval;
 use DateTimeInterface;
-use Hyperf\Utils\Collection;
-use League\OAuth2\Server\ResourceServer;
-use Mockery;
-use Psr\Http\Message\ServerRequestInterface;
+use Hyperf\Collection\Collection;
+use Hyperf\Collection\Enumerable;
 
 class Passport
 {
@@ -39,21 +37,21 @@ class Passport
     /**
      * The date when access tokens expire.
      *
-     * @var \DateTimeInterface|null
+     * @var DateTimeInterface|null
      */
     public ?DateTimeInterface $tokensExpireAt = null;
 
     /**
      * The date when refresh tokens expire.
      *
-     * @var \DateTimeInterface|null
+     * @var DateTimeInterface|null
      */
     public ?DateTimeInterface $refreshTokensExpireAt = null;
 
     /**
      * The date when personal access tokens expire.
      *
-     * @var \DateTimeInterface|null
+     * @var DateTimeInterface|null
      */
     public ?DateTimeInterface $personalAccessTokensExpireAt = null;
 
@@ -83,14 +81,14 @@ class Passport
      *
      * @var string
      */
-    public string $authCodeModel = 'Richard\HyperfPassport\AuthCode';
+    public string $authCodeModel = AuthCode::class;
 
     /**
      * The client model class name.
      *
      * @var string
      */
-    public string $clientModel = 'Richard\HyperfPassport\Client';
+    public string $clientModel = Client::class;
 
     /**
      * Indicates if clients are identified by UUIDs.
@@ -104,21 +102,21 @@ class Passport
      *
      * @var string
      */
-    public string $personalAccessClientModel = 'Richard\HyperfPassport\PersonalAccessClient';
+    public string $personalAccessClientModel = PersonalAccessClient::class;
 
     /**
      * The token model class name.
      *
      * @var string
      */
-    public string $tokenModel = 'Richard\HyperfPassport\Token';
+    public string $tokenModel = Token::class;
 
     /**
      * The refresh token model class name.
      *
      * @var string
      */
-    public string $refreshTokenModel = 'Richard\HyperfPassport\RefreshToken';
+    public string $refreshTokenModel = RefreshToken::class;
 
     /**
      * Indicates if Passport migrations will be run.
@@ -151,7 +149,7 @@ class Passport
      *
      * @return static
      */
-    public function enableImplicitGrant()
+    public function enableImplicitGrant(): static
     {
         $this->implicitGrantEnabled = true;
         return $this;
@@ -163,7 +161,7 @@ class Passport
      * @param array|string $scope
      * @return void
      */
-    public function setDefaultScope($scope)
+    public function setDefaultScope(array|string $scope): void
     {
         $this->defaultScope = is_array($scope) ? implode(' ', $scope) : $scope;
     }
@@ -173,7 +171,7 @@ class Passport
      *
      * @return array
      */
-    public function scopeIds()
+    public function scopeIds(): array
     {
         return $this->scopes()->pluck('id')->values()->all();
     }
@@ -184,7 +182,7 @@ class Passport
      * @param string $id
      * @return bool
      */
-    public function hasScope($id)
+    public function hasScope(string $id): bool
     {
         return $id === '*' || array_key_exists($id, $this->scopes);
     }
@@ -192,11 +190,11 @@ class Passport
     /**
      * Get all  the scopes defined for the application.
      *
-     * @return Collection
+     * @return Collection|Enumerable
      */
-    public function scopes()
+    public function scopes(): Enumerable|Collection
     {
-        return collect($this->scopes)->map(function ($description, $id) {
+        return \Hyperf\Collection\collect($this->scopes)->map(function ($description, $id) {
             return new Scope($id, $description);
         })->values();
     }
@@ -207,12 +205,13 @@ class Passport
      * @param array $ids
      * @return array
      */
-    public function scopesFor(array $ids)
+    public function scopesFor(array $ids): array
     {
-        return collect($ids)->map(function ($id) {
+        return \Hyperf\Collection\collect($ids)->map(function ($id) {
             if (isset($this->scopes[$id])) {
                 return new Scope($id, $this->scopes[$id]);
             }
+            return [];
         })->filter()->values()->all();
     }
 
@@ -222,7 +221,7 @@ class Passport
      * @param array $scopes
      * @return void
      */
-    public function tokensCan(array $scopes)
+    public function tokensCan(array $scopes): void
     {
         $this->scopes = $scopes;
     }
@@ -230,10 +229,10 @@ class Passport
     /**
      * Get or set when access tokens expire.
      *
-     * @param \DateTimeInterface|null $date
-     * @return Passport|\DateInterval
+     * @param DateTimeInterface|null $date
+     * @return Passport|DateInterval
      */
-    public function tokensExpireIn(DateTimeInterface $date = null)
+    public function tokensExpireIn(DateTimeInterface $date = null): DateInterval|Passport|static
     {
         if (is_null($date)) {
             return $this->tokensExpireAt ? Carbon::now()->diff($this->tokensExpireAt) : new DateInterval('P1Y');
@@ -246,10 +245,10 @@ class Passport
     /**
      * Get or set when refresh tokens expire.
      *
-     * @param \DateTimeInterface|null $date
-     * @return Passport|\DateInterval
+     * @param DateTimeInterface|null $date
+     * @return Passport|DateInterval
      */
-    public function refreshTokensExpireIn(DateTimeInterface $date = null)
+    public function refreshTokensExpireIn(DateTimeInterface $date = null): DateInterval|Passport|static
     {
         if (is_null($date)) {
             return $this->refreshTokensExpireAt ? Carbon::now()->diff($this->refreshTokensExpireAt) :
@@ -264,10 +263,10 @@ class Passport
     /**
      * Get or set when personal access tokens expire.
      *
-     * @param \DateTimeInterface|null $date
-     * @return Passport|\DateInterval
+     * @param DateTimeInterface|null $date
+     * @return Passport|DateInterval
      */
-    public function personalAccessTokensExpireIn(DateTimeInterface $date = null)
+    public function personalAccessTokensExpireIn(DateTimeInterface $date = null): DateInterval|Passport|static
     {
         if (is_null($date)) {
             return $this->personalAccessTokensExpireAt ? Carbon::now()->diff($this->personalAccessTokensExpireAt) :
@@ -285,7 +284,7 @@ class Passport
      * @param string|null $cookie
      * @return Passport|string
      */
-    public function cookie($cookie = null)
+    public function cookie(string $cookie = null): string|Passport|static
     {
         if (is_null($cookie)) {
             return $this->cookie;
@@ -302,7 +301,7 @@ class Passport
      * @param bool $ignoreCsrfToken
      * @return static
      */
-    public function ignoreCsrfToken($ignoreCsrfToken = true)
+    public function ignoreCsrfToken(bool $ignoreCsrfToken = true): static
     {
         $this->ignoreCsrfToken = $ignoreCsrfToken;
 
@@ -315,7 +314,7 @@ class Passport
      * @param string $path
      * @return void
      */
-    public function loadKeysFrom($path)
+    public function loadKeysFrom(string $path): void
     {
         $this->keyPath = $path;
     }
@@ -326,7 +325,7 @@ class Passport
      * @param string $file
      * @return string
      */
-    public function keyPath($file)
+    public function keyPath(string $file): string
     {
         $file = ltrim($file, '/\\');
         $path = BASE_PATH . DIRECTORY_SEPARATOR . (config('passport.key_store_path') ?? 'storage');
@@ -340,7 +339,7 @@ class Passport
      * @param string $authCodeModel
      * @return void
      */
-    public function useAuthCodeModel($authCodeModel)
+    public function useAuthCodeModel(string $authCodeModel): void
     {
         $this->authCodeModel = $authCodeModel;
     }
@@ -350,7 +349,7 @@ class Passport
      *
      * @return string
      */
-    public function authCodeModel()
+    public function authCodeModel(): string
     {
         return $this->authCodeModel;
     }
@@ -360,7 +359,7 @@ class Passport
      *
      * @return AuthCode
      */
-    public function authCode()
+    public function authCode(): AuthCode
     {
         return new $this->authCodeModel;
     }
@@ -371,7 +370,7 @@ class Passport
      * @param string $clientModel
      * @return void
      */
-    public function useClientModel($clientModel)
+    public function useClientModel(string $clientModel): void
     {
         $this->clientModel = $clientModel;
     }
@@ -381,7 +380,7 @@ class Passport
      *
      * @return string
      */
-    public function clientModel()
+    public function clientModel(): string
     {
         return $this->clientModel;
     }
@@ -391,7 +390,7 @@ class Passport
      *
      * @return Client
      */
-    public function client()
+    public function client(): Client
     {
         return new $this->clientModel;
     }
@@ -401,7 +400,7 @@ class Passport
      *
      * @return bool
      */
-    public function clientUuids()
+    public function clientUuids(): bool
     {
         return $this->clientUuids;
     }
@@ -412,7 +411,7 @@ class Passport
      * @param bool $value
      * @return void
      */
-    public function setClientUuids($value)
+    public function setClientUuids(bool $value): void
     {
         $this->clientUuids = $value;
     }
@@ -423,7 +422,7 @@ class Passport
      * @param string $clientModel
      * @return void
      */
-    public function usePersonalAccessClientModel($clientModel)
+    public function usePersonalAccessClientModel(string $clientModel): void
     {
         $this->personalAccessClientModel = $clientModel;
     }
@@ -433,7 +432,7 @@ class Passport
      *
      * @return string
      */
-    public function personalAccessClientModel()
+    public function personalAccessClientModel(): string
     {
         return $this->personalAccessClientModel;
     }
@@ -443,7 +442,7 @@ class Passport
      *
      * @return PersonalAccessClient
      */
-    public function personalAccessClient()
+    public function personalAccessClient(): PersonalAccessClient
     {
         return new $this->personalAccessClientModel;
     }
@@ -454,7 +453,7 @@ class Passport
      * @param string $tokenModel
      * @return void
      */
-    public function useTokenModel($tokenModel)
+    public function useTokenModel(string $tokenModel): void
     {
         $this->tokenModel = $tokenModel;
     }
@@ -464,7 +463,7 @@ class Passport
      *
      * @return string
      */
-    public function tokenModel()
+    public function tokenModel(): string
     {
         return $this->tokenModel;
     }
@@ -474,7 +473,7 @@ class Passport
      *
      * @return Token
      */
-    public function token()
+    public function token(): Token
     {
         return new $this->tokenModel;
     }
@@ -485,7 +484,7 @@ class Passport
      * @param string $refreshTokenModel
      * @return void
      */
-    public function useRefreshTokenModel($refreshTokenModel)
+    public function useRefreshTokenModel(string $refreshTokenModel): void
     {
         $this->refreshTokenModel = $refreshTokenModel;
     }
@@ -495,7 +494,7 @@ class Passport
      *
      * @return string
      */
-    public function refreshTokenModel()
+    public function refreshTokenModel(): string
     {
         return $this->refreshTokenModel;
     }
@@ -505,7 +504,7 @@ class Passport
      *
      * @return RefreshToken
      */
-    public function refreshToken()
+    public function refreshToken(): RefreshToken
     {
         return new $this->refreshTokenModel;
     }
@@ -515,7 +514,7 @@ class Passport
      *
      * @return static
      */
-    public function hashClientSecrets()
+    public function hashClientSecrets(): static
     {
         $this->hashesClientSecrets = true;
         return $this;
@@ -526,7 +525,7 @@ class Passport
      *
      * @return static
      */
-    public function ignoreMigrations()
+    public function ignoreMigrations(): static
     {
         $this->runsMigrations = false;
         return $this;
@@ -537,7 +536,7 @@ class Passport
      *
      * @return static
      */
-    public function withCookieSerialization()
+    public function withCookieSerialization(): static
     {
         $this->unserializesCookies = true;
         return $this;
@@ -548,7 +547,7 @@ class Passport
      *
      * @return static
      */
-    public function withoutCookieSerialization()
+    public function withoutCookieSerialization(): static
     {
         $this->unserializesCookies = false;
         return $this;

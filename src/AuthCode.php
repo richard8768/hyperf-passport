@@ -66,7 +66,7 @@ class AuthCode extends Model
      *
      * @return BelongsTo
      */
-    public function client()
+    public function client(): BelongsTo
     {
         $passport = make(Passport::class);
         return $this->belongsTo($passport->clientModel());
@@ -77,7 +77,7 @@ class AuthCode extends Model
      *
      * @return string|null
      */
-    public function getConnectionName()
+    public function getConnectionName(): ?string
     {
         return config('passport.database_connection') ?? $this->connection;
     }

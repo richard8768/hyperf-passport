@@ -3,6 +3,7 @@
 namespace Richard\HyperfPassport\Controller;
 
 use Hyperf\Database\Model\Collection;
+use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Request;
 use Hyperf\HttpMessage\Server\Response;
 use Richard\HyperfPassport\RefreshTokenRepository;
@@ -36,7 +37,7 @@ class AuthorizedAccessTokenController
      *
      * @param TokenRepository $tokenRepository
      * @param RefreshTokenRepository $refreshTokenRepository
-     * @return void
+     * @param AuthManager $auth
      */
     public function __construct(TokenRepository $tokenRepository, RefreshTokenRepository $refreshTokenRepository, AuthManager $auth)
     {
@@ -49,9 +50,9 @@ class AuthorizedAccessTokenController
      * Get all the authorized tokens for the authenticated user.
      *
      * @param Request $request
-     * @return Collection
+     * @return \Hyperf\Collection\Collection|Collection
      */
-    public function forUser(Request $request)
+    public function forUser(Request $request): Collection|\Hyperf\Collection\Collection
     {
         $user = $this->auth->guard('passport')->user();
         $tokens = $this->tokenRepository->forUser($user->getKey());
@@ -77,7 +78,7 @@ class AuthorizedAccessTokenController
 
         if (is_null($token)) {
             $response = new Response();
-            return $response->withStatus(404)->withBody(new \Hyperf\HttpMessage\Stream\SwooleStream(''));
+            return $response->withStatus(404)->withBody(new SwooleStream(''));
         }
 
         $token->revoke();
@@ -85,7 +86,7 @@ class AuthorizedAccessTokenController
         $this->refreshTokenRepository->revokeRefreshTokensByAccessTokenId($tokenId);
 
         $response = new Response();
-        return $response->withStatus(204)->withBody(new \Hyperf\HttpMessage\Stream\SwooleStream(''));
+        return $response->withStatus(204)->withBody(new SwooleStream(''));
     }
 
 }

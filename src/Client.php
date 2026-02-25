@@ -63,7 +63,7 @@ class Client extends Model
         parent::boot();
     }
 
-    public function creating(Creating $event)
+    public function creating(Creating $event): \Closure
     {
         return function ($model) {
             if (config('passport.client_uuids')) {
@@ -77,12 +77,12 @@ class Client extends Model
      *
      * @return BelongsTo
      */
-    public function user()
+    public function user(): BelongsTo
     {
         $provider = $this->provider ?: config('auth.guards.passport.provider');
 
         return $this->belongsTo(
-            config("auth.providers.{$provider}.model")
+            config('auth.providers.'.$provider.'.model')
         );
     }
 
@@ -91,7 +91,7 @@ class Client extends Model
      *
      * @return HasMany
      */
-    public function authCodes()
+    public function authCodes(): HasMany
     {
         $passport = make(Passport::class);
         return $this->hasMany($passport->authCodeModel(), 'client_id');
@@ -102,7 +102,7 @@ class Client extends Model
      *
      * @return HasMany
      */
-    public function tokens()
+    public function tokens(): HasMany
     {
         $passport = make(Passport::class);
         return $this->hasMany($passport->tokenModel(), 'client_id');
@@ -115,7 +115,7 @@ class Client extends Model
      *
      * @return string|null
      */
-    public function getPlainSecretAttribute()
+    public function getPlainSecretAttribute(): ?string
     {
         return $this->plainSecret;
     }
@@ -126,7 +126,7 @@ class Client extends Model
      * @param string|null $value
      * @return void
      */
-    public function setSecretAttribute($value)
+    public function setSecretAttribute($value): void
     {
         $this->plainSecret = $value;
         $passport = make(Passport::class);
@@ -144,7 +144,7 @@ class Client extends Model
      *
      * @return bool
      */
-    public function firstParty()
+    public function firstParty(): bool
     {
         return $this->personal_access_client || $this->password_client;
     }
@@ -154,7 +154,7 @@ class Client extends Model
      *
      * @return bool
      */
-    public function skipsAuthorization()
+    public function skipsAuthorization(): bool
     {
         return false;
     }
@@ -164,7 +164,7 @@ class Client extends Model
      *
      * @return bool
      */
-    public function confidential()
+    public function confidential(): bool
     {
         return !empty($this->secret);
     }
@@ -174,7 +174,7 @@ class Client extends Model
      *
      * @return string
      */
-    public function getKeyType()
+    public function getKeyType(): string
     {
         $passport = make(Passport::class);
         return $passport->clientUuids() ? 'string' : $this->keyType;
@@ -185,7 +185,7 @@ class Client extends Model
      *
      * @return bool
      */
-    public function getIncrementing()
+    public function getIncrementing(): bool
     {
         $passport = make(Passport::class);
         return $passport->clientUuids() ? false : $this->incrementing;
@@ -196,7 +196,7 @@ class Client extends Model
      *
      * @return string|null
      */
-    public function getConnectionName()
+    public function getConnectionName(): ?string
     {
         return config('passport.database_connection') ?? $this->connection;
     }

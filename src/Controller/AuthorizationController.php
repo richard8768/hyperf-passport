@@ -8,6 +8,7 @@ use Hyperf\HttpMessage\Server\Response;
 use Hyperf\View\Render;
 use Hyperf\HttpServer\Request;
 use Hyperf\Stringable\Str;
+use Psr\Http\Message\ResponseInterface;
 use Richard\HyperfPassport\Bridge\User;
 use Richard\HyperfPassport\ClientRepository;
 use Richard\HyperfPassport\Passport;
@@ -50,7 +51,7 @@ class AuthorizationController
      * @param AuthorizationServer $server
      * @param Render $render
      * @param SessionInterface $session
-     * @return void
+     * @param AuthManager $auth
      */
     public function __construct(AuthorizationServer $server, Render $render, SessionInterface $session, AuthManager $auth)
     {
@@ -67,8 +68,9 @@ class AuthorizationController
      * @param Request $request
      * @param ClientRepository $clients
      * @param TokenRepository $tokens
+     * @return Response|ResponseInterface
      */
-    public function authorize(ServerRequestInterface $psrRequest, Request $request, ClientRepository $clients, TokenRepository $tokens)
+    public function authorize(ServerRequestInterface $psrRequest, Request $request, ClientRepository $clients, TokenRepository $tokens): Response|ResponseInterface
     {
         $authRequest = $this->withErrorHandling(function () use ($psrRequest) {
             return $this->server->validateAuthorizationRequest($psrRequest);
@@ -76,7 +78,7 @@ class AuthorizationController
 
         $scopes = $this->parseScopes($authRequest);
         $token = $tokens->findValidToken($user = $this->auth->guard('session')->user(), $client = $clients->find($authRequest->getClient()->getIdentifier()));
-        if ($token && $token->scopes === collect($scopes)->pluck('id')->all() || $client->skipsAuthorization()) {
+        if (($token && ($token->scopes === collect($scopes)->pluck('id')->all())) || $client->skipsAuthorization()) {
             return $this->approveRequest($authRequest, $user);
         }
 
@@ -93,10 +95,9 @@ class AuthorizationController
      * @param AuthorizationRequest $authRequest
      * @return array
      */
-    protected function parseScopes($authRequest)
+    protected function parseScopes(AuthorizationRequest $authRequest): array
     {
-        $passport = make(Passport::class);
-        return $passport->scopesFor(collect($authRequest->getScopes())->map(function ($scope) {
+        return make(Passport::class)->scopesFor(collect($authRequest->getScopes())->map(function ($scope) {
             return $scope->getIdentifier();
         })->unique()->all());
     }
@@ -108,7 +109,7 @@ class AuthorizationController
      * @param Model $user
      * @return  Response
      */
-    protected function approveRequest($authRequest, $user)
+    protected function approveRequest(AuthorizationRequest $authRequest, Model $user): Response
     {
         $authRequest->setUser(new User($user->getKey()));
 

@@ -20,7 +20,7 @@ trait HasApiTokens
      *
      * @return HasMany
      */
-    public function clients()
+    public function clients(): HasMany
     {
         $passport = make(Passport::class);
         return $this->hasMany($passport->clientModel(), 'user_id');
@@ -31,7 +31,7 @@ trait HasApiTokens
      *
      * @return HasMany
      */
-    public function tokens()
+    public function tokens(): HasMany
     {
         $passport = make(Passport::class);
         return $this->hasMany($passport->tokenModel(), 'user_id')->orderBy('created_at', 'desc');
@@ -42,7 +42,7 @@ trait HasApiTokens
      *
      * @return Token|null
      */
-    public function token()
+    public function token(): ?Token
     {
         return $this->accessToken;
     }
@@ -53,7 +53,7 @@ trait HasApiTokens
      * @param string $scope
      * @return bool
      */
-    public function tokenCan($scope)
+    public function tokenCan(string $scope): bool
     {
         return $this->accessToken ? $this->accessToken->can($scope) : false;
     }
@@ -63,9 +63,10 @@ trait HasApiTokens
      *
      * @param string $name
      * @param array $scopes
+     * @param string $provider
      * @return PersonalAccessTokenResult
      */
-    public function createToken($name, array $scopes = [], $provider = 'users')
+    public function createToken(string $name, array $scopes = [], string $provider = 'users'): PersonalAccessTokenResult
     {
         return make(PersonalAccessTokenFactory::class)->make(
             $this->getKey(), $name, $scopes, $provider
@@ -78,7 +79,7 @@ trait HasApiTokens
      * @param Token $accessToken
      * @return $this
      */
-    public function withAccessToken($accessToken)
+    public function withAccessToken(Token $accessToken): self
     {
         $this->accessToken = $accessToken;
 

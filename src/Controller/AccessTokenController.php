@@ -46,7 +46,7 @@ class AccessTokenController
      * @param ServerRequestInterface $request
      * @return Response
      */
-    public function issueToken(ServerRequestInterface $request)
+    public function issueToken(ServerRequestInterface $request): Response
     {
         return $this->withErrorHandling(function () use ($request) {
             return $this->convertResponse(

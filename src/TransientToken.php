@@ -10,7 +10,7 @@ class TransientToken
      * @param string $scope
      * @return bool
      */
-    public function can($scope)
+    public function can($scope): bool
     {
         return true;
     }
@@ -21,7 +21,7 @@ class TransientToken
      * @param string $scope
      * @return bool
      */
-    public function cant($scope)
+    public function cant($scope): bool
     {
         return false;
     }
@@ -31,7 +31,7 @@ class TransientToken
      *
      * @return bool
      */
-    public function transient()
+    public function transient(): bool
     {
         return true;
     }

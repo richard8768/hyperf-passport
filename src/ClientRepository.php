@@ -4,6 +4,7 @@ namespace Richard\HyperfPassport;
 
 use Hyperf\Database\Model\Collection;
 use Hyperf\Stringable\Str;
+use Richard\HyperfPassport\Exception\PassportException;
 use RuntimeException;
 
 class ClientRepository
@@ -30,7 +31,7 @@ class ClientRepository
      * @param string|null $personalAccessClientSecret
      * @return void
      */
-    public function __construct($personalAccessClientId = null, $personalAccessClientSecret = null)
+    public function __construct(int|string $personalAccessClientId = null, string $personalAccessClientSecret = null)
     {
         $this->personalAccessClientId = $personalAccessClientId;
         $this->personalAccessClientSecret = $personalAccessClientSecret;
@@ -42,9 +43,9 @@ class ClientRepository
      * @param int $id
      * @return Client|null
      */
-    public function find($id)
+    public function find(int $id): ?Client
     {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         $client = $passport->client();
 
         return $client->where($client->getKeyName(), $id)->first();
@@ -56,7 +57,7 @@ class ClientRepository
      * @param int $id
      * @return Client|null
      */
-    public function findActive($id)
+    public function findActive(int $id): ?Client
     {
         $client = $this->find($id);
 
@@ -70,9 +71,9 @@ class ClientRepository
      * @param mixed $userId
      * @return Client|null
      */
-    public function findForUser($clientId, $userId)
+    public function findForUser(int $clientId, mixed $userId): ?Client
     {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         $client = $passport->client();
 
         return $client
@@ -87,9 +88,9 @@ class ClientRepository
      * @param mixed $userId
      * @return Collection
      */
-    public function forUser($userId)
+    public function forUser(mixed $userId): Collection
     {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         return $passport->client()
             ->where('user_id', $userId)
             ->orderBy('name', 'asc')->get();
@@ -99,7 +100,7 @@ class ClientRepository
      * Get the active client instances for the given user ID.
      *
      * @param mixed $userId
-     * @return Collection
+     * @return \Hyperf\Collection\Collection
      */
     public function activeForUser($userId)
     {
@@ -110,44 +111,44 @@ class ClientRepository
 
     public function findForProvider($id, $provider = 'user')
     {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         $client = $passport->client();
 
         if (empty($provider)) {
             return $client->where($client->getKeyName(), $id)->first();
-        } else {
-            return $client->where($client->getKeyName(), $id)->where('provider', $provider)->first();
         }
+
+        return $client->where($client->getKeyName(), $id)->where('provider', $provider)->first();
     }
 
     /**
      * Get the personal access token client for the application.
      *
+     * @param string $provider
      * @return Client
      *
-     * @throws \RuntimeException
      */
-    public function personalAccessClient($provider = 'users')
+    public function personalAccessClient(string $provider = 'users'): Client
     {
         if ($this->personalAccessClientId) {
             $resClient = $this->findForProvider($this->personalAccessClientId, $provider);
             if (empty($resClient)) {
-                throw new \Richard\HyperfPassport\Exception\PassportException('Personal access client not found. Please create one..');
+                throw new PassportException('Personal access client not found. Please create one..');
             }
             return $resClient;
         }
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         $client = $passport->client();
         $client = $client->where('provider', $provider)->orderBy($client->getKeyName(), 'desc')->first();
 
         if (!$client->exists()) {
-            throw new \Richard\HyperfPassport\Exception\PassportException('Personal access client not found. Please create one.');
+            throw new PassportException('Personal access client not found. Please create one.');
         }
 
         $personalClient = $passport->personalAccessClient();
         $clientRes = $personalClient->orderBy($personalClient->getKeyName(), 'desc')->first();
         if (empty($clientRes)) {
-            throw new \Richard\HyperfPassport\Exception\PassportException('Personal access client not found. Please create one..');
+            throw new PassportException('Personal access client not found. Please create one..');
         }
 
         return $clientRes->client;
@@ -156,18 +157,18 @@ class ClientRepository
     /**
      * Store a new client.
      *
-     * @param int $userId
+     * @param int|null $userId
      * @param string $name
      * @param string $redirect
-     * @param string|null $provider
+     * @param null $provider
      * @param bool $personalAccess
      * @param bool $password
      * @param bool $confidential
      * @return Client
      */
-    public function create($userId, $name, $redirect, $provider = null, $personalAccess = false, $password = false, $confidential = true)
+    public function create(?int $userId, string $name, string $redirect, $provider = null, bool $personalAccess = false, bool $password = false, bool $confidential = true): Client
     {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         $client = $passport->client()->forceFill([
             'user_id' => $userId,
             'name' => $name,
@@ -187,14 +188,15 @@ class ClientRepository
     /**
      * Store a new personal access token client.
      *
-     * @param int $userId
+     * @param int|null $userId
      * @param string $name
      * @param string $redirect
+     * @param null $provider
      * @return Client
      */
-    public function createPersonalAccessClient($userId, $name, $redirect, $provider = null)
+    public function createPersonalAccessClient(?int $userId, string $name, string $redirect, $provider = null): Client
     {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         return tap($this->create($userId, $name, $redirect, $provider, true), function ($client) use ($passport) {
             $accessClient = $passport->personalAccessClient();
             $accessClient->client_id = $client->id;
@@ -205,13 +207,13 @@ class ClientRepository
     /**
      * Store a new password grant client.
      *
-     * @param int $userId
+     * @param int|null $userId
      * @param string $name
      * @param string $redirect
-     * @param string|null $provider
+     * @param null $provider
      * @return Client
      */
-    public function createPasswordGrantClient($userId, $name, $redirect, $provider = null)
+    public function createPasswordGrantClient(?int $userId, string $name, string $redirect, $provider = null): Client
     {
         return $this->create($userId, $name, $redirect, $provider, false, true);
     }
@@ -224,7 +226,7 @@ class ClientRepository
      * @param string $redirect
      * @return Client
      */
-    public function update(Client $client, $name, $redirect)
+    public function update(Client $client, string $name, string $redirect): Client
     {
         $client->forceFill([
             'name' => $name, 'redirect' => $redirect,
@@ -239,7 +241,7 @@ class ClientRepository
      * @param Client $client
      * @return Client
      */
-    public function regenerateSecret(Client $client)
+    public function regenerateSecret(Client $client): Client
     {
         $client->forceFill([
             'secret' => Str::random(40),
@@ -254,7 +256,7 @@ class ClientRepository
      * @param int $id
      * @return bool
      */
-    public function revoked($id)
+    public function revoked($id): bool
     {
         $client = $this->find($id);
 
@@ -267,7 +269,7 @@ class ClientRepository
      * @param Client $client
      * @return void
      */
-    public function delete(Client $client)
+    public function delete(Client $client): void
     {
         $client->tokens()->update(['revoked' => true]);
 
@@ -279,7 +281,7 @@ class ClientRepository
      *
      * @return int|string|null
      */
-    public function getPersonalAccessClientId()
+    public function getPersonalAccessClientId(): int|string|null
     {
         return $this->personalAccessClientId;
     }
@@ -289,7 +291,7 @@ class ClientRepository
      *
      * @return string|null
      */
-    public function getPersonalAccessClientSecret()
+    public function getPersonalAccessClientSecret(): ?string
     {
         return $this->personalAccessClientSecret;
     }

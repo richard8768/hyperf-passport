@@ -2,7 +2,7 @@
 
 namespace Richard\HyperfPassport\Controller;
 
-use Hyperf\Utils\Collection;
+use Hyperf\Collection\Collection;
 use Richard\HyperfPassport\Passport;
 
 class ScopeController
@@ -13,10 +13,9 @@ class ScopeController
      *
      * @return Collection
      */
-    public function all()
+    public function all(): Collection
     {
-        $passport = make(Passport::class);
-        return $passport->scopes();
+        return make(Passport::class)->scopes();
     }
 
 }

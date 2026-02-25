@@ -12,6 +12,14 @@ declare(strict_types=1);
 
 namespace Richard\HyperfPassport;
 
+use League\OAuth2\Server\AuthorizationServer;
+use League\OAuth2\Server\ResourceServer;
+use Richard\HyperfPassport\Console\ClientCommand;
+use Richard\HyperfPassport\Console\HashCommand;
+use Richard\HyperfPassport\Console\InstallCommand;
+use Richard\HyperfPassport\Console\KeysCommand;
+use Richard\HyperfPassport\Console\PurgeCommand;
+
 class ConfigProvider
 {
 
@@ -22,18 +30,18 @@ class ConfigProvider
                 \Hyperf\HttpServer\Router\DispatcherFactory::class => DispatcherFactory::class,
                 \Hyperf\Session\Session::class => Session::class,
                 \Qbhy\HyperfAuth\AuthManager::class => AuthManager::class,
-                \League\OAuth2\Server\AuthorizationServer::class => AuthorizationServerFactory::class,
-                \League\OAuth2\Server\ResourceServer::class => ResourceServerFactory::class,
+                AuthorizationServer::class => AuthorizationServerFactory::class,
+                ResourceServer::class => ResourceServerFactory::class,
             ],
             'listeners' => [
                 //
             ],
             'commands' => [
-                \Richard\HyperfPassport\Console\InstallCommand::class,
-                \Richard\HyperfPassport\Console\ClientCommand::class,
-                \Richard\HyperfPassport\Console\KeysCommand::class,
-                \Richard\HyperfPassport\Console\HashCommand::class,
-                \Richard\HyperfPassport\Console\PurgeCommand::class,
+                InstallCommand::class,
+                ClientCommand::class,
+                KeysCommand::class,
+                HashCommand::class,
+                PurgeCommand::class,
             ],
             'annotations' => [
                 'scan' => [

@@ -26,7 +26,7 @@ class RefreshTokenCreated
      * @param string $accessTokenId
      * @return void
      */
-    public function __construct($refreshTokenId, $accessTokenId)
+    public function __construct(string $refreshTokenId, string $accessTokenId)
     {
         $this->accessTokenId = $accessTokenId;
         $this->refreshTokenId = $refreshTokenId;

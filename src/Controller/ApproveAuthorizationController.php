@@ -2,6 +2,7 @@
 
 namespace Richard\HyperfPassport\Controller;
 
+use Exception;
 use Hyperf\HttpMessage\Server\Response;
 use League\OAuth2\Server\AuthorizationServer;
 use Nyholm\Psr7\Response as Psr7Response;
@@ -32,7 +33,8 @@ class ApproveAuthorizationController
      * Create a new controller instance.
      *
      * @param AuthorizationServer $server
-     * @return void
+     * @param SessionInterface $session
+     * @param AuthManager $auth
      */
     public function __construct(AuthorizationServer $server, SessionInterface $session, AuthManager $auth)
     {
@@ -46,8 +48,9 @@ class ApproveAuthorizationController
      *
      * @param Request $request
      * @return Response
+     * @throws Exception
      */
-    public function approve(Request $request)
+    public function approve(Request $request): Response
     {
         $this->assertValidAuthToken($request);
 

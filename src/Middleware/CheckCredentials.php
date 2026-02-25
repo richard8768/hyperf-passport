@@ -45,13 +45,13 @@ abstract class CheckCredentials
      * Handle an incoming request.
      *
      * @param Request $request
-     * @param \Closure $next
+     * @param Closure $next
      * @param mixed ...$scopes
      * @return mixed
      *
      * @throws PassportException
      */
-    public function handle($request, Closure $next, ...$scopes)
+    public function handle(Request $request, Closure $next, ...$scopes): mixed
     {
         $psr = $request;
 
@@ -77,7 +77,7 @@ abstract class CheckCredentials
      *
      * @throws PassportException
      */
-    protected function validate($psr, $scopes)
+    protected function validate(ServerRequestInterface $psr, array $scopes): void
     {
         $token = $this->repository->find($psr->getAttribute('oauth_access_token_id'));
 
@@ -94,7 +94,7 @@ abstract class CheckCredentials
      *
      * @throws PassportException
      */
-    abstract protected function validateCredentials($token);
+    abstract protected function validateCredentials(Token $token): void;
 
     /**
      * Validate token scopes.
@@ -105,5 +105,5 @@ abstract class CheckCredentials
      *
      * @throws PassportException
      */
-    abstract protected function validateScopes($token, $scopes);
+    abstract protected function validateScopes(Token $token, array $scopes): void;
 }

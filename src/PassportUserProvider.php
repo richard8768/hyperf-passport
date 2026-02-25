@@ -27,7 +27,7 @@ class PassportUserProvider implements ExtendUserProvider
     /**
      * {@inheritdoc}
      */
-    public function retrieveById($identifier)
+    public function retrieveById($identifier): ?Authenticatable
     {
         return call_user_func_array([$this->config['model'], 'retrieveById'], [$identifier]);
     }
@@ -35,7 +35,7 @@ class PassportUserProvider implements ExtendUserProvider
     /**
      * {@inheritdoc}
      */
-    public function retrieveByToken($identifier, $token)
+    public function retrieveByToken($identifier, string $token): ?Authenticatable
     {
         return call_user_func_array([$this->config['model'], 'retrieveById'], [$identifier, $token]);
     }
@@ -61,7 +61,7 @@ class PassportUserProvider implements ExtendUserProvider
      *
      * @return string
      */
-    public function getProviderName()
+    public function getProviderName(): string
     {
         return $this->name;
     }

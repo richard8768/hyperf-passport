@@ -16,7 +16,7 @@ class PersonalAccessGrant extends AbstractGrant
         ServerRequestInterface $request,
         ResponseTypeInterface  $responseType,
         DateInterval           $accessTokenTTL
-    )
+    ): ResponseTypeInterface
     {
         // Validate request
         $client = $this->validateClient($request);
@@ -40,7 +40,7 @@ class PersonalAccessGrant extends AbstractGrant
     /**
      * {@inheritdoc}
      */
-    public function getIdentifier()
+    public function getIdentifier(): string
     {
         return 'personal_access';
     }

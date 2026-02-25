@@ -35,7 +35,7 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
      *
      * @param TokenRepository $tokenRepository
      * @param EventDispatcherInterface $events
-     * @return void
+     * @param AuthManager $auth
      */
     public function __construct(TokenRepository $tokenRepository, EventDispatcherInterface $events, AuthManager $auth)
     {
@@ -47,7 +47,7 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getNewToken(ClientEntityInterface $clientEntity, array $scopes, $userIdentifier = null)
+    public function getNewToken(ClientEntityInterface $clientEntity, array $scopes, $userIdentifier = null): AccessToken|AccessTokenEntityInterface
     {
         return new AccessToken($userIdentifier, $scopes, $clientEntity);
     }
@@ -55,11 +55,11 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity)
+    public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity): void
     {
         $isRevoke = config('passport.is_revoke_user_others_token');
         if ($isRevoke) {
-            $this->tokenRepository->revokeAccessTokenByConditons([
+            $this->tokenRepository->revokeAccessTokenByConditions([
                 'user_id' => $accessTokenEntity->getUserIdentifier(),
                 'client_id' => $accessTokenEntity->getClient()->getIdentifier()
             ]);
@@ -84,7 +84,7 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function revokeAccessToken($tokenId)
+    public function revokeAccessToken($tokenId): void
     {
         $this->tokenRepository->revokeAccessToken($tokenId);
     }
@@ -92,7 +92,7 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function isAccessTokenRevoked($tokenId)
+    public function isAccessTokenRevoked($tokenId): bool
     {
         return $this->tokenRepository->isAccessTokenRevoked($tokenId);
     }

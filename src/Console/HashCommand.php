@@ -27,7 +27,7 @@ class HashCommand extends Command
      *
      * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $passport = make(Passport::class);
         if (!$passport->hashesClientSecrets) {
@@ -55,7 +55,7 @@ class HashCommand extends Command
         }
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setDescription($this->description);
     }

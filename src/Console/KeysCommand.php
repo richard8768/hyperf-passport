@@ -32,7 +32,7 @@ class KeysCommand extends Command
      *
      * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $passport = make(Passport::class);
         [$publicKey, $privateKey] = [
@@ -59,7 +59,7 @@ class KeysCommand extends Command
         }
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setDescription($this->description);
     }

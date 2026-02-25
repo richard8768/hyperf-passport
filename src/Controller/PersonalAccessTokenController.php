@@ -3,6 +3,7 @@
 namespace Richard\HyperfPassport\Controller;
 
 use Hyperf\Database\Model\Collection;
+use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface as ValidationFactory;
 use Hyperf\HttpServer\Request;
 use Hyperf\HttpMessage\Server\Response;
@@ -52,9 +53,9 @@ class PersonalAccessTokenController
      * Get all the personal access tokens for the authenticated user.
      *
      * @param Request $request
-     * @return Collection
+     * @return \Hyperf\Collection\Collection|Collection
      */
-    public function forUser(Request $request)
+    public function forUser(Request $request): Collection|\Hyperf\Collection\Collection
     {
         $user = $this->auth->guard('passport')->user();
         $tokens = $this->tokenRepository->forUser($user->getKey());
@@ -70,7 +71,7 @@ class PersonalAccessTokenController
      * @param Request $request
      * @return PersonalAccessTokenResult
      */
-    public function store(Request $request)
+    public function store(Request $request): PersonalAccessTokenResult
     {
         $passport = make(Passport::class);
         $this->validation->make($request->all(), [
@@ -79,8 +80,7 @@ class PersonalAccessTokenController
         ])->validate();
         $passportGuard = $this->auth->guard('passport');
         $provider = $passportGuard->getProvider()->getProviderName();
-        $user = $passportGuard->user();
-        return $user->createToken(
+        return $passportGuard->user()->createToken(
             $request->input('name'), $request->input('scopes') ?: [], $provider
         );
     }
@@ -92,7 +92,7 @@ class PersonalAccessTokenController
      * @param string $tokenId
      * @return Response
      */
-    public function destroy(Request $request, $tokenId)
+    public function destroy(Request $request, $tokenId): Response
     {
         $user = $this->auth->guard('passport')->user();
         $token = $this->tokenRepository->findForUser(
@@ -101,13 +101,13 @@ class PersonalAccessTokenController
 
         if (is_null($token)) {
             $response = new Response();
-            return $response->withStatus(404)->withBody(new \Hyperf\HttpMessage\Stream\SwooleStream(''));
+            return $response->withStatus(404)->withBody(new SwooleStream(''));
         }
 
         $token->revoke();
 
         $response = new Response();
-        return $response->withStatus(204)->withBody(new \Hyperf\HttpMessage\Stream\SwooleStream(''));
+        return $response->withStatus(204)->withBody(new SwooleStream(''));
     }
 
 }

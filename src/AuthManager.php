@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Richard\HyperfPassport;
 
-use Hyperf\Contract\ConfigInterface;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Qbhy\HyperfAuth\Exception\GuardException;
 use Qbhy\HyperfAuth\Exception\UserProviderException;
@@ -12,7 +11,6 @@ use Qbhy\HyperfAuth\AuthManager as QbhyAuthManager;
 use Qbhy\HyperfAuth\AuthGuard;
 use Qbhy\HyperfAuth\UserProvider;
 use Hyperf\Di\Annotation\Inject;
-use Richard\HyperfPassport\ClientRepository;
 
 class AuthManager extends QbhyAuthManager
 {
@@ -27,18 +25,20 @@ class AuthManager extends QbhyAuthManager
     public function guard(?string $name = null): AuthGuard
     {
         $provider = '';
-        $clentId = $this->serverRequest->header('X-Client-Id') ?: ($this->serverRequest->header('x-client-id') ?: ($this->serverRequest->input('X-Client-Id') ?: $this->serverRequest->input('x-client-id')));
-        if (!empty($clentId)) {
+        $headerClientId = $this->serverRequest->header('X-Client-Id') ?? $this->serverRequest->header('x-client-id');
+        $inputClientId = $this->serverRequest->input('X-Client-Id') ?? $this->serverRequest->input('x-client-id');
+        $clientId = (!empty($headerClientId)) ? $headerClientId : $inputClientId;
+        if (!empty($clientId)) {
             $clients = make(ClientRepository::class);
-            $clientInfo = $clients->findActive($clentId);
-            $tmpProvider = !empty($clientInfo) ? $clientInfo->provider : '';
+            $clientInfo = $clients->findActive($clientId);
+            $tmpProvider = $clientInfo->provider ?? '';
             $configProviders = $this->config['providers'];
             $provider = !empty($tmpProvider) && $configProviders[$tmpProvider] ? $tmpProvider : '';
         }
 
         $name = $name ?? $this->defaultGuard();
         if (empty($this->config['guards'][$name])) {
-            throw new GuardException("Does not support this driver: {$name}");
+            throw new GuardException('Does not support this driver: '.$name);
         }
 
         $config = $this->config['guards'][$name];
@@ -57,7 +57,7 @@ class AuthManager extends QbhyAuthManager
     {
         $name = $name ?? $this->defaultProvider();
         if (empty($this->config['providers'][$name])) {
-            throw new UserProviderException("Does not support this provider: {$name}");
+            throw new UserProviderException('Does not support this provider: '.$name);
         }
 
         $config = $this->config['providers'][$name];

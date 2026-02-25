@@ -7,8 +7,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Qbhy\HyperfAuth\Exception\UnauthorizedException;
 use Qbhy\HyperfAuth\Authenticatable;
+use Richard\HyperfPassport\Exception\PassportException;
 
 class PassportAuthMiddleware implements MiddlewareInterface
 {
@@ -17,7 +17,7 @@ class PassportAuthMiddleware implements MiddlewareInterface
     // 支持多个 guard
 
     #[Inject]
-    protected \Richard\HyperfPassport\AuthManager $auth;
+    protected AuthManager $auth;
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
@@ -25,7 +25,7 @@ class PassportAuthMiddleware implements MiddlewareInterface
             $guard = $this->auth->guard($name);
 
             if (!$guard->user() instanceof Authenticatable) {
-                throw new \Richard\HyperfPassport\Exception\PassportException("Without authorization from {$guard->getName()} guard", $guard);
+                throw new PassportException("Without authorization from {$guard->getName()} guard", $guard);
             }
         }
 

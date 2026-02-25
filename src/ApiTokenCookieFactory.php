@@ -5,9 +5,9 @@ namespace Richard\HyperfPassport;
 use Carbon\Carbon;
 use Firebase\JWT\JWT;
 use Hyperf\Contract\ConfigInterface as Config;
+use Hyperf\HttpMessage\Cookie\Cookie;
 use HyperfExt\Encryption\Contract\DriverInterface;
 use HyperfExt\Encryption\EncryptionManager;
-use Hyperf\HttpMessage\Cookie\Cookie;
 
 class ApiTokenCookieFactory
 {
@@ -22,18 +22,18 @@ class ApiTokenCookieFactory
     /**
      * The encrypter implementation.
      *
-     * @var \HyperfExt\Encryption\Contract\DriverInterface
+     * @var DriverInterface
      */
-    protected \HyperfExt\Encryption\Contract\DriverInterface $encrypter;
+    protected DriverInterface $encrypter;
 
     /**
      * Create an API token cookie factory instance.
      *
      * @param Config $config
-     * @param \HyperfExt\Encryption\EncryptionManager $encrypterManager
+     * @param EncryptionManager $encrypterManager
      * @return void
      */
-    public function __construct(Config $config, \HyperfExt\Encryption\EncryptionManager $encrypterManager)
+    public function __construct(Config $config, EncryptionManager $encrypterManager)
     {
         $this->config = $config;
         $this->encrypter = $encrypterManager->getDriver();
@@ -46,12 +46,12 @@ class ApiTokenCookieFactory
      * @param string $csrfToken
      * @return Cookie
      */
-    public function make($userId, $csrfToken)
+    public function make(mixed $userId, string $csrfToken): Cookie
     {
         $configArray = $this->config->get('session');
 
         $expiration = Carbon::now()->addMinutes($configArray['cookie_lifetime']);
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         return new Cookie(
             $passport->cookie(),
             $this->createToken($userId, $csrfToken, $expiration),
@@ -73,13 +73,13 @@ class ApiTokenCookieFactory
      * @param Carbon $expiration
      * @return string
      */
-    protected function createToken($userId, $csrfToken, Carbon $expiration)
+    protected function createToken(mixed $userId, string $csrfToken, Carbon $expiration): string
     {
         return JWT::encode([
             'sub' => $userId,
             'csrf' => $csrfToken,
             'expiry' => $expiration->getTimestamp(),
-        ], $this->encrypter->getKey());
+        ], $this->encrypter->getKey(),'HS256');
     }
 
 }

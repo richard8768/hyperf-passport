@@ -12,10 +12,10 @@ class User implements UserEntityInterface
     /**
      * Create a new user instance.
      *
-     * @param string|int $identifier
+     * @param int|string $identifier
      * @return void
      */
-    public function __construct($identifier)
+    public function __construct(int|string $identifier)
     {
         $this->setIdentifier($identifier);
     }

@@ -15,7 +15,7 @@ class Scope implements ScopeEntityInterface
      * @param string $name
      * @return void
      */
-    public function __construct($name)
+    public function __construct(string $name)
     {
         $this->setIdentifier($name);
     }

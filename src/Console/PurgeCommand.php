@@ -28,7 +28,7 @@ class PurgeCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
         $expired = Carbon::now()->subDays(7);
         $passport = make(Passport::class);
@@ -54,7 +54,7 @@ class PurgeCommand extends Command
         }
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setDescription($this->description);
     }

@@ -10,7 +10,7 @@ trait AuthenticatableTrait
      *
      * @return string
      */
-    public function getAuthIdentifierName()
+    public function getAuthIdentifierName(): string
     {
         return $this->getKeyName();
     }
@@ -20,7 +20,7 @@ trait AuthenticatableTrait
      *
      * @return mixed
      */
-    public function getAuthIdentifier()
+    public function getAuthIdentifier(): mixed
     {
         return $this->{$this->getAuthIdentifierName()};
     }
@@ -30,7 +30,7 @@ trait AuthenticatableTrait
      *
      * @return string
      */
-    public function getAuthPassword()
+    public function getAuthPassword(): string
     {
         return $this->password;
     }

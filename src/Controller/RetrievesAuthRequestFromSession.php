@@ -2,7 +2,9 @@
 
 namespace Richard\HyperfPassport\Controller;
 
+use Exception;
 use Hyperf\HttpServer\Request;
+use Hyperf\Tappable\HigherOrderTapProxy;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use Richard\HyperfPassport\Bridge\User;
 use Richard\HyperfPassport\Exception\PassportException;
@@ -18,7 +20,7 @@ trait RetrievesAuthRequestFromSession
      *
      * @throws PassportException
      */
-    protected function assertValidAuthToken(Request $request)
+    protected function assertValidAuthToken(Request $request): void
     {
         if ($request->has('auth_token') && $this->session->get('authToken') !== $request->input('auth_token')) {
             $this->session->forget(['authToken', 'authRequest']);
@@ -32,11 +34,11 @@ trait RetrievesAuthRequestFromSession
      * Get the authorization request from the session.
      *
      * @param Request $request
-     * @return AuthorizationRequest
+     * @return AuthorizationRequest|HigherOrderTapProxy
      *
-     * @throws \Exception
+     * @throws Exception
      */
-    protected function getAuthRequestFromSession(Request $request)
+    protected function getAuthRequestFromSession(Request $request): AuthorizationRequest|HigherOrderTapProxy
     {
         return tap($this->session->get('authRequest'), function ($authRequest) use ($request) {
             if (!$authRequest) {

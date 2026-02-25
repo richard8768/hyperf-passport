@@ -2,6 +2,7 @@
 
 namespace Richard\HyperfPassport;
 
+use Hyperf\Database\Model\Relations\BelongsTo;
 use Hyperf\DbConnection\Model\Model;
 
 class PersonalAccessClient extends Model
@@ -24,11 +25,11 @@ class PersonalAccessClient extends Model
     /**
      * Get all the authentication codes for the client.
      *
-     * @return \Hyperf\Database\Model\Relations\BelongsTo
+     * @return BelongsTo
      */
-    public function client()
+    public function client(): BelongsTo
     {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         return $this->belongsTo($passport->clientModel());
     }
 
@@ -37,7 +38,7 @@ class PersonalAccessClient extends Model
      *
      * @return string|null
      */
-    public function getConnectionName()
+    public function getConnectionName(): ?string
     {
         return config('passport.database_connection') ?? $this->connection;
     }

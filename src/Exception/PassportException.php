@@ -13,10 +13,9 @@ declare(strict_types=1);
 namespace Richard\HyperfPassport\Exception;
 
 use Qbhy\HyperfAuth\AuthGuard;
-use Throwable;
 use Qbhy\HyperfAuth\Exception\AuthException;
 use League\OAuth2\Server\Exception\OAuthServerException;
-use Hyperf\Utils\Arr;
+use Hyperf\Collection\Arr;
 
 class PassportException extends AuthException
 {
@@ -36,7 +35,7 @@ class PassportException extends AuthException
         return $this->statusCode;
     }
 
-    public function setStatusCode(int $statusCode)
+    public function setStatusCode(int $statusCode): PassportException
     {
         $this->statusCode = $statusCode;
         return $this;
@@ -47,7 +46,7 @@ class PassportException extends AuthException
         return (string)$this->guard;
     }
 
-    public function setScopes(array $scopes = [])
+    public function setScopes(array $scopes = []): PassportException
     {
         $this->scopes = Arr::wrap($scopes);
         return $this;

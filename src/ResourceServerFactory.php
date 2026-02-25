@@ -31,7 +31,7 @@ class ResourceServerFactory
         $this->config = $config;
     }
 
-    public function __invoke()
+    public function __invoke(): ResourceServer
     {
         return new ResourceServer(make(AccessTokenRepository::class), $this->makeCryptKey('public'));
     }
@@ -42,7 +42,7 @@ class ResourceServerFactory
      * @param string $type
      * @return CryptKey
      */
-    protected function makeCryptKey($type)
+    protected function makeCryptKey(string $type): CryptKey
     {
         $passport = make(Passport::class);
         $key = str_replace('\\n', "\n", file_get_contents($passport->keyPath('oauth-' . $type . '.key')));

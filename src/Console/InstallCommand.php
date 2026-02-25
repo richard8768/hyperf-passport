@@ -34,7 +34,7 @@ class InstallCommand extends Command
      *
      * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $provider = in_array('users', array_keys(config('auth.providers'))) ? 'users' : null;
 
@@ -53,7 +53,7 @@ class InstallCommand extends Command
      *
      * @return void
      */
-    protected function configureUuids()
+    protected function configureUuids(): void
     {
         $this->call('vendor:publish', ['package' => 'richard/hyperf-passport', '--id' => 'config', '--force']);
         $this->call('vendor:publish', ['package' => 'richard/hyperf-passport', '--id' => 'migrations', '--force']);
@@ -82,12 +82,12 @@ class InstallCommand extends Command
      * @param string $replace
      * @return void
      */
-    protected function replaceInFile($path, $search, $replace)
+    protected function replaceInFile($path, $search, $replace): void
     {
         file_put_contents($path, str_replace($search, $replace, file_get_contents($path)));
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setDescription($this->description);
     }

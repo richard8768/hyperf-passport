@@ -5,6 +5,7 @@ namespace Richard\HyperfPassport;
 use Lcobucci\JWT\Token\Parser as JwtParser;
 use Lcobucci\JWT\Encoding\JoseEncoder;
 use League\OAuth2\Server\AuthorizationServer;
+use League\OAuth2\Server\Exception\OAuthServerException;
 use Nyholm\Psr7\Response;
 use Nyholm\Psr7\ServerRequest;
 use Psr\Http\Message\ServerRequestInterface;
@@ -66,9 +67,10 @@ class PersonalAccessTokenFactory
      * @param mixed $userId
      * @param string $name
      * @param array $scopes
-     * @return \Richard\HyperfPassport\PersonalAccessTokenResult
+     * @param string $provider
+     * @return PersonalAccessTokenResult
      */
-    public function make($userId, $name, array $scopes = [], $provider = 'users')
+    public function make(mixed $userId, string $name, array $scopes = [], string $provider = 'users'): PersonalAccessTokenResult
     {
         $response = $this->dispatchRequestToAuthorizationServer(
             $this->createRequest($this->clients->personalAccessClient($provider), $userId, $scopes)
@@ -89,14 +91,14 @@ class PersonalAccessTokenFactory
     /**
      * Create a request instance for the given client.
      *
-     * @param \Richard\HyperfPassport\Client $client
+     * @param Client $client
      * @param mixed $userId
      * @param array $scopes
-     * @return \Psr\Http\Message\ServerRequestInterface
+     * @return ServerRequestInterface
      */
-    protected function createRequest($client, $userId, array $scopes)
+    protected function createRequest(Client $client, mixed $userId, array $scopes): ServerRequestInterface
     {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         $secret = $passport->hashesClientSecrets ? $this->clients->getPersonalAccessClientSecret() : $client->secret;
 
         return (new ServerRequest('POST', 'not-important'))->withParsedBody([
@@ -111,10 +113,11 @@ class PersonalAccessTokenFactory
     /**
      * Dispatch the given request to the authorization server.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param ServerRequestInterface $request
      * @return array
+     * @throws OAuthServerException
      */
-    protected function dispatchRequestToAuthorizationServer(ServerRequestInterface $request)
+    protected function dispatchRequestToAuthorizationServer(ServerRequestInterface $request): array
     {
         return json_decode($this->server->respondToAccessTokenRequest(
             $request, new Response
@@ -125,9 +128,9 @@ class PersonalAccessTokenFactory
      * Get the access token instance for the parsed response.
      *
      * @param array $response
-     * @return \Richard\HyperfPassport\Token
+     * @return Token
      */
-    protected function findAccessToken(array $response)
+    protected function findAccessToken(array $response): Token
     {
         return $this->tokens->find(
             $this->jwt->parse($response['access_token'])->claims()->get('jti')

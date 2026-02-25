@@ -10,7 +10,7 @@ trait FormatsScopesForStorage
      * @param array $scopes
      * @return string
      */
-    public function formatScopesForStorage(array $scopes)
+    public function formatScopesForStorage(array $scopes): string
     {
         return json_encode($this->scopesToArray($scopes));
     }
@@ -21,7 +21,7 @@ trait FormatsScopesForStorage
      * @param array $scopes
      * @return array
      */
-    public function scopesToArray(array $scopes)
+    public function scopesToArray(array $scopes): array
     {
         return array_map(function ($scope) {
             return $scope->getIdentifier();

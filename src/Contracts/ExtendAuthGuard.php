@@ -12,7 +12,7 @@ interface ExtendAuthGuard extends AuthGuard
      *
      * @return null|int|string
      */
-    public function id();
+    public function id(): int|string|null;
 
     /**
      * Validate a user's credentials.

@@ -17,7 +17,7 @@ class AccessTokenCreated
      *
      * @var string
      */
-    public string|int|null $userId;
+    public string $userId;
 
     /**
      * The ID of the client associated with the token.
@@ -30,11 +30,11 @@ class AccessTokenCreated
      * Create a new event instance.
      *
      * @param string $tokenId
-     * @param string|int|null $userId
+     * @param int|string|null $userId
      * @param string $clientId
      * @return void
      */
-    public function __construct($tokenId, $userId, $clientId)
+    public function __construct(string $tokenId, int|string|null $userId, string $clientId)
     {
         $this->userId = $userId;
         $this->tokenId = $tokenId;

@@ -14,8 +14,10 @@ namespace Richard\HyperfPassport;
 
 use Hyperf\ExceptionHandler\ExceptionHandler;
 use Hyperf\HttpMessage\Stream\SwooleStream;
+use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\ResponseInterface;
 use Richard\HyperfPassport\Exception\PassportException;
+use stdClass;
 use Throwable;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Di\Annotation\Inject;
@@ -28,12 +30,12 @@ class PassportExceptionHandler extends ExceptionHandler
     #[Inject]
     protected RequestInterface $requests;
 
-    public function handle(Throwable $throwable, ResponseInterface $response)
+    public function handle(Throwable $throwable, ResponseInterface $response): MessageInterface|ResponseInterface
     {
         if ($throwable instanceof PassportException || $throwable instanceof GuardException || $throwable instanceof UserProviderException) {
             $this->stopPropagation();
             $handleData = $this->getHandleMsg();
-            $emptyObj = new \stdClass();
+            $emptyObj = new stdClass();
             if (empty($handleData)) {
                 $data = ['status' => 999999, 'data' => $emptyObj, 'message' => $throwable->getMessage()];
             } else {

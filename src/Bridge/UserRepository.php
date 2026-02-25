@@ -3,10 +3,10 @@
 namespace Richard\HyperfPassport\Bridge;
 
 use League\OAuth2\Server\Entities\ClientEntityInterface;
+use League\OAuth2\Server\Entities\UserEntityInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
-use RuntimeException;
-use Hyperf\Di\Annotation\Inject;
 use HyperfExt\Hashing\HashManager as HashingHashManager;
+use Richard\HyperfPassport\Exception\PassportException;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -21,19 +21,19 @@ class UserRepository implements UserRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getUserEntityByUserCredentials($username, $password, $grantType, ClientEntityInterface $clientEntity)
+    public function getUserEntityByUserCredentials($username, $password, $grantType, ClientEntityInterface $clientEntity): UserEntityInterface|User|null
     {
         $provider = $clientEntity->provider ?: config('auth.guards.passport.provider');
 
         if (is_null($model = config('auth.providers.' . $provider . '.model'))) {
-            throw new \Richard\HyperfPassport\Exception\PassportException('Unable to determine authentication model from configuration.');
+            throw new PassportException('Unable to determine authentication model from configuration.');
         }
 
         if (method_exists($model, 'findAndValidateForPassport')) {
             $user = (new $model)->findAndValidateForPassport($username, $password);
 
             if (!$user) {
-                return;
+                return null;
             }
 
             return new User($user->getKey());
@@ -46,13 +46,15 @@ class UserRepository implements UserRepositoryInterface
         }
 
         if (!$user) {
-            return;
-        } elseif (method_exists($user, 'validateForPassportPasswordGrant')) {
+            return null;
+        }
+
+        if (method_exists($user, 'validateForPassportPasswordGrant')) {
             if (!$user->validateForPassportPasswordGrant($password)) {
-                return;
+                return null;
             }
         } elseif (!$this->hasher->check($password, $user->getAuthPassword())) {
-            return;
+            return null;
         }
 
         return new User($user->getKey());

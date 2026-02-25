@@ -3,6 +3,8 @@
 namespace Richard\HyperfPassport\Console;
 
 use Hyperf\Command\Command;
+use Hyperf\Context\ApplicationContext;
+use Hyperf\Stringable\Str;
 use Richard\HyperfPassport\Client;
 use Richard\HyperfPassport\ClientRepository;
 use Richard\HyperfPassport\Passport;
@@ -37,7 +39,7 @@ class ClientCommand extends Command
      *
      * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $clients = make(ClientRepository::class);
         if ($this->input->getOption('personal')) {
@@ -57,7 +59,7 @@ class ClientCommand extends Command
      * @param ClientRepository $clients
      * @return void
      */
-    protected function createPersonalClient(ClientRepository $clients)
+    protected function createPersonalClient(ClientRepository $clients): void
     {
         $name = $this->input->getOption('name') ?: $this->ask(
             'What should we name the personal access client?',
@@ -87,7 +89,7 @@ class ClientCommand extends Command
      * @param ClientRepository $clients
      * @return void
      */
-    protected function createPasswordClient(ClientRepository $clients)
+    protected function createPasswordClient(ClientRepository $clients): void
     {
         $name = $this->input->getOption('name') ?: $this->ask(
             'What should we name the password grant client?',
@@ -117,7 +119,7 @@ class ClientCommand extends Command
      * @param ClientRepository $clients
      * @return void
      */
-    protected function createClientCredentialsClient(ClientRepository $clients)
+    protected function createClientCredentialsClient(ClientRepository $clients): void
     {
         $name = $this->input->getOption('name') ?: $this->ask(
             'What should we name the client?',
@@ -147,7 +149,7 @@ class ClientCommand extends Command
      * @param ClientRepository $clients
      * @return void
      */
-    protected function createAuthCodeClient(ClientRepository $clients)
+    protected function createAuthCodeClient(ClientRepository $clients): void
     {
         $userId = $this->input->getOption('user_id') ?: $this->ask(
             'Which user ID should the client be assigned to?'
@@ -185,7 +187,7 @@ class ClientCommand extends Command
      * @param Client $client
      * @return void
      */
-    protected function outputClientDetails(Client $client)
+    protected function outputClientDetails(Client $client): void
     {
         $passport = make(Passport::class);
         if ($passport->hashesClientSecrets) {
@@ -197,17 +199,17 @@ class ClientCommand extends Command
         $this->line('<comment>Client secret:</comment> ' . $client->plainSecret);
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setDescription($this->description);
     }
 
-    protected function genUrl(string $toUrl)
+    protected function genUrl(string $toUrl): string
     {
-        if (!\Hyperf\Utils\ApplicationContext::hasContainer() || \Hyperf\Stringable\Str::startsWith($toUrl, ['http://', 'https://'])) {
+        if (!ApplicationContext::hasContainer() || Str::startsWith($toUrl, ['http://', 'https://'])) {
             return $toUrl;
         }
-        return 'http://localhost' . (\Hyperf\Stringable\Str::startsWith($toUrl, '/') ? $toUrl : '/' . $toUrl);
+        return 'http://localhost' . (Str::startsWith($toUrl, '/') ? $toUrl : '/' . $toUrl);
     }
 
 }

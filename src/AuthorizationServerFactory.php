@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Richard\HyperfPassport;
 
+use DateInterval;
+use Exception;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Tappable\HigherOrderTapProxy;
 use Psr\Container\ContainerInterface;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
@@ -14,7 +17,6 @@ use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use League\OAuth2\Server\Grant\ImplicitGrant;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
-use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use Richard\HyperfPassport\Bridge\ClientRepository;
 use Richard\HyperfPassport\Bridge\RefreshTokenRepository;
 use Richard\HyperfPassport\Bridge\PersonalAccessGrant;
@@ -42,15 +44,15 @@ class AuthorizationServerFactory
         $this->config = $config;
     }
     
-    public function __invoke()
+    public function __invoke(): HigherOrderTapProxy|AuthorizationServer
     {
-        $tokenExpireDays = new \DateInterval('P7D');
-        $refreashTokenExpireDays = new \DateInterval('P60D');
-        $personTokenDays = new \DateInterval('P7D');
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $tokenExpireDays = new DateInterval('P7D');
+        $refreshTokenExpireDays = new DateInterval('P60D');
+        $personTokenDays = new DateInterval('P7D');
+        $passport = make(Passport::class);
         $passport->setClientUuids($this->config->get('passport.client_uuids', false));
         $passport->tokensExpireIn($this->config->get('passport.token_days', $tokenExpireDays));
-        $passport->refreshTokensExpireIn($this->config->get('passport.refresh_token_days', $refreashTokenExpireDays));
+        $passport->refreshTokensExpireIn($this->config->get('passport.refresh_token_days', $refreshTokenExpireDays));
         $passport->personalAccessTokensExpireIn($this->config->get('passport.person_token_days', $personTokenDays));
         return tap($this->makeAuthorizationServer(), function (AuthorizationServer $server)use($passport) {
             $server->setDefaultScope($passport->defaultScope);
@@ -71,7 +73,7 @@ class AuthorizationServerFactory
      *
      * @return AuthCodeGrant
      */
-    protected function makeAuthCodeGrant()
+    protected function makeAuthCodeGrant(): AuthCodeGrant
     {
         $passport = make(Passport::class);
         return tap($this->buildAuthCodeGrant(), function ($grant) use($passport) {
@@ -83,13 +85,14 @@ class AuthorizationServerFactory
      * Build the Auth Code grant instance.
      *
      * @return AuthCodeGrant
+     * @throws Exception
      */
-    protected function buildAuthCodeGrant()
+    protected function buildAuthCodeGrant(): AuthCodeGrant
     {
-        return new AuthCodeGrant(make(AuthCodeRepository::class), make(RefreshTokenRepository::class), new \DateInterval('PT10M'));
+        return new AuthCodeGrant(make(AuthCodeRepository::class), make(RefreshTokenRepository::class), new DateInterval('PT10M'));
     }
     
-    public function makeRefreshTokenGrant()
+    public function makeRefreshTokenGrant(): HigherOrderTapProxy|RefreshTokenGrant
     {
         $repository = make(RefreshTokenRepository::class);
         $passport = make(Passport::class);
@@ -98,7 +101,7 @@ class AuthorizationServerFactory
         });
     }
     
-    public function makePasswordGrant()
+    public function makePasswordGrant(): PasswordGrant
     {
         $grant = new PasswordGrant(make(UserRepository::class), make(RefreshTokenRepository::class));
         $passport = make(Passport::class);
@@ -107,7 +110,7 @@ class AuthorizationServerFactory
         return $grant;
     }
     
-    protected function makeImplicitGrant()
+    protected function makeImplicitGrant(): ImplicitGrant
     {
         $passport = make(Passport::class);
         return new ImplicitGrant($passport->tokensExpireIn());
@@ -118,7 +121,7 @@ class AuthorizationServerFactory
      *
      * @return AuthorizationServer
      */
-    public function makeAuthorizationServer()
+    public function makeAuthorizationServer(): AuthorizationServer
     {
         return new AuthorizationServer(make(ClientRepository::class), make(AccessTokenRepository::class), make(ScopeRepository::class), $this->makeCryptKey('private'), $this->config->get('passport.key', 'E3Wxizr8gUXuBuyG7CecmGX9E9lbRzdFmqQpG2yP85eDuXzqOj'));
     }
@@ -126,10 +129,10 @@ class AuthorizationServerFactory
     /**
      * Create a CryptKey instance without permissions check.
      *
-     * @param  string  $type
+     * @param string $type
      * @return CryptKey
      */
-    protected function makeCryptKey($type)
+    protected function makeCryptKey(string $type): CryptKey
     {
         $passport = make(Passport::class);
         $key = str_replace('\\n', "\n", file_get_contents($passport->keyPath('oauth-'.$type.'.key')));

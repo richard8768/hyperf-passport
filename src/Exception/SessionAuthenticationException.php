@@ -38,7 +38,7 @@ class SessionAuthenticationException extends ServerException
      * @param string|null $redirectTo
      * @return void
      */
-    public function __construct($message = 'Unauthenticated.', array $guards = [], $redirectTo = null)
+    public function __construct(string $message = 'Unauthenticated.', array $guards = [], $redirectTo = null)
     {
         parent::__construct($message);
 
@@ -51,7 +51,7 @@ class SessionAuthenticationException extends ServerException
      *
      * @return array
      */
-    public function guards()
+    public function guards(): array
     {
         return $this->guards;
     }
@@ -59,9 +59,9 @@ class SessionAuthenticationException extends ServerException
     /**
      * Get the path the user should be redirected to.
      *
-     * @return string
+     * @return string|null
      */
-    public function redirectTo()
+    public function redirectTo(): ?string
     {
         return $this->redirectTo;
     }

@@ -2,8 +2,8 @@
 
 namespace Richard\HyperfPassport\Contracts;
 
-use Qbhy\HyperfAuth\UserProvider;
 use Qbhy\HyperfAuth\Authenticatable;
+use Qbhy\HyperfAuth\UserProvider;
 
 interface ExtendUserProvider extends UserProvider
 {
@@ -11,17 +11,17 @@ interface ExtendUserProvider extends UserProvider
     /**
      * Retrieve a user by their unique identifier.
      *
-     * @param mixed $identifier
-     * @return \Qbhy\HyperfAuth\Authenticatable|null
+     * @param  $identifier
+     * @return Authenticatable|null
      */
-    public function retrieveById($identifier);
+    public function retrieveById($identifier): ?Authenticatable;
 
     /**
      * Retrieve a user by their unique identifier and "remember me" token.
      *
-     * @param mixed $identifier
+     * @param  $identifier
      * @param string $token
-     * @return \Qbhy\HyperfAuth\Authenticatable|null
+     * @return Authenticatable|null
      */
-    public function retrieveByToken($identifier, $token);
+    public function retrieveByToken($identifier, string $token): ?Authenticatable;
 }

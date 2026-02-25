@@ -3,6 +3,7 @@
 namespace Richard\HyperfPassport\Controller;
 
 use Hyperf\Database\Model\Collection;
+use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface as ValidationFactory;
 use Hyperf\HttpServer\Request;
 use Hyperf\HttpMessage\Server\Response;
@@ -47,7 +48,7 @@ class ClientController
      * @param ClientRepository $clients
      * @param ValidationFactory $validation
      * @param RedirectRule $redirectRule
-     * @return void
+     * @param AuthManager $auth
      */
     public function __construct(
         ClientRepository  $clients,
@@ -68,7 +69,7 @@ class ClientController
      * @param Request $request
      * @return Collection
      */
-    public function forUser(Request $request)
+    public function forUser(Request $request): Collection
     {
         $passport = make(Passport::class);
         $user = $this->auth->guard('passport')->user();
@@ -89,7 +90,7 @@ class ClientController
      * @param Request $request
      * @return Client|array
      */
-    public function store(Request $request)
+    public function store(Request $request): Client|array
     {
         $passport = make(Passport::class);
         $this->validation->make($request->all(), [
@@ -117,14 +118,14 @@ class ClientController
      * @param string $clientId
      * @return Response|Client
      */
-    public function update(Request $request, $clientId)
+    public function update(Request $request, $clientId): Client|Response
     {
         $user = $this->auth->guard('passport')->user();
         $client = $this->clients->findForUser($clientId, $user->getKey());
 
         if (!$client) {
             $response = new Response();
-            return $response->withStatus(404)->withBody(new \Hyperf\HttpMessage\Stream\SwooleStream(''));
+            return $response->withStatus(404)->withBody(new SwooleStream(''));
         }
 
         $this->validation->make($request->all(), [
@@ -144,20 +145,20 @@ class ClientController
      * @param string $clientId
      * @return Response
      */
-    public function destroy(Request $request, $clientId)
+    public function destroy(Request $request, $clientId): Response
     {
         $user = $this->auth->guard('passport')->user();
         $client = $this->clients->findForUser($clientId, $user->getKey());
 
         if (!$client) {
             $response = new Response();
-            return $response->withStatus(404)->withBody(new \Hyperf\HttpMessage\Stream\SwooleStream(''));
+            return $response->withStatus(404)->withBody(new SwooleStream(''));
         }
 
         $this->clients->delete($client);
 
         $response = new Response();
-        return $response->withStatus(204)->withBody(new \Hyperf\HttpMessage\Stream\SwooleStream(''));
+        return $response->withStatus(204)->withBody(new SwooleStream(''));
     }
 
 }

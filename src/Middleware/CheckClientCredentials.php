@@ -16,11 +16,10 @@ class CheckClientCredentials extends CheckCredentials
      *
      * @throws PassportException
      */
-    protected function validateCredentials($token)
+    protected function validateCredentials(Token $token): void
     {
         if (!$token) {
-            $exception = new PassportException('This action is unauthorized.');
-            throw $exception;
+            throw new PassportException('This action is unauthorized.');
         }
     }
 
@@ -33,7 +32,7 @@ class CheckClientCredentials extends CheckCredentials
      *
      * @throws PassportException
      */
-    protected function validateScopes($token, $scopes)
+    protected function validateScopes(Token $token, array $scopes): void
     {
         if (in_array('*', $token->scopes)) {
             return;

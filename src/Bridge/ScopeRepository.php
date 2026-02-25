@@ -2,9 +2,10 @@
 
 namespace Richard\HyperfPassport\Bridge;
 
-use Richard\HyperfPassport\Passport;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
+use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
+use Richard\HyperfPassport\Passport;
 
 class ScopeRepository implements ScopeRepositoryInterface
 {
@@ -12,27 +13,26 @@ class ScopeRepository implements ScopeRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getScopeEntityByIdentifier($identifier)
+    public function getScopeEntityByIdentifier($identifier): Scope|ScopeEntityInterface|null
     {
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         if ($passport->hasScope($identifier)) {
             return new Scope($identifier);
         }
+        return null;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function finalizeScopes(
-        array                 $scopes, $grantType,
-        ClientEntityInterface $clientEntity, $userIdentifier = null)
+    public function finalizeScopes(array $scopes, $grantType, ClientEntityInterface $clientEntity, $userIdentifier = null):array
     {
         if (!in_array($grantType, ['password', 'personal_access', 'client_credentials'])) {
             $scopes = collect($scopes)->reject(function ($scope) {
                 return trim($scope->getIdentifier()) === '*';
             })->values()->all();
         }
-        $passport = make(\Richard\HyperfPassport\Passport::class);
+        $passport = make(Passport::class);
         return collect($scopes)->filter(function ($scope) use ($passport) {
             return $passport->hasScope($scope->getIdentifier());
         })->values()->all();

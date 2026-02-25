@@ -15,7 +15,7 @@ class TokenRepository
      * @param array $attributes
      * @return Token
      */
-    public function create($attributes)
+    public function create(array $attributes): Token
     {
         $passport = make(Passport::class);
         return $passport->token()->create($attributes);
@@ -27,7 +27,7 @@ class TokenRepository
      * @param string $id
      * @return Token
      */
-    public function find($id)
+    public function find(string $id): Token
     {
         $passport = make(Passport::class);
         return $passport->token()->where('id', $id)->first();
@@ -40,7 +40,7 @@ class TokenRepository
      * @param int $userId
      * @return Token|null
      */
-    public function findForUser($id, $userId)
+    public function findForUser(string $id, int $userId): ?Token
     {
         $passport = make(Passport::class);
         return $passport->token()->where('id', $id)->where('user_id', $userId)->first();
@@ -52,7 +52,7 @@ class TokenRepository
      * @param mixed $userId
      * @return Collection
      */
-    public function forUser($userId)
+    public function forUser(mixed $userId): Collection
     {
         $passport = make(Passport::class);
         return $passport->token()->where('user_id', $userId)->get();
@@ -65,7 +65,7 @@ class TokenRepository
      * @param Client $client
      * @return Token|null
      */
-    public function getValidToken($user, $client)
+    public function getValidToken(Model $user, Client $client): ?Token
     {
         return $client->tokens()
             ->whereUserId($user->getKey())
@@ -80,7 +80,7 @@ class TokenRepository
      * @param Token $token
      * @return void
      */
-    public function save(Token $token)
+    public function save(Token $token): void
     {
         $token->save();
     }
@@ -91,7 +91,7 @@ class TokenRepository
      * @param string $id
      * @return mixed
      */
-    public function revokeAccessToken($id)
+    public function revokeAccessToken(string $id): mixed
     {
         $passport = make(Passport::class);
         return $passport->token()->where('id', $id)->update(['revoked' => true]);
@@ -103,7 +103,7 @@ class TokenRepository
      * @param array $conditions
      * @return mixed
      */
-    public function revokeAccessTokenByConditons($conditions)
+    public function revokeAccessTokenByConditions(array $conditions): mixed
     {
         $passport = make(Passport::class);
         return $passport->token()->where($conditions)->update(['revoked' => true]);
@@ -115,7 +115,7 @@ class TokenRepository
      * @param string $id
      * @return bool
      */
-    public function isAccessTokenRevoked($id)
+    public function isAccessTokenRevoked(string $id): bool
     {
         if ($token = $this->find($id)) {
             return $token->revoked;
@@ -131,7 +131,7 @@ class TokenRepository
      * @param Client $client
      * @return Token|null
      */
-    public function findValidToken($user, $client)
+    public function findValidToken(Model $user, Client $client): ?Token
     {
         return $client->tokens()
             ->whereUserId($user->getKey())

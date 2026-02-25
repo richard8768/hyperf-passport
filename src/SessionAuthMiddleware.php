@@ -40,7 +40,7 @@ class SessionAuthMiddleware implements MiddlewareInterface
         return $handler->handle($request);
     }
 
-    protected function authenticate($request)
+    protected function authenticate($request): void
     {
         if (empty($this->guards)) {
             $this->guards = [null];
@@ -54,7 +54,7 @@ class SessionAuthMiddleware implements MiddlewareInterface
         $this->unauthenticated($request);
     }
 
-    protected function unauthenticated($request)
+    protected function unauthenticated($request): void
     {
         $intended = $this->httpRequest->getMethod() === 'GET' && !('XMLHttpRequest' == $this->httpRequest->getHeaderLine('X-Requested-With') && !($this->httpRequest->getHeaderLine('X-PJAX') == true)) ? $this->httpRequest->fullUrl() : $this->httpRequest->getHeaderLine('referer') ?? $this->session->previousUrl() ?? '/';
         if ($intended) {

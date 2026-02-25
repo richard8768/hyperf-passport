@@ -2,6 +2,7 @@
 
 namespace Richard\HyperfPassport\Middleware;
 
+use Closure;
 use Hyperf\HttpMessage\Server\Response;
 use Hyperf\HttpServer\Request;
 use Qbhy\HyperfAuth\AuthManager;
@@ -28,13 +29,13 @@ class CheckScopes
      * Handle the incoming request.
      *
      * @param Request $request
-     * @param \Closure $next
+     * @param Closure $next
      * @param mixed ...$scopes
      * @return Response
      *
      * @throws PassportException
      */
-    public function handle($request, $next, ...$scopes)
+    public function handle(Request $request, Closure $next, ...$scopes): Response
     {
         $user = $this->auth->guard('passport')->user();
         if (!$user || !$user->token()) {

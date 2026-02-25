@@ -66,7 +66,7 @@ class RefreshToken extends Model
      *
      * @return BelongsTo
      */
-    public function accessToken()
+    public function accessToken(): BelongsTo
     {
         $passport = make(Passport::class);
         return $this->belongsTo($passport->tokenModel());
@@ -77,7 +77,7 @@ class RefreshToken extends Model
      *
      * @return bool
      */
-    public function revoke()
+    public function revoke(): bool
     {
         return $this->forceFill(['revoked' => true])->save();
     }
@@ -87,7 +87,7 @@ class RefreshToken extends Model
      *
      * @return bool
      */
-    public function transient()
+    public function transient(): bool
     {
         return false;
     }
@@ -97,7 +97,7 @@ class RefreshToken extends Model
      *
      * @return string|null
      */
-    public function getConnectionName()
+    public function getConnectionName(): ?string
     {
         return config('passport.database_connection') ?? $this->connection;
     }
