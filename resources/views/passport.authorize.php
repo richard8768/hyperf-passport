@@ -1,247 +1,444 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <title><?=$this->e($appname)?> - Authorization</title>
-
-    <!-- Styles -->
-    <link rel="stylesheet" href="http://www.dmaku.com/demo/moban/2019090551101975/css/font-awesome.min.css">
-    <link rel="stylesheet" href="http://www.dmaku.com/demo/moban/2019090551101975/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="http://www.dmaku.com/demo/moban/2019090551101975/css/demo.css">
-    <style type="text/css">
-        .form-horizontal {
-            background: #fff;
-            padding-bottom: 40px;
-            border-radius: 15px;
-            text-align: center;
+    <title><?= $this->e($appname) ?> - Authorization</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        :root {
+            --primary: #2563eb;
+            /* 主色：蓝色 */
+            --primary-dark: #1d4ed8;
+            --danger: #dc2626;
+            --text-main: #111827;
+            --text-sub: #6b7280;
+            --border-color: #e5e7eb;
+            --bg-main: #f3f4f6;
+            --bg-card: #ffffff;
+            --radius-lg: 12px;
+            --radius-md: 8px;
         }
 
-        .form-horizontal .heading {
-            display: block;
-            font-size: 35px;
-            font-weight: 700;
-            padding: 35px 0;
-            border-bottom: 1px solid #f0f0f0;
-            margin-bottom: 30px;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
-        .form-horizontal .form-group {
-            padding: 0 40px;
-            margin: 0 0 25px 0;
-            position: relative;
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.5;
         }
 
-        .form-horizontal .form-control {
-            background: #f0f0f0;
-            border: none;
-            border-radius: 20px;
-            box-shadow: none;
-            padding: 0 20px 0 45px;
-            height: 40px;
-            transition: all 0.3s ease 0s;
+        .page-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
         }
 
-        .form-horizontal .form-control:focus {
-            background: #e0e0e0;
-            box-shadow: none;
-            outline: 0 none;
+        .card {
+            width: 100%;
+            max-width: 720px;
+            background-color: var(--bg-card);
+            border-radius: var(--radius-lg);
+            box-shadow:
+                0 24px 48px rgba(15, 23, 42, 0.08),
+                0 0 0 1px rgba(15, 23, 42, 0.02);
+            padding: 28px 32px 24px;
         }
 
-        .form-horizontal .form-group i {
-            position: absolute;
-            top: 12px;
-            left: 60px;
-            font-size: 17px;
-            color: #c8c8c8;
-            transition: all 0.5s ease 0s;
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 16px;
         }
 
-        .form-horizontal .form-control:focus + i {
-            color: #00b4ef;
+        .app-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
         }
 
-        .form-horizontal .fa-question-circle {
-            display: inline-block;
-            position: absolute;
-            top: 12px;
-            right: 60px;
+        .app-logo {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #2563eb, #4f46e5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
             font-size: 20px;
-            color: #808080;
-            transition: all 0.5s ease 0s;
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.35);
         }
 
-        .form-horizontal .fa-question-circle:hover {
-            color: #000;
+        .app-text-main {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-main);
         }
 
-        .form-horizontal .main-checkbox {
-            float: left;
-            width: 20px;
-            height: 20px;
-            background: #11a3fc;
-            border-radius: 50%;
-            position: relative;
-            margin: 5px 0 0 5px;
-            border: 1px solid #11a3fc;
+        .app-text-sub {
+            font-size: 13px;
+            color: var(--text-sub);
+            margin-top: 2px;
         }
 
-        .form-horizontal .main-checkbox label {
-            width: 20px;
-            height: 20px;
-            position: absolute;
-            top: 0;
-            left: 0;
+        .provider-info {
+            text-align: right;
+            font-size: 12px;
+            color: var(--text-sub);
+        }
+
+        .provider-name {
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+
+        .section-desc {
+            font-size: 13px;
+            color: var(--text-sub);
+        }
+
+        .account-box {
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #f9fafb;
+        }
+
+        .account-main {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+        }
+
+        .avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #0ea5e9, #6366f1);
+            color: white;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+        }
+
+        .account-name {
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        .account-email {
+            font-size: 12px;
+            color: var(--text-sub);
+        }
+
+        .account-switch {
+            font-size: 12px;
+            color: var(--primary);
             cursor: pointer;
         }
 
-        .form-horizontal .main-checkbox label:after {
-            content: "";
-            width: 10px;
-            height: 5px;
-            position: absolute;
-            top: 5px;
-            left: 4px;
-            border: 3px solid #fff;
-            border-top: none;
-            border-right: none;
-            background: transparent;
-            opacity: 0;
-            -webkit-transform: rotate(-45deg);
-            transform: rotate(-45deg);
+        .scope-list {
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            padding: 10px 12px;
+            background-color: #f9fafb;
+            font-size: 13px;
         }
 
-        .form-horizontal .main-checkbox input[type=checkbox] {
-            visibility: hidden;
+        .scope-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 6px 0;
         }
 
-        .form-horizontal .main-checkbox input[type=checkbox]:checked + label:after {
-            opacity: 1;
+        .scope-item+.scope-item {
+            border-top: 1px dashed #e5e7eb;
+            margin-top: 4px;
+            padding-top: 10px;
         }
 
-        .form-horizontal .text {
-            float: left;
-            margin-left: 7px;
-            line-height: 20px;
-            padding-top: 5px;
-            text-transform: capitalize;
+        .scope-label {
+            font-weight: 500;
+            color: var(--text-main);
         }
 
-        .form-horizontal .btn {
-            float: right;
+        .scope-tag {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1px 6px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 500;
+            margin-left: 6px;
+        }
+
+        .scope-tag.required {
+            background-color: rgba(37, 99, 235, 0.06);
+            color: var(--primary-dark);
+        }
+
+        .scope-tag.optional {
+            background-color: rgba(107, 114, 128, 0.08);
+            color: var(--text-sub);
+        }
+
+        .scope-desc {
+            font-size: 12px;
+            color: var(--text-sub);
+            margin-top: 1px;
+        }
+
+        .scope-checkbox {
+            margin-top: 2px;
+        }
+
+        .risk-box {
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(220, 38, 38, 0.2);
+            background-color: #fef2f2;
+            padding: 10px 12px;
+            font-size: 12px;
+            color: #991b1b;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .risk-icon {
             font-size: 14px;
-            color: #fff;
-            background: #00b4ef;
-            border-radius: 30px;
-            padding: 10px 25px;
+            line-height: 1.2;
+        }
+
+        .card-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 4px;
+        }
+
+        .button-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .btn {
+            appearance: none;
             border: none;
-            text-transform: capitalize;
-            transition: all 0.5s ease 0s;
+            border-radius: 999px;
+            padding: 9px 18px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.16s ease, box-shadow 0.16s ease, transform 0.08s ease;
         }
 
-        @media only screen and (max-width: 479px) {
-            .form-horizontal .form-group {
-                padding: 0 25px;
+        .btn-primary {
+            background-color: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 12px 20px rgba(37, 99, 235, 0.35);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 16px 30px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-outline {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .btn-outline:hover {
+            background-color: #f9fafb;
+        }
+
+        .hint-text {
+            font-size: 11px;
+            color: var(--text-sub);
+        }
+
+        .hint-text a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .hint-text a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .card {
+                padding: 20px 18px 16px;
             }
 
-            .form-horizontal .form-group i {
-                left: 45px;
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
             }
 
-            .form-horizontal .btn {
-                padding: 10px 20px;
+            .provider-info {
+                text-align: left;
             }
-        }
-    </style>
-    <!--[if IE]>
-    <script src="http://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <![endif]-->
 
-    <style>
-        .passport-authorize .container {
-            margin-top: 30px;
-        }
+            .button-row {
+                flex-direction: column-reverse;
+            }
 
-        .passport-authorize .scopes {
-            margin-top: 20px;
-        }
-
-        .passport-authorize .buttons {
-            margin-top: 25px;
-            text-align: center;
-        }
-
-        .passport-authorize .btn {
-            width: 125px;
-        }
-
-        .passport-authorize .btn-approve {
-            margin-right: 15px;
-        }
-
-        .passport-authorize form {
-            display: inline;
+            .btn {
+                width: 100%;
+                text-align: center;
+                justify-content: center;
+            }
         }
     </style>
 </head>
-<body class="passport-authorize">
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card card-default">
-                <div class="card-header">
-                    Authorization Request
-                </div>
-                <div class="card-body">
-                    <!-- Introduction -->
-                    <p><strong><?=$this->e($client->name)?></strong> is requesting permission to access your account.</p>
 
-                    <!-- Scope List -->
-                    <?php
-                    if (count($scopes) > 0){
-                        ?>
-                        <div class="scopes">
-                            <p><strong>This application will be able to:</strong></p>
-
-                            <ul>
-                                <?php
-                                foreach ($scopes as $scope){
-                                    ?>
-                                    <li><?=$scope->description?></li>
-                                    <?php
-                                }
-                                ?>
-                            </ul>
-                        </div>
-                        <?php
-                    }
-                    ?>
-
-                    <div class="buttons">
-                        <!-- Authorize Button -->
-                        <form method="post" action="/oauth/authorize">
-
-                            <input type="hidden" name="state" value="<?=$this->e($request->state)?>">
-                            <input type="hidden" name="client_id" value="<?=$this->e($client->id)?>">
-                            <input type="hidden" name="auth_token" value="<?=$this->e($authToken)?>">
-                            <button type="submit" class="btn btn-success btn-approve">Authorize</button>
-                        </form>
-
-                        <!-- Cancel Button -->
-                        <form method="post" action="/oauth/authorize">
-                            <input type="hidden" name="method" value="delete">
-                            <input type="hidden" name="state" value="<?=$this->e($request->state)?>">
-                            <input type="hidden" name="client_id" value="<?=$this->e($client->id)?>">
-                            <input type="hidden" name="auth_token" value="<?=$this->e($authToken)?>">
-                            <button class="btn btn-danger">Cancel</button>
-                        </form>
+<body>
+    <div class="page-wrapper">
+        <div class="card">
+            <div class="card-header">
+                <div class="app-info">
+                    <div>
+                        <div class="app-text-main">"<?= $this->e($client->name) ?>" is requesting permission to access your account.</div>
                     </div>
+                </div>
+            </div>
+            <?php
+            if (count($scopes) > 0) {
+            ?>
+                <div class="card-body">
+
+                    <!-- 授权范围 -->
+                    <section>
+                        <div class="section-title">The application is requesting the following permissions</div>
+                        <div class="section-desc">
+                            Please read the following permission instructions carefully.
+                        </div>
+                        <div class="scope-list">
+
+                            <?php
+                            foreach ($scopes as $scope) {
+                            ?>
+
+                                <div class="scope-item">
+
+                                    <div>
+                                        <?= $this->e($scope->description) ?>
+
+                                    </div>
+                                </div>
+                            <?php
+                            }
+                            ?>
+
+
+                        </div>
+                    </section>
+
+                </div>
+            <?php
+            }
+            ?>
+
+            <!-- 操作区 -->
+            <div class="card-footer">
+                <div class="button-row">
+                    <form method="post" action="/oauth/authorize">
+
+                        <input type="hidden" name="state" value="<?= $this->e($request->state) ?>">
+                        <input type="hidden" name="client_id" value="<?= $this->e($client->id) ?>">
+                        <input type="hidden" name="auth_token" value="<?= $this->e($authToken) ?>">
+                        <button type="submit" class="btn btn-primary">Authorize</button>
+                    </form>
+                    <form method="post" action="/oauth/authorize">
+                        <input type="hidden" name="method" value="delete">
+                        <input type="hidden" name="state" value="<?= $this->e($request->state) ?>">
+                        <input type="hidden" name="client_id" value="<?= $this->e($client->id) ?>">
+                        <input type="hidden" name="auth_token" value="<?= $this->e($authToken) ?>">
+                        <button type="button" class="btn btn-outline" id="btn-cancel">Cancel</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-</div>
+    <script>
+        document.addEventListener('click', async (e) => {
+            const btn = e.target.closest('#btn-cancel');
+            if (!btn) return;
+
+            const form = btn.closest('form');
+            if (!form) return;
+
+            btn.disabled = true;
+
+            try {
+                const fd = new FormData(form);
+                const body = new URLSearchParams();
+                for (const [k, v] of fd.entries()) body.append(k, v);
+
+                const res = await fetch(form.action, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                    },
+                    body,
+                    credentials: 'same-origin',
+                    redirect: 'follow'
+                });
+
+                if (res.redirected) {
+                    window.location.href = res.url;
+                    return;
+                }
+
+                if (!res.ok) throw new Error('Request failed: ' + res.status);
+                window.location.reload();
+            } catch (err) {
+                console.error(err);
+                btn.disabled = false;
+                alert('Failed to revoke authorization. Please try again.');
+            }
+        });
+    </script>
 </body>
+
 </html>
