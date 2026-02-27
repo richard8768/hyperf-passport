@@ -24,8 +24,13 @@ class ScopeRepository implements ScopeRepositoryInterface
 
     /**
      * {@inheritdoc}
+     * @param array $scopes
+     * @param string $grantType
+     * @param ClientEntityInterface $clientEntity
+     * @param string|null $userIdentifier
+     * @param string|null $authCodeId
      */
-    public function finalizeScopes(array $scopes, $grantType, ClientEntityInterface $clientEntity, $userIdentifier = null):array
+    public function finalizeScopes(array $scopes, string $grantType, ClientEntityInterface $clientEntity, string|null $userIdentifier = null, ?string $authCodeId = null):array
     {
         if (!in_array($grantType, ['password', 'personal_access', 'client_credentials'])) {
             $scopes = collect($scopes)->reject(function ($scope) {
