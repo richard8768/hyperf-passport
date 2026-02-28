@@ -1,11 +1,11 @@
 <?php
 
 $header = <<<'EOF'
-This file is part of hyperf-ext/encryption.
+This file is part of richard8768/hyperf-passport.
 
-@link     https://github.com/hyperf-ext/encryption
-@contact  eric@zhu.email
-@license  https://github.com/hyperf-ext/encryption/blob/master/LICENSE
+@link     https://github.com/richard8768/hyperf-passport
+@contact  444626008@qq.com
+@license  https://github.com/richard8768/hyperf-passport/blob/master/LICENSE
 EOF;
 
 return (new PhpCsFixer\Config())
