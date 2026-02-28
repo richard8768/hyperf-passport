@@ -369,7 +369,7 @@ client_secret |是  |string | 服务端分配的client_id对应的密钥        
 - 使用刷新令牌获得新的会话令牌和刷新令牌
 
 ##### 请求地址
-- ` /oauth/token `
+- ` /oauth/token/refresh `
   
 ##### 请求方式
 - POST 
@@ -461,7 +461,7 @@ class DemoController extends AbstractController {
 > 当用户发起应用授权的时候系统将跳转到passport的授权页 http://192.168.56.141:15403/oauth/authorize?response_type=code&client_id=5&redirect_uri=http%3A%2F%2F192.168.56.141%3A15403%2Fdemo%2Fcallback&scope= 
 > 该页面将检查当前用户是否登录,如果用户没有登录系统将跳转至passport.php中指定的session_user_login_uri位置让用户登录
 > 
-> 3 当用户登录成功并给应用授权后系统将跳转到指定的成功后的回调地址并携带授权码code,即http://192.168.56.141:15403/demo/callback?code=thisiscodedata
+> 3 当用户登录成功并给应用授权后系统将跳转到指定的成功后的回调地址并携带授权码code,即 http://192.168.56.141:15403/demo/callback?code=thisiscodedata
 > 在此页面用户需要使用此code向服务器发起获得会话令牌和刷新令牌的请求,以下为示例代码:
 > 
 ```
