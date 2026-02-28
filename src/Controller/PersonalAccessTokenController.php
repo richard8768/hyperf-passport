@@ -63,7 +63,7 @@ class PersonalAccessTokenController
      */
     public function store(Request $request): PersonalAccessTokenResult
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         $this->validation->make($request->all(), [
             'name' => 'required|max:191',
             'scopes' => 'array|in:' . implode(',', $passport->scopeIds()),

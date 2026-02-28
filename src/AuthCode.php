@@ -60,7 +60,7 @@ class AuthCode extends Model
      */
     public function client(): BelongsTo
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         return $this->belongsTo($passport->clientModel());
     }
 

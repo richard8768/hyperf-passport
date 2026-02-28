@@ -26,7 +26,7 @@ class TokenRepository
      */
     public function create(array $attributes): Token
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         return $passport->token()->create($attributes);
     }
 
@@ -38,7 +38,7 @@ class TokenRepository
      */
     public function find(string $id): Token
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         return $passport->token()->where('id', $id)->first();
     }
 
@@ -51,7 +51,7 @@ class TokenRepository
      */
     public function findForUser(string $id, int $userId): ?Token
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         return $passport->token()->where('id', $id)->where('user_id', $userId)->first();
     }
 
@@ -63,7 +63,7 @@ class TokenRepository
      */
     public function forUser(mixed $userId): Collection
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         return $passport->token()->where('user_id', $userId)->get();
     }
 
@@ -102,7 +102,7 @@ class TokenRepository
      */
     public function revokeAccessToken(string $id): mixed
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         return $passport->token()->where('id', $id)->update(['revoked' => true]);
     }
 
@@ -114,7 +114,7 @@ class TokenRepository
      */
     public function revokeAccessTokenByConditions(array $conditions): mixed
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         return $passport->token()->where($conditions)->update(['revoked' => true]);
     }
 

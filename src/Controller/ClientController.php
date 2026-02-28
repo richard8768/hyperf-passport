@@ -61,7 +61,7 @@ class ClientController
      */
     public function forUser(Request $request): Collection
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         $user = $this->auth->guard('passport')->user();
         $userId = $user->getKey();
 
@@ -79,7 +79,7 @@ class ClientController
      */
     public function store(Request $request): array|Client
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         $this->validation->make($request->all(), [
             'name' => 'required|max:191',
             'redirect' => ['required', $this->redirectRule],

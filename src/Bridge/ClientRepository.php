@@ -96,7 +96,7 @@ class ClientRepository implements ClientRepositoryInterface
      */
     protected function verifySecret($clientSecret, $storedHash): bool
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         return $passport->hashesClientSecrets ? password_verify($clientSecret, $storedHash) : hash_equals($storedHash, $clientSecret);
     }
 }

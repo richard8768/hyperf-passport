@@ -86,7 +86,7 @@ class Client extends Model
      */
     public function authCodes(): HasMany
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         return $this->hasMany($passport->authCodeModel(), 'client_id');
     }
 
@@ -95,7 +95,7 @@ class Client extends Model
      */
     public function tokens(): HasMany
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         return $this->hasMany($passport->tokenModel(), 'client_id');
     }
 
@@ -117,7 +117,7 @@ class Client extends Model
     public function setSecretAttribute($value): void
     {
         $this->plainSecret = $value;
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         if (is_null($value) || ! $passport->hashesClientSecrets) {
             $this->attributes['secret'] = $value;
 
@@ -156,7 +156,7 @@ class Client extends Model
      */
     public function getKeyType(): string
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         return $passport->clientUuids() ? 'string' : $this->keyType;
     }
 
@@ -165,7 +165,7 @@ class Client extends Model
      */
     public function getIncrementing(): bool
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         return $passport->clientUuids() ? false : $this->incrementing;
     }
 

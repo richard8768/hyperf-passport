@@ -34,19 +34,19 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
             'revoked' => false,
             'expires_at' => $authCodeEntity->getExpiryDateTime(),
         ];
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         $passport->authCode()->forceFill($attributes)->save();
     }
 
     public function revokeAuthCode($codeId): void
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         $passport->authCode()->where('id', $codeId)->update(['revoked' => true]);
     }
 
     public function isAuthCodeRevoked($codeId): bool
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         return $passport->authCode()->where('id', $codeId)->where('revoked', 1)->exists();
     }
 }

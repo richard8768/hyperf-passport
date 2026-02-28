@@ -20,7 +20,7 @@ class ScopeRepository implements ScopeRepositoryInterface
 {
     public function getScopeEntityByIdentifier($identifier): null|Scope|ScopeEntityInterface
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         if ($passport->hasScope($identifier)) {
             return new Scope($identifier);
         }
@@ -34,7 +34,7 @@ class ScopeRepository implements ScopeRepositoryInterface
                 return trim($scope->getIdentifier()) === '*';
             })->values()->all();
         }
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         return collect($scopes)->filter(function ($scope) use ($passport) {
             return $passport->hasScope($scope->getIdentifier());
         })->values()->all();

@@ -31,7 +31,7 @@ class HashCommand extends Command
      */
     public function handle(): void
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         if (! $passport->hashesClientSecrets) {
             $this->warn('Please enable client hashing yet in your AppServiceProvider before continuing.');
 

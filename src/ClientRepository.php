@@ -41,7 +41,7 @@ class ClientRepository
      */
     public function find(int $id): ?Client
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         $client = $passport->client();
 
         return $client->where($client->getKeyName(), $id)->first();
@@ -62,7 +62,7 @@ class ClientRepository
      */
     public function findForUser(int $clientId, mixed $userId): ?Client
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         $client = $passport->client();
 
         return $client
@@ -76,7 +76,7 @@ class ClientRepository
      */
     public function forUser(mixed $userId): Collection
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         return $passport->client()
             ->where('user_id', $userId)
             ->orderBy('name', 'asc')->get();
@@ -97,7 +97,7 @@ class ClientRepository
 
     public function findForProvider($id, $provider = 'user')
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         $client = $passport->client();
 
         if (empty($provider)) {
@@ -119,7 +119,7 @@ class ClientRepository
             }
             return $resClient;
         }
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         $client = $passport->client();
         $client = $client->where('provider', $provider)->orderBy($client->getKeyName(), 'desc')->first();
 
@@ -143,7 +143,7 @@ class ClientRepository
      */
     public function create(?int $userId, string $name, string $redirect, $provider = null, bool $personalAccess = false, bool $password = false, bool $confidential = true): Client
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         $client = $passport->client()->forceFill([
             'user_id' => $userId,
             'name' => $name,
@@ -167,7 +167,7 @@ class ClientRepository
      */
     public function createPersonalAccessClient(?int $userId, string $name, string $redirect, $provider = null): Client
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         return tap($this->create($userId, $name, $redirect, $provider, true), function ($client) use ($passport) {
             $accessClient = $passport->personalAccessClient();
             $accessClient->client_id = $client->id;

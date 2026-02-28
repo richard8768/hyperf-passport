@@ -36,7 +36,7 @@ class KeysCommand extends Command
      */
     public function handle(): void
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         [$publicKey, $privateKey] = [
             $passport->keyPath('oauth-public.key'),
             $passport->keyPath('oauth-private.key'),

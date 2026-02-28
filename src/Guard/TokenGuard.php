@@ -99,7 +99,7 @@ class TokenGuard implements ExtendAuthGuard
      */
     public function user(): ?Authenticatable
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         if ($this->bearerToken($this->request)) {
             return $this->authenticateViaBearerToken($this->request);
         }
@@ -117,7 +117,7 @@ class TokenGuard implements ExtendAuthGuard
      */
     public function client()
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         if ($this->bearerToken($this->request)) {
             if (! $psr = $this->getPsrRequestViaBearerToken($this->request)) {
                 return null;
@@ -311,7 +311,7 @@ class TokenGuard implements ExtendAuthGuard
      */
     protected function getTokenViaCookie(RequestInterface $request): ?array
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         // If we need to retrieve the token from the cookie, it'll be encrypted , so we must
         // first decrypt the cookie and then attempt to find the token value within the
         // database. If we can't decrypt the value we'll bail out with a null return.
@@ -337,7 +337,7 @@ class TokenGuard implements ExtendAuthGuard
      */
     protected function decodeJwtTokenCookie(RequestInterface $request): array
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         $headers = new stdClass();
         return (array) JWT::decode(
             CookieValuePrefix::remove($this->encrypter->decrypt($request->cookie($passport->cookie()), $passport->unserializesCookies)),

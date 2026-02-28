@@ -60,7 +60,7 @@ class RefreshToken extends Model
      */
     public function accessToken(): BelongsTo
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         return $this->belongsTo($passport->tokenModel());
     }
 

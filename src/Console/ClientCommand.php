@@ -43,7 +43,7 @@ class ClientCommand extends Command
      */
     public function handle(): void
     {
-        $clients = make(ClientRepository::class);
+        $clients = \Hyperf\Support\make(ClientRepository::class);
         if ($this->input->getOption('personal')) {
             $this->createPersonalClient($clients);
         } elseif ($this->input->getOption('password')) {
@@ -191,7 +191,7 @@ class ClientCommand extends Command
      */
     protected function outputClientDetails(Client $client): void
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         if ($passport->hashesClientSecrets) {
             $this->line('<comment>Here is your new client secret. This is the only time it will be shown so don\'t lose it!</comment>');
             $this->line('');

@@ -179,6 +179,7 @@ class Passport
     /**
      * Get or set when access tokens expire.
      *
+     * @param DateTimeInterface|null $date
      * @return DateInterval|Passport
      */
     public function tokensExpireIn(?DateTimeInterface $date = null): DateInterval|Passport|static
@@ -194,6 +195,7 @@ class Passport
     /**
      * Get or set when refresh tokens expire.
      *
+     * @param DateTimeInterface|null $date
      * @return DateInterval|Passport
      */
     public function refreshTokensExpireIn(?DateTimeInterface $date = null): DateInterval|Passport|static
@@ -211,6 +213,7 @@ class Passport
     /**
      * Get or set when personal access tokens expire.
      *
+     * @param DateTimeInterface|null $date
      * @return DateInterval|Passport
      */
     public function personalAccessTokensExpireIn(?DateTimeInterface $date = null): DateInterval|Passport|static
@@ -228,6 +231,7 @@ class Passport
     /**
      * Get or set the name for API token cookies.
      *
+     * @param string|null $cookie
      * @return Passport|string
      */
     public function cookie(?string $cookie = null): Passport|static|string

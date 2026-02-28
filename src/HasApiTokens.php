@@ -25,7 +25,7 @@ trait HasApiTokens
      */
     public function clients(): HasMany
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         return $this->hasMany($passport->clientModel(), 'user_id');
     }
 
@@ -34,7 +34,7 @@ trait HasApiTokens
      */
     public function tokens(): HasMany
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         return $this->hasMany($passport->tokenModel(), 'user_id')->orderBy('created_at', 'desc');
     }
 

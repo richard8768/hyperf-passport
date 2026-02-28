@@ -47,7 +47,7 @@ class ApiTokenCookieFactory
         $configArray = $this->config->get('session');
 
         $expiration = Carbon::now()->addMinutes($configArray['cookie_lifetime']);
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         return new Cookie(
             $passport->cookie(),
             $this->createToken($userId, $csrfToken, $expiration),

@@ -61,7 +61,7 @@ class Token extends Model
      */
     public function client(): BelongsTo
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         return $this->belongsTo($passport->clientModel());
     }
 
@@ -85,7 +85,7 @@ class Token extends Model
         if (in_array('*', $this->scopes)) {
             return true;
         }
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         $scopes = $passport->withInheritedScopes ? $this->resolveInheritedScopes($scope) : [$scope];
 
         foreach ($scopes as $loopScope) {

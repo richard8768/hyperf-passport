@@ -58,7 +58,7 @@ class InstallCommand extends Command
     {
         $this->call('vendor:publish', ['package' => 'richard/hyperf-passport', '--id' => 'config', '--force']);
         $this->call('vendor:publish', ['package' => 'richard/hyperf-passport', '--id' => 'migrations', '--force']);
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         $this->config->set('passport.client_uuids', true);
         $passport->setClientUuids(true);
 

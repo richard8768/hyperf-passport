@@ -22,7 +22,7 @@ class RefreshTokenRepository
      */
     public function create(array $attributes): RefreshToken
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         return $passport->refreshToken()->create($attributes);
     }
 
@@ -34,7 +34,7 @@ class RefreshTokenRepository
      */
     public function find(string $id): RefreshToken
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         return $passport->refreshToken()->where('id', $id)->first();
     }
 
@@ -57,7 +57,7 @@ class RefreshTokenRepository
      */
     public function revokeRefreshToken(string $id): mixed
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         return $passport->refreshToken()->where('id', $id)->update(['revoked' => true]);
     }
 
@@ -69,7 +69,7 @@ class RefreshTokenRepository
      */
     public function revokeRefreshTokensByAccessTokenId(string $tokenId): void
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         $passport->refreshToken()->where('access_token_id', $tokenId)->update(['revoked' => true]);
     }
 
@@ -81,7 +81,7 @@ class RefreshTokenRepository
      */
     public function revokeRefreshTokensByConditons(array $conditions): mixed
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         $accessTokenIdList = $passport->token()->where($conditions)->get(['id'])->toArray();
         return $passport->refreshToken()->whereIn('access_token_id', $accessTokenIdList)->update(['revoked' => true]);
     }

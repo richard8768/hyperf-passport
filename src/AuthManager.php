@@ -35,7 +35,7 @@ class AuthManager extends QbhyAuthManager
         $inputClientId = $this->serverRequest->input('X-Client-Id') ?? $this->serverRequest->input('x-client-id');
         $clientId = (! empty($headerClientId)) ? $headerClientId : $inputClientId;
         if (! empty($clientId)) {
-            $clients = make(ClientRepository::class);
+            $clients = \Hyperf\Support\make(ClientRepository::class);
             $clientInfo = $clients->findActive($clientId);
             $tmpProvider = $clientInfo->provider ?? '';
             $configProviders = $this->config['providers'];

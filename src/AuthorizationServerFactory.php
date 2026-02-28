@@ -51,7 +51,7 @@ class AuthorizationServerFactory
         $tokenExpireDays = new DateInterval('P7D');
         $refreshTokenExpireDays = new DateInterval('P60D');
         $personTokenDays = new DateInterval('P7D');
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         $passport->setClientUuids($this->config->get('passport.client_uuids', false));
         $passport->tokensExpireIn($this->config->get('passport.token_days', $tokenExpireDays));
         $passport->refreshTokensExpireIn($this->config->get('passport.refresh_token_days', $refreshTokenExpireDays));
@@ -72,8 +72,8 @@ class AuthorizationServerFactory
 
     public function makeRefreshTokenGrant(): HigherOrderTapProxy|RefreshTokenGrant
     {
-        $repository = make(RefreshTokenRepository::class);
-        $passport = make(Passport::class);
+        $repository = \Hyperf\Support\make(RefreshTokenRepository::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         return tap(new RefreshTokenGrant($repository), function ($grant) use ($passport) {
             $grant->setRefreshTokenTTL($passport->refreshTokensExpireIn());
         });
@@ -82,7 +82,7 @@ class AuthorizationServerFactory
     public function makePasswordGrant(): PasswordGrant
     {
         $grant = new PasswordGrant(make(UserRepository::class), make(RefreshTokenRepository::class));
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         $grant->setRefreshTokenTTL($passport->refreshTokensExpireIn());
 
         return $grant;
@@ -101,7 +101,7 @@ class AuthorizationServerFactory
      */
     protected function makeAuthCodeGrant(): AuthCodeGrant
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         return tap($this->buildAuthCodeGrant(), function ($grant) use ($passport) {
             $grant->setRefreshTokenTTL($passport->refreshTokensExpireIn());
         });
@@ -119,7 +119,7 @@ class AuthorizationServerFactory
 
     protected function makeImplicitGrant(): ImplicitGrant
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         return new ImplicitGrant($passport->tokensExpireIn());
     }
 
@@ -128,7 +128,7 @@ class AuthorizationServerFactory
      */
     protected function makeCryptKey(string $type): CryptKey
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         $key = str_replace('\n', "\n", file_get_contents($passport->keyPath('oauth-' . $type . '.key')));
 
         return new CryptKey($key, null, false);

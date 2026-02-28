@@ -84,7 +84,7 @@ class PersonalAccessTokenFactory
      */
     protected function createRequest(Client $client, mixed $userId, array $scopes): ServerRequestInterface
     {
-        $passport = make(Passport::class);
+        $passport = \Hyperf\Support\make(Passport::class);
         $secret = $passport->hashesClientSecrets ? $this->clients->getPersonalAccessClientSecret() : $client->secret;
 
         return (new ServerRequest('POST', 'not-important'))->withParsedBody([
