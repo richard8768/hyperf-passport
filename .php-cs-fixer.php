@@ -1,5 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
+use PhpCsFixer\Config;
+use PhpCsFixer\Finder;
+
 $header = <<<'EOF'
 This file is part of richard8768/hyperf-passport.
 
@@ -8,7 +13,7 @@ This file is part of richard8768/hyperf-passport.
 @license  https://github.com/richard8768/hyperf-passport/blob/master/LICENSE
 EOF;
 
-return (new PhpCsFixer\Config())
+return (new Config())
     ->setRiskyAllowed(true)
     ->setRules([
         '@PSR2' => true,
@@ -22,13 +27,13 @@ return (new PhpCsFixer\Config())
             'location' => 'after_declare_strict',
         ],
         'array_syntax' => [
-            'syntax' => 'short'
+            'syntax' => 'short',
         ],
         'list_syntax' => [
-            'syntax' => 'short'
+            'syntax' => 'short',
         ],
         'concat_space' => [
-            'spacing' => 'one'
+            'spacing' => 'one',
         ],
         'blank_line_before_statement' => [
             'statements' => [
@@ -37,7 +42,7 @@ return (new PhpCsFixer\Config())
         ],
         'general_phpdoc_annotation_remove' => [
             'annotations' => [
-                'author'
+                'author',
             ],
         ],
         'ordered_imports' => [
@@ -64,6 +69,14 @@ return (new PhpCsFixer\Config())
         'constant_case' => [
             'case' => 'lower',
         ],
+        'global_namespace_import' => [
+            'import_classes' => true,
+            'import_constants' => true,
+            'import_functions' => true,
+        ],
+        'ordered_types' => [
+            'null_adjustment' => 'always_first',
+        ],
         'class_attributes_separation' => true,
         'combine_consecutive_unsets' => true,
         'declare_strict_types' => true,
@@ -79,9 +92,12 @@ return (new PhpCsFixer\Config())
         'single_quote' => true,
         'standardize_not_equals' => true,
         'multiline_comment_opening_closing' => true,
+        // Since PHP 8.3, default null values can be declared as nullable.
+        'nullable_type_declaration_for_default_null_value' => true,
+        'single_line_empty_body' => false,
     ])
     ->setFinder(
-        PhpCsFixer\Finder::create()
+        Finder::create()
             ->exclude('bin')
             ->exclude('public')
             ->exclude('runtime')

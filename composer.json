@@ -13,7 +13,7 @@
   "authors": [
     {
       "name": "richard8768",
-      "email": "jobsen123@qq.com"
+      "email": "444626008@qq.com"
     }
   ],
   "autoload": {
@@ -53,7 +53,7 @@
     "lcobucci/jwt": "^5.3",
     "league/oauth2-server": "^9.1",
     "league/plates": "^3.6",
-    "nesbot/carbon": "^3.10",
+    "nesbot/carbon": "^2.21",
     "nyholm/psr7": "^1.8",
     "phpseclib/phpseclib": "^2.0|^3.0",
     "ramsey/uuid": "^4.9",
@@ -77,8 +77,9 @@
   },
   "scripts": {
     "test": "co-phpunit --prepend tests/bootstrap.php -c phpunit.xml --colors=always",
-    "analyse": "phpstan analyse --memory-limit 300M -l 0 ./src",
-    "cs-fix": "php-cs-fixer fix $1"
+    "analyse": "phpstan analyse --memory-limit 512M -l 0 ./src",
+    "analyse-types": "phpstan analyze --configuration=\"phpstan.types.neon.dist\" --memory-limit 512M -l 0 ./src",
+    "cs-fix": "php-cs-fixer fix $1 --verbose"
   },
   "extra": {
     "hyperf": {
