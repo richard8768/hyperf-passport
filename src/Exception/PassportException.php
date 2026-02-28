@@ -2,29 +2,29 @@
 
 declare(strict_types=1);
 /**
- * This file is part of Hyperf.
+ * This file is part of richard8768/hyperf-passport.
  *
- * @link     https://www.hyperf.io
- * @document https://hyperf.wiki
- * @contact  group@hyperf.io
- * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ * @link     https://github.com/richard8768/hyperf-passport
+ * @contact  444626008@qq.com
+ * @license  https://github.com/richard8768/hyperf-passport/blob/master/LICENSE
  */
 
 namespace Richard\HyperfPassport\Exception;
 
+use Hyperf\Collection\Arr;
+use League\OAuth2\Server\Exception\OAuthServerException;
 use Qbhy\HyperfAuth\AuthGuard;
 use Qbhy\HyperfAuth\Exception\AuthException;
-use League\OAuth2\Server\Exception\OAuthServerException;
-use Hyperf\Collection\Arr;
 
 class PassportException extends AuthException
 {
-
     protected ?AuthGuard $guard;
+
     protected int $statusCode = 401;
+
     protected array $scopes = [];
 
-    public function __construct(string $message, AuthGuard $guard = null, OAuthServerException $previous = null)
+    public function __construct(string $message, ?AuthGuard $guard = null, ?OAuthServerException $previous = null)
     {
         parent::__construct($message, 401, $previous);
         $this->guard = $guard;
@@ -43,7 +43,7 @@ class PassportException extends AuthException
 
     public function getGuard(): string
     {
-        return (string)$this->guard;
+        return (string) $this->guard;
     }
 
     public function setScopes(array $scopes = []): PassportException
@@ -56,5 +56,4 @@ class PassportException extends AuthException
     {
         return $this->scopes;
     }
-
 }

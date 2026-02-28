@@ -1,37 +1,36 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of richard8768/hyperf-passport.
+ *
+ * @link     https://github.com/richard8768/hyperf-passport
+ * @contact  444626008@qq.com
+ * @license  https://github.com/richard8768/hyperf-passport/blob/master/LICENSE
+ */
+
 namespace Richard\HyperfPassport;
 
 use Hyperf\Database\Model\Collection;
 use Hyperf\Stringable\Str;
 use Richard\HyperfPassport\Exception\PassportException;
-use RuntimeException;
 
 class ClientRepository
 {
-
     /**
      * The personal access client ID.
-     *
-     * @var int|string|null
      */
-    protected string|int|null $personalAccessClientId;
+    protected null|int|string $personalAccessClientId;
 
     /**
      * The personal access client secret.
-     *
-     * @var string|null
      */
     protected ?string $personalAccessClientSecret;
 
     /**
      * Create a new client repository.
-     *
-     * @param int|string|null $personalAccessClientId
-     * @param string|null $personalAccessClientSecret
-     * @return void
      */
-    public function __construct(int|string $personalAccessClientId = null, string $personalAccessClientSecret = null)
+    public function __construct(null|int|string $personalAccessClientId = null, ?string $personalAccessClientSecret = null)
     {
         $this->personalAccessClientId = $personalAccessClientId;
         $this->personalAccessClientSecret = $personalAccessClientSecret;
@@ -39,9 +38,6 @@ class ClientRepository
 
     /**
      * Get a client by the given ID.
-     *
-     * @param int $id
-     * @return Client|null
      */
     public function find(int $id): ?Client
     {
@@ -53,23 +49,16 @@ class ClientRepository
 
     /**
      * Get an active client by the given ID.
-     *
-     * @param int $id
-     * @return Client|null
      */
     public function findActive(int $id): ?Client
     {
         $client = $this->find($id);
 
-        return $client && !$client->revoked ? $client : null;
+        return $client && ! $client->revoked ? $client : null;
     }
 
     /**
      * Get a client instance for the given ID and user ID.
-     *
-     * @param int $clientId
-     * @param mixed $userId
-     * @return Client|null
      */
     public function findForUser(int $clientId, mixed $userId): ?Client
     {
@@ -84,9 +73,6 @@ class ClientRepository
 
     /**
      * Get the client instances for the given user ID.
-     *
-     * @param mixed $userId
-     * @return Collection
      */
     public function forUser(mixed $userId): Collection
     {
@@ -123,10 +109,6 @@ class ClientRepository
 
     /**
      * Get the personal access token client for the application.
-     *
-     * @param string $provider
-     * @return Client
-     *
      */
     public function personalAccessClient(string $provider = 'users'): Client
     {
@@ -141,7 +123,7 @@ class ClientRepository
         $client = $passport->client();
         $client = $client->where('provider', $provider)->orderBy($client->getKeyName(), 'desc')->first();
 
-        if (!$client->exists()) {
+        if (! $client->exists()) {
             throw new PassportException('Personal access client not found. Please create one.');
         }
 
@@ -157,14 +139,7 @@ class ClientRepository
     /**
      * Store a new client.
      *
-     * @param int|null $userId
-     * @param string $name
-     * @param string $redirect
      * @param null $provider
-     * @param bool $personalAccess
-     * @param bool $password
-     * @param bool $confidential
-     * @return Client
      */
     public function create(?int $userId, string $name, string $redirect, $provider = null, bool $personalAccess = false, bool $password = false, bool $confidential = true): Client
     {
@@ -188,11 +163,7 @@ class ClientRepository
     /**
      * Store a new personal access token client.
      *
-     * @param int|null $userId
-     * @param string $name
-     * @param string $redirect
      * @param null $provider
-     * @return Client
      */
     public function createPersonalAccessClient(?int $userId, string $name, string $redirect, $provider = null): Client
     {
@@ -207,11 +178,7 @@ class ClientRepository
     /**
      * Store a new password grant client.
      *
-     * @param int|null $userId
-     * @param string $name
-     * @param string $redirect
      * @param null $provider
-     * @return Client
      */
     public function createPasswordGrantClient(?int $userId, string $name, string $redirect, $provider = null): Client
     {
@@ -220,11 +187,6 @@ class ClientRepository
 
     /**
      * Update the given client.
-     *
-     * @param Client $client
-     * @param string $name
-     * @param string $redirect
-     * @return Client
      */
     public function update(Client $client, string $name, string $redirect): Client
     {
@@ -237,9 +199,6 @@ class ClientRepository
 
     /**
      * Regenerate the client secret.
-     *
-     * @param Client $client
-     * @return Client
      */
     public function regenerateSecret(Client $client): Client
     {
@@ -254,7 +213,6 @@ class ClientRepository
      * Determine if the given client is revoked.
      *
      * @param int $id
-     * @return bool
      */
     public function revoked($id): bool
     {
@@ -265,9 +223,6 @@ class ClientRepository
 
     /**
      * Delete the given client.
-     *
-     * @param Client $client
-     * @return void
      */
     public function delete(Client $client): void
     {
@@ -278,22 +233,17 @@ class ClientRepository
 
     /**
      * Get the personal access client id.
-     *
-     * @return int|string|null
      */
-    public function getPersonalAccessClientId(): int|string|null
+    public function getPersonalAccessClientId(): null|int|string
     {
         return $this->personalAccessClientId;
     }
 
     /**
      * Get the personal access client secret.
-     *
-     * @return string|null
      */
     public function getPersonalAccessClientSecret(): ?string
     {
         return $this->personalAccessClientSecret;
     }
-
 }

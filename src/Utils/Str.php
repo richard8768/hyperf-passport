@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of richard8768/hyperf-passport.
+ *
+ * @link     https://github.com/richard8768/hyperf-passport
+ * @contact  444626008@qq.com
+ * @license  https://github.com/richard8768/hyperf-passport/blob/master/LICENSE
+ */
+
 namespace Richard\HyperfPassport\Utils;
 
 use DateTimeInterface;
@@ -14,8 +23,6 @@ class Str extends HyperfStr
 {
     /**
      * Generate a UUID (version 4).
-     *
-     * @return UuidInterface
      */
     public static function uuid(): UuidInterface
     {
@@ -24,13 +31,10 @@ class Str extends HyperfStr
 
     /**
      * Generate a time-ordered UUID (version 4).
-     *
-     * @param DateTimeInterface|null $time
-     * @return UuidInterface
      */
-    public static function orderedUuid(DateTimeInterface|null $time = null): UuidInterface
+    public static function orderedUuid(?DateTimeInterface $time = null): UuidInterface
     {
-        $factory = new UuidFactory;
+        $factory = new UuidFactory();
 
         $factory->setRandomGenerator(new CombGenerator(
             $factory->getRandomGenerator(),

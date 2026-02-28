@@ -1,24 +1,27 @@
 <?php
 
-namespace Richard\HyperfPassport;
+declare(strict_types=1);
+/**
+ * This file is part of richard8768/hyperf-passport.
+ *
+ * @link     https://github.com/richard8768/hyperf-passport
+ * @contact  444626008@qq.com
+ * @license  https://github.com/richard8768/hyperf-passport/blob/master/LICENSE
+ */
 
+namespace Richard\HyperfPassport;
 
 use Hyperf\Database\Model\Relations\HasMany;
 
 trait HasApiTokens
 {
-
     /**
      * The current access token for the authentication user.
-     *
-     * @var Token
      */
     protected Token $accessToken;
 
     /**
      * Get all  the user's registered OAuth clients.
-     *
-     * @return HasMany
      */
     public function clients(): HasMany
     {
@@ -28,8 +31,6 @@ trait HasApiTokens
 
     /**
      * Get all  the access tokens for the user.
-     *
-     * @return HasMany
      */
     public function tokens(): HasMany
     {
@@ -39,8 +40,6 @@ trait HasApiTokens
 
     /**
      * Get the current access token being used by the user.
-     *
-     * @return Token|null
      */
     public function token(): ?Token
     {
@@ -49,9 +48,6 @@ trait HasApiTokens
 
     /**
      * Determine if the current API token has a given scope.
-     *
-     * @param string $scope
-     * @return bool
      */
     public function tokenCan(string $scope): bool
     {
@@ -60,23 +56,20 @@ trait HasApiTokens
 
     /**
      * Create a new personal access token for the user.
-     *
-     * @param string $name
-     * @param array $scopes
-     * @param string $provider
-     * @return PersonalAccessTokenResult
      */
     public function createToken(string $name, array $scopes = [], string $provider = 'users'): PersonalAccessTokenResult
     {
         return make(PersonalAccessTokenFactory::class)->make(
-            $this->getKey(), $name, $scopes, $provider
+            $this->getKey(),
+            $name,
+            $scopes,
+            $provider
         );
     }
 
     /**
      * Set the current access token for the user.
      *
-     * @param Token $accessToken
      * @return $this
      */
     public function withAccessToken(Token $accessToken): self
@@ -85,5 +78,4 @@ trait HasApiTokens
 
         return $this;
     }
-
 }

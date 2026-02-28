@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of richard8768/hyperf-passport.
+ *
+ * @link     https://github.com/richard8768/hyperf-passport
+ * @contact  444626008@qq.com
+ * @license  https://github.com/richard8768/hyperf-passport/blob/master/LICENSE
+ */
+
 namespace Richard\HyperfPassport\Console;
 
 use Hyperf\Command\Command;
@@ -11,11 +20,8 @@ use Richard\HyperfPassport\Passport;
 
 class ClientCommand extends Command
 {
-
     /**
      * The name and signature of the console command.
-     *
-     * @var null|string
      */
     protected ?string $signature = 'passport:client
             {--personal : Create a personal access token client}
@@ -29,15 +35,11 @@ class ClientCommand extends Command
 
     /**
      * The console command description.
-     *
-     * @var string
      */
     protected string $description = 'Create a client for issuing access tokens';
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
     public function handle(): void
     {
@@ -55,9 +57,6 @@ class ClientCommand extends Command
 
     /**
      * Create a new personal access client.
-     *
-     * @param ClientRepository $clients
-     * @return void
      */
     protected function createPersonalClient(ClientRepository $clients): void
     {
@@ -75,7 +74,10 @@ class ClientCommand extends Command
         );
 
         $client = $clients->createPersonalAccessClient(
-            null, $name, 'http://localhost', $provider
+            null,
+            $name,
+            'http://localhost',
+            $provider
         );
 
         $this->info('Personal access client created successfully.');
@@ -85,9 +87,6 @@ class ClientCommand extends Command
 
     /**
      * Create a new password grant client.
-     *
-     * @param ClientRepository $clients
-     * @return void
      */
     protected function createPasswordClient(ClientRepository $clients): void
     {
@@ -105,7 +104,10 @@ class ClientCommand extends Command
         );
 
         $client = $clients->createPasswordGrantClient(
-            null, $name, 'http://localhost', $provider
+            null,
+            $name,
+            'http://localhost',
+            $provider
         );
 
         $this->info('Password grant client created successfully.');
@@ -115,9 +117,6 @@ class ClientCommand extends Command
 
     /**
      * Create a client credentials grant client.
-     *
-     * @param ClientRepository $clients
-     * @return void
      */
     protected function createClientCredentialsClient(ClientRepository $clients): void
     {
@@ -135,7 +134,10 @@ class ClientCommand extends Command
         );
 
         $client = $clients->create(
-            null, $name, '', $provider
+            null,
+            $name,
+            '',
+            $provider
         );
 
         $this->info('New client created successfully.');
@@ -145,9 +147,6 @@ class ClientCommand extends Command
 
     /**
      * Create a authorization code client.
-     *
-     * @param ClientRepository $clients
-     * @return void
      */
     protected function createAuthCodeClient(ClientRepository $clients): void
     {
@@ -173,7 +172,13 @@ class ClientCommand extends Command
         );
 
         $client = $clients->create(
-            $userId, $name, $redirect, $provider, false, false, !$this->input->getOption('public')
+            $userId,
+            $name,
+            $redirect,
+            $provider,
+            false,
+            false,
+            ! $this->input->getOption('public')
         );
 
         $this->info('New client created successfully.');
@@ -183,9 +188,6 @@ class ClientCommand extends Command
 
     /**
      * Output the client's ID and secret key.
-     *
-     * @param Client $client
-     * @return void
      */
     protected function outputClientDetails(Client $client): void
     {
@@ -206,10 +208,9 @@ class ClientCommand extends Command
 
     protected function genUrl(string $toUrl): string
     {
-        if (!ApplicationContext::hasContainer() || Str::startsWith($toUrl, ['http://', 'https://'])) {
+        if (! ApplicationContext::hasContainer() || Str::startsWith($toUrl, ['http://', 'https://'])) {
             return $toUrl;
         }
         return 'http://localhost' . (Str::startsWith($toUrl, '/') ? $toUrl : '/' . $toUrl);
     }
-
 }

@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of richard8768/hyperf-passport.
+ *
+ * @link     https://github.com/richard8768/hyperf-passport
+ * @contact  444626008@qq.com
+ * @license  https://github.com/richard8768/hyperf-passport/blob/master/LICENSE
+ */
+
 namespace Richard\HyperfPassport\Bridge;
 
 use League\OAuth2\Server\Entities\ClientEntityInterface;
@@ -9,11 +18,7 @@ use Richard\HyperfPassport\Passport;
 
 class ScopeRepository implements ScopeRepositoryInterface
 {
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getScopeEntityByIdentifier($identifier): Scope|ScopeEntityInterface|null
+    public function getScopeEntityByIdentifier($identifier): null|Scope|ScopeEntityInterface
     {
         $passport = make(Passport::class);
         if ($passport->hasScope($identifier)) {
@@ -22,17 +27,9 @@ class ScopeRepository implements ScopeRepositoryInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     * @param array $scopes
-     * @param string $grantType
-     * @param ClientEntityInterface $clientEntity
-     * @param string|null $userIdentifier
-     * @param string|null $authCodeId
-     */
-    public function finalizeScopes(array $scopes, string $grantType, ClientEntityInterface $clientEntity, string|null $userIdentifier = null, ?string $authCodeId = null):array
+    public function finalizeScopes(array $scopes, string $grantType, ClientEntityInterface $clientEntity, ?string $userIdentifier = null, ?string $authCodeId = null): array
     {
-        if (!in_array($grantType, ['password', 'personal_access', 'client_credentials'])) {
+        if (! in_array($grantType, ['password', 'personal_access', 'client_credentials'])) {
             $scopes = collect($scopes)->reject(function ($scope) {
                 return trim($scope->getIdentifier()) === '*';
             })->values()->all();
@@ -42,5 +39,4 @@ class ScopeRepository implements ScopeRepositoryInterface
             return $passport->hasScope($scope->getIdentifier());
         })->values()->all();
     }
-
 }

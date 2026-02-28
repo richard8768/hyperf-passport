@@ -1,25 +1,34 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of richard8768/hyperf-passport.
+ *
+ * @link     https://github.com/richard8768/hyperf-passport
+ * @contact  444626008@qq.com
+ * @license  https://github.com/richard8768/hyperf-passport/blob/master/LICENSE
+ */
+
 namespace Richard\HyperfPassport\Controller;
 
+use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\SessionInterface;
 use Hyperf\Database\Model\Model;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpMessage\Server\Response;
-use Hyperf\View\Render;
 use Hyperf\HttpServer\Request;
 use Hyperf\Stringable\Str;
+use Hyperf\View\Render;
+use League\OAuth2\Server\AuthorizationServer;
+use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
+use Nyholm\Psr7\Response as Psr7Response;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Qbhy\HyperfAuth\AuthManager;
 use Richard\HyperfPassport\Bridge\User;
 use Richard\HyperfPassport\ClientRepository;
 use Richard\HyperfPassport\Passport;
 use Richard\HyperfPassport\TokenRepository;
-use Hyperf\Contract\SessionInterface;
-use League\OAuth2\Server\AuthorizationServer;
-use Nyholm\Psr7\Response as Psr7Response;
-use Psr\Http\Message\ServerRequestInterface;
-use Qbhy\HyperfAuth\AuthManager;
-use Hyperf\Contract\ConfigInterface;
-use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 
 class AuthorizationController
 {
@@ -27,31 +36,20 @@ class AuthorizationController
 
     #[Inject]
     protected ConfigInterface $config;
+
     /**
      * The authorization server.
-     *
-     * @var AuthorizationServer
      */
     protected AuthorizationServer $server;
 
-    /**
-     * @var Render
-     */
     protected Render $render;
+
     protected SessionInterface $session;
 
-    /**
-     * @var AuthManager
-     */
     protected AuthManager $auth;
 
     /**
      * Create a new controller instance.
-     *
-     * @param AuthorizationServer $server
-     * @param Render $render
-     * @param SessionInterface $session
-     * @param AuthManager $auth
      */
     public function __construct(AuthorizationServer $server, Render $render, SessionInterface $session, AuthManager $auth)
     {
@@ -63,12 +61,6 @@ class AuthorizationController
 
     /**
      * Authorize a client to access the user's account.
-     *
-     * @param ServerRequestInterface $psrRequest
-     * @param Request $request
-     * @param ClientRepository $clients
-     * @param TokenRepository $tokens
-     * @return Response|ResponseInterface
      */
     public function authorize(ServerRequestInterface $psrRequest, Request $request, ClientRepository $clients, TokenRepository $tokens): Response|ResponseInterface
     {
@@ -91,9 +83,6 @@ class AuthorizationController
 
     /**
      * Transform the authorization request's scopes into Scope instances.
-     *
-     * @param AuthorizationRequest $authRequest
-     * @return array
      */
     protected function parseScopes(AuthorizationRequest $authRequest): array
     {
@@ -104,10 +93,6 @@ class AuthorizationController
 
     /**
      * Approve the authorization request.
-     *
-     * @param AuthorizationRequest $authRequest
-     * @param Model $user
-     * @return  Response
      */
     protected function approveRequest(AuthorizationRequest $authRequest, Model $user): Response
     {
@@ -118,5 +103,4 @@ class AuthorizationController
             return $this->convertResponse($this->server->completeAuthorizationRequest($authRequest, new Psr7Response()));
         });
     }
-
 }

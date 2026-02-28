@@ -1,18 +1,24 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of richard8768/hyperf-passport.
+ *
+ * @link     https://github.com/richard8768/hyperf-passport
+ * @contact  444626008@qq.com
+ * @license  https://github.com/richard8768/hyperf-passport/blob/master/LICENSE
+ */
+
 namespace Richard\HyperfPassport\Console;
 
-use Hyperf\Command\Command;
 use Carbon\Carbon;
+use Hyperf\Command\Command;
 use Richard\HyperfPassport\Passport;
 
 class PurgeCommand extends Command
 {
-
     /**
      * The name and signature of the console command.
-     *
-     * @var null|string
      */
     protected ?string $signature = 'passport:purge
                             {--revoked : Only purge revoked tokens and authentication codes}
@@ -20,8 +26,6 @@ class PurgeCommand extends Command
 
     /**
      * The console command description.
-     *
-     * @var string
      */
     protected string $description = 'Purge revoked and / or expired tokens and authentication codes';
 
@@ -32,8 +36,8 @@ class PurgeCommand extends Command
     {
         $expired = Carbon::now()->subDays(7);
         $passport = make(Passport::class);
-        if (($this->input->getOption('revoked') && $this->input->getOption('expired')) ||
-            (!$this->input->getOption('revoked') && !$this->input->getOption('expired'))) {
+        if (($this->input->getOption('revoked') && $this->input->getOption('expired'))
+            || (! $this->input->getOption('revoked') && ! $this->input->getOption('expired'))) {
             $passport->token()->where('revoked', 1)->orWhereDate('expires_at', '<', $expired)->delete();
             $passport->authCode()->where('revoked', 1)->orWhereDate('expires_at', '<', $expired)->delete();
             $passport->refreshToken()->where('revoked', 1)->orWhereDate('expires_at', '<', $expired)->delete();
@@ -58,5 +62,4 @@ class PurgeCommand extends Command
     {
         $this->setDescription($this->description);
     }
-
 }

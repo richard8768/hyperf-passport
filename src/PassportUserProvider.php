@@ -1,21 +1,23 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of richard8768/hyperf-passport.
+ *
+ * @link     https://github.com/richard8768/hyperf-passport
+ * @contact  444626008@qq.com
+ * @license  https://github.com/richard8768/hyperf-passport/blob/master/LICENSE
+ */
+
 namespace Richard\HyperfPassport;
 
-use Richard\HyperfPassport\Contracts\ExtendUserProvider;
 use Qbhy\HyperfAuth\Authenticatable;
+use Richard\HyperfPassport\Contracts\ExtendUserProvider;
 
 class PassportUserProvider implements ExtendUserProvider
 {
-
-    /**
-     * @var array
-     */
     protected array $config;
 
-    /**
-     * @var string
-     */
     protected string $name;
 
     public function __construct(array $config, string $name)
@@ -24,33 +26,21 @@ class PassportUserProvider implements ExtendUserProvider
         $this->name = $name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function retrieveById($identifier): ?Authenticatable
     {
         return call_user_func_array([$this->config['model'], 'retrieveById'], [$identifier]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function retrieveByToken($identifier, string $token): ?Authenticatable
     {
         return call_user_func_array([$this->config['model'], 'retrieveById'], [$identifier, $token]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function retrieveByCredentials($credentials): null|Authenticatable
+    public function retrieveByCredentials($credentials): ?Authenticatable
     {
         return call_user_func_array([$this->config['model'], 'retrieveById'], [$credentials]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function validateCredentials(Authenticatable $user, $credentials): bool
     {
         return $user->getId() === $credentials;
@@ -58,12 +48,9 @@ class PassportUserProvider implements ExtendUserProvider
 
     /**
      * Get the name of the user provider.
-     *
-     * @return string
      */
     public function getProviderName(): string
     {
         return $this->name;
     }
-
 }

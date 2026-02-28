@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of richard8768/hyperf-passport.
+ *
+ * @link     https://github.com/richard8768/hyperf-passport
+ * @contact  444626008@qq.com
+ * @license  https://github.com/richard8768/hyperf-passport/blob/master/LICENSE
+ */
+
 namespace Richard\HyperfPassport\Middleware;
 
 use Closure;
@@ -10,15 +19,10 @@ use Richard\HyperfPassport\Exception\PassportException;
 
 class CheckScopes
 {
-
-    /**
-     * @var AuthManager
-     */
     protected AuthManager $auth;
 
     /**
      * Create a new middleware instance.
-     * @return void
      */
     public function __construct(AuthManager $auth)
     {
@@ -28,23 +32,20 @@ class CheckScopes
     /**
      * Handle the incoming request.
      *
-     * @param Request $request
-     * @param Closure $next
      * @param mixed ...$scopes
-     * @return Response
      *
      * @throws PassportException
      */
     public function handle(Request $request, Closure $next, ...$scopes): Response
     {
         $user = $this->auth->guard('passport')->user();
-        if (!$user || !$user->token()) {
+        if (! $user || ! $user->token()) {
             $exception = new PassportException('This action is unauthorized.');
             throw $exception;
         }
 
         foreach ($scopes as $scope) {
-            if (!$user->tokenCan($scope)) {
+            if (! $user->tokenCan($scope)) {
                 $exception = new PassportException('Invalid scope(s) provided.');
                 $exception->setScopes($scopes);
                 throw $exception;
@@ -53,5 +54,4 @@ class CheckScopes
 
         return $next($request);
     }
-
 }

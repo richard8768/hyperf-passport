@@ -1,43 +1,40 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of richard8768/hyperf-passport.
+ *
+ * @link     https://github.com/richard8768/hyperf-passport
+ * @contact  444626008@qq.com
+ * @license  https://github.com/richard8768/hyperf-passport/blob/master/LICENSE
+ */
+
 namespace Richard\HyperfPassport\Controller;
 
 use Hyperf\Database\Model\Collection;
+use Hyperf\HttpMessage\Server\Response;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Request;
-use Hyperf\HttpMessage\Server\Response;
+use Qbhy\HyperfAuth\AuthManager;
 use Richard\HyperfPassport\RefreshTokenRepository;
 use Richard\HyperfPassport\TokenRepository;
-use Qbhy\HyperfAuth\AuthManager;
 
 class AuthorizedAccessTokenController
 {
-
     /**
      * The token repository implementation.
-     *
-     * @var TokenRepository
      */
     protected TokenRepository $tokenRepository;
 
     /**
      * The refresh token repository implementation.
-     *
-     * @var RefreshTokenRepository
      */
     protected RefreshTokenRepository $refreshTokenRepository;
 
-    /**
-     * @var AuthManager
-     */
     protected AuthManager $auth;
 
     /**
      * Create a new controller instance.
-     *
-     * @param TokenRepository $tokenRepository
-     * @param RefreshTokenRepository $refreshTokenRepository
-     * @param AuthManager $auth
      */
     public function __construct(TokenRepository $tokenRepository, RefreshTokenRepository $refreshTokenRepository, AuthManager $auth)
     {
@@ -48,9 +45,6 @@ class AuthorizedAccessTokenController
 
     /**
      * Get all the authorized tokens for the authenticated user.
-     *
-     * @param Request $request
-     * @return \Hyperf\Collection\Collection|Collection
      */
     public function forUser(Request $request): Collection|\Hyperf\Collection\Collection
     {
@@ -58,14 +52,13 @@ class AuthorizedAccessTokenController
         $tokens = $this->tokenRepository->forUser($user->getKey());
 
         return $tokens->load('client')->filter(function ($token) {
-            return !$token->client->firstParty() && !$token->revoked;
+            return ! $token->client->firstParty() && ! $token->revoked;
         })->values();
     }
 
     /**
      * Delete the given token.
      *
-     * @param Request $request
      * @param string $tokenId
      * @return Response
      */
@@ -73,7 +66,8 @@ class AuthorizedAccessTokenController
     {
         $user = $this->auth->guard('passport')->user();
         $token = $this->tokenRepository->findForUser(
-            $tokenId, $user->getKey()
+            $tokenId,
+            $user->getKey()
         );
 
         if (is_null($token)) {
@@ -88,5 +82,4 @@ class AuthorizedAccessTokenController
         $response = new Response();
         return $response->withStatus(204)->withBody(new SwooleStream(''));
     }
-
 }

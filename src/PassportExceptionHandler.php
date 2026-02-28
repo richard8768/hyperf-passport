@@ -2,31 +2,29 @@
 
 declare(strict_types=1);
 /**
- * This file is part of Hyperf.
+ * This file is part of richard8768/hyperf-passport.
  *
- * @link     https://www.hyperf.io
- * @document https://hyperf.wiki
- * @contact  group@hyperf.io
- * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ * @link     https://github.com/richard8768/hyperf-passport
+ * @contact  444626008@qq.com
+ * @license  https://github.com/richard8768/hyperf-passport/blob/master/LICENSE
  */
 
 namespace Richard\HyperfPassport;
 
+use Hyperf\Di\Annotation\Inject;
 use Hyperf\ExceptionHandler\ExceptionHandler;
 use Hyperf\HttpMessage\Stream\SwooleStream;
+use Hyperf\HttpServer\Contract\RequestInterface;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\ResponseInterface;
+use Qbhy\HyperfAuth\Exception\GuardException;
+use Qbhy\HyperfAuth\Exception\UserProviderException;
 use Richard\HyperfPassport\Exception\PassportException;
 use stdClass;
 use Throwable;
-use Hyperf\HttpServer\Contract\RequestInterface;
-use Hyperf\Di\Annotation\Inject;
-use Qbhy\HyperfAuth\Exception\GuardException;
-use Qbhy\HyperfAuth\Exception\UserProviderException;
 
 class PassportExceptionHandler extends ExceptionHandler
 {
-
     #[Inject]
     protected RequestInterface $requests;
 
@@ -57,5 +55,4 @@ class PassportExceptionHandler extends ExceptionHandler
     {
         return [];
     }
-
 }

@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of richard8768/hyperf-passport.
+ *
+ * @link     https://github.com/richard8768/hyperf-passport
+ * @contact  444626008@qq.com
+ * @license  https://github.com/richard8768/hyperf-passport/blob/master/LICENSE
+ */
+
 namespace Richard\HyperfPassport\Middleware;
 
 use Richard\HyperfPassport\Exception\PassportException;
@@ -7,28 +16,20 @@ use Richard\HyperfPassport\Token;
 
 class CheckClientCredentialsForAnyScope extends CheckCredentials
 {
-
     /**
      * Validate token credentials.
-     *
-     * @param Token $token
-     * @return void
      *
      * @throws PassportException
      */
     protected function validateCredentials(Token $token): void
     {
-        if (!$token) {
+        if (! $token) {
             throw new PassportException('This action is unauthorized.');
         }
     }
 
     /**
      * Validate token credentials.
-     *
-     * @param Token $token
-     * @param array $scopes
-     * @return void
      *
      * @throws PassportException
      */
@@ -47,5 +48,4 @@ class CheckClientCredentialsForAnyScope extends CheckCredentials
         $exception->setScopes($scopes);
         throw $exception;
     }
-
 }

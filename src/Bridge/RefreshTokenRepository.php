@@ -1,34 +1,36 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of richard8768/hyperf-passport.
+ *
+ * @link     https://github.com/richard8768/hyperf-passport
+ * @contact  444626008@qq.com
+ * @license  https://github.com/richard8768/hyperf-passport/blob/master/LICENSE
+ */
+
 namespace Richard\HyperfPassport\Bridge;
 
+use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
+use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Richard\HyperfPassport\Event\RefreshTokenCreated;
 use Richard\HyperfPassport\RefreshTokenRepository as PassportRefreshTokenRepository;
-use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
-use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 
 class RefreshTokenRepository implements RefreshTokenRepositoryInterface
 {
-
     /**
      * The refresh token repository instance.
-     *
      */
     protected PassportRefreshTokenRepository $refreshTokenRepository;
 
     /**
      * The event dispatcher instance.
-     *
      */
     protected EventDispatcherInterface $events;
 
     /**
      * Create a new repository instance.
-     *
-     * @param PassportRefreshTokenRepository $refreshTokenRepository
-     * @param EventDispatcherInterface $events
-     * @return void
      */
     public function __construct(PassportRefreshTokenRepository $refreshTokenRepository, EventDispatcherInterface $events)
     {
@@ -36,17 +38,11 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
         $this->refreshTokenRepository = $refreshTokenRepository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getNewRefreshToken(): RefreshToken|RefreshTokenEntityInterface|null
+    public function getNewRefreshToken(): null|RefreshToken|RefreshTokenEntityInterface
     {
-        return new RefreshToken;
+        return new RefreshToken();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function persistNewRefreshToken(RefreshTokenEntityInterface $refreshTokenEntity): void
     {
         $isRevoke = config('passport.is_revoke_user_others_token');
@@ -65,20 +61,13 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
         $this->events->dispatch(new RefreshTokenCreated($id, $accessTokenId));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function revokeRefreshToken($tokenId): void
     {
         $this->refreshTokenRepository->revokeRefreshToken($tokenId);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isRefreshTokenRevoked($tokenId): bool
     {
         return $this->refreshTokenRepository->isRefreshTokenRevoked($tokenId);
     }
-
 }

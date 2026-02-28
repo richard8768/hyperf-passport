@@ -1,30 +1,31 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of richard8768/hyperf-passport.
+ *
+ * @link     https://github.com/richard8768/hyperf-passport
+ * @contact  444626008@qq.com
+ * @license  https://github.com/richard8768/hyperf-passport/blob/master/LICENSE
+ */
 
 namespace Richard\HyperfPassport;
 
-use Hyperf\Di\Annotation\Inject;
 use Hyperf\Contract\ConfigInterface;
-use Psr\Container\ContainerInterface;
-use League\OAuth2\Server\ResourceServer;
+use Hyperf\Di\Annotation\Inject;
 use League\OAuth2\Server\CryptKey;
+use League\OAuth2\Server\ResourceServer;
+use Psr\Container\ContainerInterface;
 use Richard\HyperfPassport\Bridge\AccessTokenRepository;
 
 class ResourceServerFactory
 {
-
     #[Inject]
     protected ContainerInterface $container;
 
     #[Inject]
     protected ConfigInterface $config;
 
-    /**
-     * @param ContainerInterface $container
-     * @param ConfigInterface $config
-     * @return void
-     */
     public function __construct(ContainerInterface $container, ConfigInterface $config)
     {
         $this->container = $container;
@@ -38,16 +39,12 @@ class ResourceServerFactory
 
     /**
      * Create a CryptKey instance without permissions check.
-     *
-     * @param string $type
-     * @return CryptKey
      */
     protected function makeCryptKey(string $type): CryptKey
     {
         $passport = make(Passport::class);
-        $key = str_replace('\\n', "\n", file_get_contents($passport->keyPath('oauth-' . $type . '.key')));
+        $key = str_replace('\n', "\n", file_get_contents($passport->keyPath('oauth-' . $type . '.key')));
 
         return new CryptKey($key, null, false);
     }
-
 }

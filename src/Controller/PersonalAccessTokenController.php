@@ -1,46 +1,42 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of richard8768/hyperf-passport.
+ *
+ * @link     https://github.com/richard8768/hyperf-passport
+ * @contact  444626008@qq.com
+ * @license  https://github.com/richard8768/hyperf-passport/blob/master/LICENSE
+ */
+
 namespace Richard\HyperfPassport\Controller;
 
 use Hyperf\Database\Model\Collection;
-use Hyperf\HttpMessage\Stream\SwooleStream;
-use Hyperf\Validation\Contract\ValidatorFactoryInterface as ValidationFactory;
-use Hyperf\HttpServer\Request;
 use Hyperf\HttpMessage\Server\Response;
+use Hyperf\HttpMessage\Stream\SwooleStream;
+use Hyperf\HttpServer\Request;
+use Hyperf\Validation\Contract\ValidatorFactoryInterface as ValidationFactory;
+use Qbhy\HyperfAuth\AuthManager;
 use Richard\HyperfPassport\Passport;
 use Richard\HyperfPassport\PersonalAccessTokenResult;
 use Richard\HyperfPassport\TokenRepository;
-use Qbhy\HyperfAuth\AuthManager;
 
 class PersonalAccessTokenController
 {
-
     /**
      * The token repository implementation.
-     *
-     * @var TokenRepository
      */
     protected TokenRepository $tokenRepository;
 
     /**
      * The validation factory implementation.
-     *
-     * @var ValidationFactory
      */
     protected ValidationFactory $validation;
 
-    /**
-     * @var AuthManager
-     */
     protected AuthManager $auth;
 
     /**
      * Create a controller instance.
-     *
-     * @param TokenRepository $tokenRepository
-     * @param ValidationFactory $validation
-     * @param AuthManager $auth
-     * @return void
      */
     public function __construct(TokenRepository $tokenRepository, ValidationFactory $validation, AuthManager $auth)
     {
@@ -51,9 +47,6 @@ class PersonalAccessTokenController
 
     /**
      * Get all the personal access tokens for the authenticated user.
-     *
-     * @param Request $request
-     * @return \Hyperf\Collection\Collection|Collection
      */
     public function forUser(Request $request): Collection|\Hyperf\Collection\Collection
     {
@@ -61,15 +54,12 @@ class PersonalAccessTokenController
         $tokens = $this->tokenRepository->forUser($user->getKey());
 
         return $tokens->load('client')->filter(function ($token) {
-            return $token->client->personal_access_client && !$token->revoked;
+            return $token->client->personal_access_client && ! $token->revoked;
         })->values();
     }
 
     /**
      * Create a new personal access token for the user.
-     *
-     * @param Request $request
-     * @return PersonalAccessTokenResult
      */
     public function store(Request $request): PersonalAccessTokenResult
     {
@@ -81,22 +71,23 @@ class PersonalAccessTokenController
         $passportGuard = $this->auth->guard('passport');
         $provider = $passportGuard->getProvider()->getProviderName();
         return $passportGuard->user()->createToken(
-            $request->input('name'), $request->input('scopes') ?: [], $provider
+            $request->input('name'),
+            $request->input('scopes') ?: [],
+            $provider
         );
     }
 
     /**
      * Delete the given token.
      *
-     * @param Request $request
      * @param string $tokenId
-     * @return Response
      */
     public function destroy(Request $request, $tokenId): Response
     {
         $user = $this->auth->guard('passport')->user();
         $token = $this->tokenRepository->findForUser(
-            $tokenId, $user->getKey()
+            $tokenId,
+            $user->getKey()
         );
 
         if (is_null($token)) {
@@ -109,5 +100,4 @@ class PersonalAccessTokenController
         $response = new Response();
         return $response->withStatus(204)->withBody(new SwooleStream(''));
     }
-
 }

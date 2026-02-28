@@ -1,34 +1,37 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of richard8768/hyperf-passport.
+ *
+ * @link     https://github.com/richard8768/hyperf-passport
+ * @contact  444626008@qq.com
+ * @license  https://github.com/richard8768/hyperf-passport/blob/master/LICENSE
+ */
+
 namespace Richard\HyperfPassport;
 
+use Closure;
+use Hyperf\Database\Model\Events\Creating;
 use Hyperf\Database\Model\Relations\BelongsTo;
 use Hyperf\Database\Model\Relations\HasMany;
 use Hyperf\DbConnection\Model\Model;
 use Richard\HyperfPassport\Utils\Str;
-use Hyperf\Database\Model\Events\Creating;
 
 class Client extends Model
 {
-
     /**
      * The database table used by the model.
-     *
-     * @var null|string
      */
     protected ?string $table = 'oauth_clients';
 
     /**
      * The guarded attributes on the model.
-     *
-     * @var array
      */
     protected array $guarded = [];
 
     /**
      * The attributes excluded from the model's JSON form.
-     *
-     * @var array
      */
     protected array $hidden = [
         'secret',
@@ -36,8 +39,6 @@ class Client extends Model
 
     /**
      * The attributes that should be cast to native types.
-     *
-     * @var array
      */
     protected array $casts = [
         'grant_types' => 'array',
@@ -48,48 +49,40 @@ class Client extends Model
 
     /**
      * The temporary plain-text client secret.
-     *
-     * @var string|null
      */
     protected ?string $plainSecret;
 
     /**
      * Bootstrap the model and its traits.
-     *
-     * @return void
      */
     public function boot(): void
     {
         parent::boot();
     }
 
-    public function creating(Creating $event): \Closure
+    public function creating(Creating $event): Closure
     {
         return function ($model) {
             if (config('passport.client_uuids')) {
-                $model->{$model->getKeyName()} = $model->{$model->getKeyName()} ?: (string)Str::orderedUuid();
+                $model->{$model->getKeyName()} = $model->{$model->getKeyName()} ?: (string) Str::orderedUuid();
             }
         };
     }
 
     /**
      * Get the user that the client belongs to.
-     *
-     * @return BelongsTo
      */
     public function user(): BelongsTo
     {
         $provider = $this->provider ?: config('auth.guards.passport.provider');
 
         return $this->belongsTo(
-            config('auth.providers.'.$provider.'.model')
+            config('auth.providers.' . $provider . '.model')
         );
     }
 
     /**
      * Get all  the authentication codes for the client.
-     *
-     * @return HasMany
      */
     public function authCodes(): HasMany
     {
@@ -99,8 +92,6 @@ class Client extends Model
 
     /**
      * Get all  the tokens that belong to the client.
-     *
-     * @return HasMany
      */
     public function tokens(): HasMany
     {
@@ -112,8 +103,6 @@ class Client extends Model
      * The temporary non-hashed client secret.
      *
      * This is only available once during the request that created the client.
-     *
-     * @return string|null
      */
     public function getPlainSecretAttribute(): ?string
     {
@@ -123,14 +112,13 @@ class Client extends Model
     /**
      * Set the value of the secret attribute.
      *
-     * @param string|null $value
-     * @return void
+     * @param null|string $value
      */
     public function setSecretAttribute($value): void
     {
         $this->plainSecret = $value;
         $passport = make(Passport::class);
-        if (is_null($value) || !$passport->hashesClientSecrets) {
+        if (is_null($value) || ! $passport->hashesClientSecrets) {
             $this->attributes['secret'] = $value;
 
             return;
@@ -141,8 +129,6 @@ class Client extends Model
 
     /**
      * Determine if the client is a "first party" client.
-     *
-     * @return bool
      */
     public function firstParty(): bool
     {
@@ -151,8 +137,6 @@ class Client extends Model
 
     /**
      * Determine if the client should skip the authorization prompt.
-     *
-     * @return bool
      */
     public function skipsAuthorization(): bool
     {
@@ -161,18 +145,14 @@ class Client extends Model
 
     /**
      * Determine if the client is a confidential client.
-     *
-     * @return bool
      */
     public function confidential(): bool
     {
-        return !empty($this->secret);
+        return ! empty($this->secret);
     }
 
     /**
      * Get the auto-incrementing key type.
-     *
-     * @return string
      */
     public function getKeyType(): string
     {
@@ -182,8 +162,6 @@ class Client extends Model
 
     /**
      * Get the value indicating whether the IDs are incrementing.
-     *
-     * @return bool
      */
     public function getIncrementing(): bool
     {
@@ -193,12 +171,9 @@ class Client extends Model
 
     /**
      * Get the current connection name for the model.
-     *
-     * @return string|null
      */
     public function getConnectionName(): ?string
     {
         return config('passport.database_connection') ?? $this->connection;
     }
-
 }

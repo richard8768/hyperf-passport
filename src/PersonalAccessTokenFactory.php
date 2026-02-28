@@ -1,9 +1,18 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of richard8768/hyperf-passport.
+ *
+ * @link     https://github.com/richard8768/hyperf-passport
+ * @contact  444626008@qq.com
+ * @license  https://github.com/richard8768/hyperf-passport/blob/master/LICENSE
+ */
+
 namespace Richard\HyperfPassport;
 
-use Lcobucci\JWT\Token\Parser as JwtParser;
 use Lcobucci\JWT\Encoding\JoseEncoder;
+use Lcobucci\JWT\Token\Parser as JwtParser;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use Nyholm\Psr7\Response;
@@ -12,49 +21,36 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class PersonalAccessTokenFactory
 {
-
     /**
      * The authorization server instance.
-     *
-     * @var AuthorizationServer
      */
     protected AuthorizationServer $server;
 
     /**
      * The client repository instance.
-     *
-     * @var ClientRepository
      */
     protected ClientRepository $clients;
 
     /**
      * The token repository instance.
-     *
-     * @var TokenRepository
      */
     protected TokenRepository $tokens;
 
     /**
      * The JWT token parser instance.
      *
-     * @var JwtParser
-     *
-     * @deprecated This property will be removed in a future Passport version.
+     * @deprecated this property will be removed in a future Passport version
      */
     protected JwtParser $jwt;
 
     /**
      * Create a new personal access token factory instance.
-     *
-     * @param AuthorizationServer $server
-     * @param ClientRepository $clients
-     * @param TokenRepository $tokens
-     * @return void
      */
-    public function __construct(AuthorizationServer $server,
-                                ClientRepository    $clients,
-                                TokenRepository     $tokens)
-    {
+    public function __construct(
+        AuthorizationServer $server,
+        ClientRepository $clients,
+        TokenRepository $tokens
+    ) {
         $this->jwt = new JwtParser(new JoseEncoder());
         $this->tokens = $tokens;
         $this->server = $server;
@@ -63,12 +59,6 @@ class PersonalAccessTokenFactory
 
     /**
      * Create a new personal access token.
-     *
-     * @param mixed $userId
-     * @param string $name
-     * @param array $scopes
-     * @param string $provider
-     * @return PersonalAccessTokenResult
      */
     public function make(mixed $userId, string $name, array $scopes = [], string $provider = 'users'): PersonalAccessTokenResult
     {
@@ -84,17 +74,13 @@ class PersonalAccessTokenFactory
         });
 
         return new PersonalAccessTokenResult(
-            $response['access_token'], $token
+            $response['access_token'],
+            $token
         );
     }
 
     /**
      * Create a request instance for the given client.
-     *
-     * @param Client $client
-     * @param mixed $userId
-     * @param array $scopes
-     * @return ServerRequestInterface
      */
     protected function createRequest(Client $client, mixed $userId, array $scopes): ServerRequestInterface
     {
@@ -113,22 +99,18 @@ class PersonalAccessTokenFactory
     /**
      * Dispatch the given request to the authorization server.
      *
-     * @param ServerRequestInterface $request
-     * @return array
      * @throws OAuthServerException
      */
     protected function dispatchRequestToAuthorizationServer(ServerRequestInterface $request): array
     {
         return json_decode($this->server->respondToAccessTokenRequest(
-            $request, new Response
+            $request,
+            new Response()
         )->getBody()->__toString(), true);
     }
 
     /**
      * Get the access token instance for the parsed response.
-     *
-     * @param array $response
-     * @return Token
      */
     protected function findAccessToken(array $response): Token
     {
@@ -136,5 +118,4 @@ class PersonalAccessTokenFactory
             $this->jwt->parse($response['access_token'])->claims()->get('jti')
         );
     }
-
 }

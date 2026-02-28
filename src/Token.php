@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of richard8768/hyperf-passport.
+ *
+ * @link     https://github.com/richard8768/hyperf-passport
+ * @contact  444626008@qq.com
+ * @license  https://github.com/richard8768/hyperf-passport/blob/master/LICENSE
+ */
+
 namespace Richard\HyperfPassport;
 
 use Hyperf\Database\Model\Relations\BelongsTo;
@@ -7,39 +16,33 @@ use Hyperf\DbConnection\Model\Model;
 
 class Token extends Model
 {
+    /**
+     * Indicates if the IDs are auto-incrementing.
+     */
+    public bool $incrementing = false;
+
+    /**
+     * Indicates if the model should be timestamped.
+     */
+    public bool $timestamps = false;
 
     /**
      * The database table used by the model.
-     *
-     * @var null|string
      */
     protected ?string $table = 'oauth_access_tokens';
 
     /**
      * The "type" of the primary key ID.
-     *
-     * @var string
      */
     protected string $keyType = 'string';
 
     /**
-     * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
-     */
-    public bool $incrementing = false;
-
-    /**
      * The guarded attributes on the model.
-     *
-     * @var array
      */
     protected array $guarded = [];
 
     /**
      * The attributes that should be cast to native types.
-     *
-     * @var array
      */
     protected array $casts = [
         'scopes' => 'array',
@@ -48,24 +51,13 @@ class Token extends Model
 
     /**
      * The attributes that should be mutated to dates.
-     *
-     * @var array
      */
     protected array $dates = [
         'expires_at',
     ];
 
     /**
-     * Indicates if the model should be timestamped.
-     *
-     * @var bool
-     */
-    public bool $timestamps = false;
-
-    /**
      * Get the client that the token belongs to.
-     *
-     * @return BelongsTo
      */
     public function client(): BelongsTo
     {
@@ -75,8 +67,6 @@ class Token extends Model
 
     /**
      * Get the user that the token belongs to.
-     *
-     * @return BelongsTo
      */
     public function user(): BelongsTo
     {
@@ -84,14 +74,11 @@ class Token extends Model
 
         $model = config('auth.providers.' . $provider . '.model');
 
-        return $this->belongsTo($model, 'user_id', (new $model)->getKeyName());
+        return $this->belongsTo($model, 'user_id', (new $model())->getKeyName());
     }
 
     /**
      * Determine if the token has a given scope.
-     *
-     * @param string $scope
-     * @return bool
      */
     public function can(string $scope): bool
     {
@@ -111,10 +98,39 @@ class Token extends Model
     }
 
     /**
+     * Determine if the token is missing a given scope.
+     */
+    public function cant(string $scope): bool
+    {
+        return ! $this->can($scope);
+    }
+
+    /**
+     * Revoke the token instance.
+     */
+    public function revoke(): bool
+    {
+        return $this->forceFill(['revoked' => true])->save();
+    }
+
+    /**
+     * Determine if the token is a transient JWT token.
+     */
+    public function transient(): bool
+    {
+        return false;
+    }
+
+    /**
+     * Get the current connection name for the model.
+     */
+    public function getConnectionName(): ?string
+    {
+        return config('passport.database_connection') ?? $this->connection;
+    }
+
+    /**
      * Resolve all possible scopes.
-     *
-     * @param string $scope
-     * @return array
      */
     protected function resolveInheritedScopes(string $scope): array
     {
@@ -124,52 +140,10 @@ class Token extends Model
 
         $scopes = [];
 
-        for ($i = 1; $i <= $partsCount; $i++) {
+        for ($i = 1; $i <= $partsCount; ++$i) {
             $scopes[] = implode(':', array_slice($parts, 0, $i));
         }
 
         return $scopes;
     }
-
-    /**
-     * Determine if the token is missing a given scope.
-     *
-     * @param string $scope
-     * @return bool
-     */
-    public function cant(string $scope): bool
-    {
-        return !$this->can($scope);
-    }
-
-    /**
-     * Revoke the token instance.
-     *
-     * @return bool
-     */
-    public function revoke(): bool
-    {
-        return $this->forceFill(['revoked' => true])->save();
-    }
-
-    /**
-     * Determine if the token is a transient JWT token.
-     *
-     * @return bool
-     */
-    public function transient(): bool
-    {
-        return false;
-    }
-
-    /**
-     * Get the current connection name for the model.
-     *
-     * @return string|null
-     */
-    public function getConnectionName(): ?string
-    {
-        return config('passport.database_connection') ?? $this->connection;
-    }
-
 }

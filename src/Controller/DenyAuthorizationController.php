@@ -1,39 +1,39 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of richard8768/hyperf-passport.
+ *
+ * @link     https://github.com/richard8768/hyperf-passport
+ * @contact  444626008@qq.com
+ * @license  https://github.com/richard8768/hyperf-passport/blob/master/LICENSE
+ */
+
 namespace Richard\HyperfPassport\Controller;
 
 use Exception;
-use Hyperf\HttpServer\Response;
-use Hyperf\HttpServer\Request;
 use Hyperf\Collection\Arr;
 use Hyperf\Contract\SessionInterface;
+use Hyperf\HttpServer\Request;
+use Hyperf\HttpServer\Response;
 use Psr\Http\Message\ResponseInterface;
 use Qbhy\HyperfAuth\AuthManager;
 
 class DenyAuthorizationController
 {
-
     use RetrievesAuthRequestFromSession;
 
     /**
      * The response factory implementation.
-     *
-     * @var Response
      */
     protected Response $response;
+
     protected SessionInterface $session;
 
-    /**
-     * @var AuthManager
-     */
     protected AuthManager $auth;
 
     /**
      * Create a new controller instance.
-     *
-     * @param Response $response
-     * @param SessionInterface $session
-     * @param AuthManager $auth
      */
     public function __construct(Response $response, SessionInterface $session, AuthManager $auth)
     {
@@ -45,8 +45,6 @@ class DenyAuthorizationController
     /**
      * Deny the authorization request.
      *
-     * @param Request $request
-     * @return ResponseInterface
      * @throws Exception
      */
     public function deny(Request $request): ResponseInterface
@@ -57,7 +55,7 @@ class DenyAuthorizationController
 
         $clientUris = Arr::wrap($authRequest->getClient()->getRedirectUri());
 
-        if (!in_array($uri = $authRequest->getRedirectUri(), $clientUris)) {
+        if (! in_array($uri = $authRequest->getRedirectUri(), $clientUris)) {
             $uri = Arr::first($clientUris);
         }
 
@@ -67,5 +65,4 @@ class DenyAuthorizationController
             $uri . $separator . 'error=access_denied&state=' . $request->input('state')
         );
     }
-
 }

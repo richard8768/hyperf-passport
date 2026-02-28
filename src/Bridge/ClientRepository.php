@@ -1,52 +1,53 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of richard8768/hyperf-passport.
+ *
+ * @link     https://github.com/richard8768/hyperf-passport
+ * @contact  444626008@qq.com
+ * @license  https://github.com/richard8768/hyperf-passport/blob/master/LICENSE
+ */
+
 namespace Richard\HyperfPassport\Bridge;
 
 use League\OAuth2\Server\Entities\ClientEntityInterface;
-use Richard\HyperfPassport\ClientRepository as ClientModelRepository;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
+use Richard\HyperfPassport\ClientRepository as ClientModelRepository;
 use Richard\HyperfPassport\Passport;
 
 class ClientRepository implements ClientRepositoryInterface
 {
-
     /**
      * The client model repository.
-     *
-     * @var ClientModelRepository
      */
     protected ClientModelRepository $clients;
 
     /**
      * Create a new repository instance.
-     *
-     * @param ClientModelRepository $clients
-     * @return void
      */
     public function __construct(ClientModelRepository $clients)
     {
         $this->clients = $clients;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getClientEntity($clientIdentifier): ClientEntityInterface|Client|null
+    public function getClientEntity($clientIdentifier): null|Client|ClientEntityInterface
     {
         $record = $this->clients->findActive($clientIdentifier);
 
-        if (!$record) {
+        if (! $record) {
             return null;
         }
 
         return new Client(
-            $clientIdentifier, $record->name, $record->redirect, $record->confidential(), $record->provider
+            $clientIdentifier,
+            $record->name,
+            $record->redirect,
+            $record->confidential(),
+            $record->provider
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function validateClient($clientIdentifier, $clientSecret, $grantType): bool
     {
         // First, we will verify that the client exists and is authorized to create personal
@@ -54,11 +55,11 @@ class ClientRepository implements ClientRepositoryInterface
         // from the main interface. We'll only let certain clients generate the tokens.
         $record = $this->clients->findActive($clientIdentifier);
 
-        if (!$record || !$this->handlesGrant($record, $grantType)) {
+        if (! $record || ! $this->handlesGrant($record, $grantType)) {
             return false;
         }
 
-        return !$record->confidential() || $this->verifySecret((string)$clientSecret, $record->secret);
+        return ! $record->confidential() || $this->verifySecret((string) $clientSecret, $record->secret);
     }
 
     /**
@@ -66,17 +67,16 @@ class ClientRepository implements ClientRepositoryInterface
      *
      * @param \Richard\HyperfPassport\Client $record
      * @param string $grantType
-     * @return bool
      */
     protected function handlesGrant($record, $grantType): bool
     {
-        if (is_array($record->grant_types) && !in_array($grantType, $record->grant_types)) {
+        if (is_array($record->grant_types) && ! in_array($grantType, $record->grant_types)) {
             return false;
         }
 
         switch ($grantType) {
             case 'authorization_code':
-                return !$record->firstParty();
+                return ! $record->firstParty();
             case 'personal_access':
                 return $record->personal_access_client && $record->confidential();
             case 'password':
@@ -93,12 +93,10 @@ class ClientRepository implements ClientRepositoryInterface
      *
      * @param string $clientSecret
      * @param string $storedHash
-     * @return bool
      */
     protected function verifySecret($clientSecret, $storedHash): bool
     {
         $passport = make(Passport::class);
         return $passport->hashesClientSecrets ? password_verify($clientSecret, $storedHash) : hash_equals($storedHash, $clientSecret);
     }
-
 }

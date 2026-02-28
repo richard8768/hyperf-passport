@@ -1,38 +1,36 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of richard8768/hyperf-passport.
+ *
+ * @link     https://github.com/richard8768/hyperf-passport
+ * @contact  444626008@qq.com
+ * @license  https://github.com/richard8768/hyperf-passport/blob/master/LICENSE
+ */
+
 namespace Richard\HyperfPassport\Controller;
 
+use Hyperf\Contract\SessionInterface;
+use Hyperf\HttpMessage\Server\Response;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Request;
-use Hyperf\HttpMessage\Server\Response;
-use Richard\HyperfPassport\ApiTokenCookieFactory;
-use Hyperf\Contract\SessionInterface;
 use Qbhy\HyperfAuth\AuthManager;
+use Richard\HyperfPassport\ApiTokenCookieFactory;
 
 class TransientTokenController
 {
-
     protected SessionInterface $session;
 
     /**
      * The cookie factory instance.
-     *
-     * @var ApiTokenCookieFactory
      */
     protected ApiTokenCookieFactory $cookieFactory;
 
-    /**
-     * @var AuthManager
-     */
     protected AuthManager $auth;
 
     /**
      * Create a new controller instance.
-     *
-     * @param ApiTokenCookieFactory $cookieFactory
-     * @param SessionInterface $session
-     * @param AuthManager $auth
-     * @return void
      */
     public function __construct(ApiTokenCookieFactory $cookieFactory, SessionInterface $session, AuthManager $auth)
     {
@@ -43,9 +41,6 @@ class TransientTokenController
 
     /**
      * Get a fresh transient token cookie for the authenticated user.
-     *
-     * @param Request $request
-     * @return Response
      */
     public function refresh(Request $request): Response
     {
@@ -53,8 +48,8 @@ class TransientTokenController
         $user = $this->auth->guard('passport')->user();
         return $response->withBody(new SwooleStream('Refreshed.'))
             ->withCookie($this->cookieFactory->make(
-                $user->getKey(), $this->session->token()
+                $user->getKey(),
+                $this->session->token()
             ));
     }
-
 }

@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of richard8768/hyperf-passport.
+ *
+ * @link     https://github.com/richard8768/hyperf-passport
+ * @contact  444626008@qq.com
+ * @license  https://github.com/richard8768/hyperf-passport/blob/master/LICENSE
+ */
+
 namespace Richard\HyperfPassport\Controller;
 
 use Exception;
@@ -11,12 +20,8 @@ use Richard\HyperfPassport\Exception\PassportException;
 
 trait RetrievesAuthRequestFromSession
 {
-
     /**
      * Make sure the auth token matches the one in the session.
-     *
-     * @param Request $request
-     * @return void
      *
      * @throws PassportException
      */
@@ -33,15 +38,12 @@ trait RetrievesAuthRequestFromSession
     /**
      * Get the authorization request from the session.
      *
-     * @param Request $request
-     * @return AuthorizationRequest|HigherOrderTapProxy
-     *
      * @throws Exception
      */
     protected function getAuthRequestFromSession(Request $request): AuthorizationRequest|HigherOrderTapProxy
     {
-        return tap($this->session->get('authRequest'), function ($authRequest) use ($request) {
-            if (!$authRequest) {
+        return tap($this->session->get('authRequest'), function ($authRequest) {
+            if (! $authRequest) {
                 $exception = new PassportException('Authorization request was not present in the session.');
                 $exception->setStatusCode(400);
                 throw $exception;
@@ -52,5 +54,4 @@ trait RetrievesAuthRequestFromSession
             $authRequest->setAuthorizationApproved(true);
         });
     }
-
 }

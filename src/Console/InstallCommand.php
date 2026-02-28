@@ -1,21 +1,28 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of richard8768/hyperf-passport.
+ *
+ * @link     https://github.com/richard8768/hyperf-passport
+ * @contact  444626008@qq.com
+ * @license  https://github.com/richard8768/hyperf-passport/blob/master/LICENSE
+ */
+
 namespace Richard\HyperfPassport\Console;
 
 use Hyperf\Command\Command;
-use Richard\HyperfPassport\Passport;
-use Hyperf\Di\Annotation\Inject;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Di\Annotation\Inject;
+use Richard\HyperfPassport\Passport;
 
 class InstallCommand extends Command
 {
-
     #[Inject]
     protected ConfigInterface $config;
+
     /**
      * The name and signature of the console command.
-     *
-     * @var null|string
      */
     protected ?string $signature = 'passport:install
                             {--uuids : Use UUIDs for all client IDs}
@@ -24,15 +31,11 @@ class InstallCommand extends Command
 
     /**
      * The console command description.
-     *
-     * @var string
      */
     protected string $description = 'Run the commands necessary to prepare Passport for use';
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
     public function handle(): void
     {
@@ -50,8 +53,6 @@ class InstallCommand extends Command
 
     /**
      * Configure Passport for client UUIDs.
-     *
-     * @return void
      */
     protected function configureUuids(): void
     {
@@ -80,7 +81,6 @@ class InstallCommand extends Command
      * @param string $path
      * @param string $search
      * @param string $replace
-     * @return void
      */
     protected function replaceInFile($path, $search, $replace): void
     {
@@ -91,5 +91,4 @@ class InstallCommand extends Command
     {
         $this->setDescription($this->description);
     }
-
 }
