@@ -54,7 +54,7 @@ class CreateOauthPersonalAccessClientsTable extends Migration
      */
     public function getConnection(): string
     {
-        return config('passport.database_connection');
+        return config('passport.database_connection','default');
     }
 
 }

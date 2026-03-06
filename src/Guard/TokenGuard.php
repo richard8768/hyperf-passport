@@ -42,7 +42,7 @@ class TokenGuard implements ExtendAuthGuard
     /**
      * The currently authenticated user.
      */
-    protected Authenticatable $user;
+    protected ?Authenticatable $user;
 
     /**
      * The resource server instance.
@@ -167,19 +167,22 @@ class TokenGuard implements ExtendAuthGuard
 
     public function login(Authenticatable $user)
     {
+        $this->user = $user;
+        return $this;
     }
 
     public function logout()
     {
+        $this->user = null;
+        return $this;
     }
 
     /**
      * Determine if the guard has a user instance.
-     *
-     * @return bool
      */
-    public function hasUser()
+    public function hasUser(): bool
     {
+        return ! is_null($this->user);
     }
 
     /**

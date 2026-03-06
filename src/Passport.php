@@ -16,6 +16,7 @@ use DateInterval;
 use DateTimeInterface;
 use Hyperf\Collection\Collection;
 use Hyperf\Collection\Enumerable;
+use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 
 class Passport
 {
@@ -111,6 +112,13 @@ class Passport
      * Indicates the scope should inherit its parent scope.
      */
     public bool $withInheritedScopes = false;
+
+    /**
+     * The authorization server response type.
+     *
+     * @var null|ResponseTypeInterface
+     */
+    public ?ResponseTypeInterface $authorizationServerResponseType;
 
     /**
      * Enable the implicit grant type.

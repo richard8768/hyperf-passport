@@ -61,7 +61,7 @@ class CreateOauthClientsTable extends Migration
      */
     public function down()
     {
-        $this->schema->dropIfExists('oauth_clients');
+        $this->schema->dropIfExists('oauth_clients','default');
     }
 
 }
