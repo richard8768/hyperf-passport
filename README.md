@@ -18,9 +18,11 @@ $ composer require richard8768/hyperf-passport
 
 $ php bin/hyperf.php vendor:publish 96qbhy/hyperf-auth
 
-$ php bin/hyperf.php vendor:publish hyperf-ext/encryption
+$ php bin/hyperf.php vendor:publish richard8768/encryption
 
-$ php bin/hyperf.php vendor:publish hyperf-ext/hashing
+$ php bin/hyperf.php vendor:publish richard8768/hashing
+
+$ php bin/hyperf.php vendor:publish richard8768/cookie
 
 $ php bin/hyperf.php vendor:publish hyperf/view
 
@@ -228,6 +230,8 @@ php bin/hyperf.php passport:client --password --name="your client name"//生成�
 php bin/hyperf.php passport:client --personal --name="your client name"//生成Personal Access模式的client
 
 php bin/hyperf.php passport:client --client --name="your client name"//生成客户端模式的client
+
+php bin/hyperf.php passport:client --user_id=your_user_id --redirect_uri="your redirect callback url" --name="your client name"//生成授权码模式的client
 
 如果有数据填充文件可以执行 php bin/hyperf.php db:seed --path=seeders/user_table_seeder.php
 
