@@ -32,14 +32,15 @@ class PassportExceptionHandler extends ExceptionHandler
     {
         if ($throwable instanceof PassportException || $throwable instanceof GuardException || $throwable instanceof UserProviderException) {
             $this->stopPropagation();
-            $handleData = $this->getHandleMsg();
+            $statusCode = $throwable->getCode()??$throwable->getStatusCode();
+            $handleData = $this->getHandleMsg($statusCode);
             $emptyObj = new stdClass();
             if (empty($handleData)) {
-                $data = ['status' => 999999, 'data' => $emptyObj, 'message' => $throwable->getMessage()];
+                $data = ['status' => $statusCode, 'data' => $emptyObj, 'message' => $throwable->getMessage()];
             } else {
-                $data = ['status' => $handleData['status'] ?? 999999, 'data' => $handleData['data'] ?? $emptyObj, 'message' => $throwable->getMessage()];
+                $data = ['status' => $handleData['status'] ?? $statusCode, 'data' => $handleData['data'] ?? $emptyObj, 'message' => $throwable->getMessage()];
             }
-            return $response->withHeader('Content-Type', 'application/json;charset=utf-8')->withStatus($throwable->getStatusCode())->withBody(new SwooleStream(json_encode($data)));
+            return $response->withHeader('Content-Type', 'application/json;charset=utf-8')->withStatus(200)->withBody(new SwooleStream(json_encode($data)));
         }
 
         // 交给下一个异常处理器
@@ -51,7 +52,7 @@ class PassportExceptionHandler extends ExceptionHandler
         return $throwable instanceof PassportException;
     }
 
-    protected function getHandleMsg(): array
+    protected function getHandleMsg($statusCode): array
     {
         return [];
     }

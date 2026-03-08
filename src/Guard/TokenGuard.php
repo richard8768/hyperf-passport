@@ -100,13 +100,17 @@ class TokenGuard implements ExtendAuthGuard
      */
     public function user(): ?Authenticatable
     {
+        if (! is_null($this->user)) {
+            return $this->user;
+        }
+
         $passport = \Hyperf\Support\make(Passport::class);
         if ($this->bearerToken($this->request)) {
-            return $this->authenticateViaBearerToken($this->request);
+            return $this->user = $this->authenticateViaBearerToken($this->request);
         }
 
         if ($this->request->cookie($passport->cookie())) {
-            return $this->authenticateViaCookie($this->request);
+            return $this->user = $this->authenticateViaCookie($this->request);
         }
         return null;
     }
@@ -284,6 +288,7 @@ class TokenGuard implements ExtendAuthGuard
         try {
             return $this->server->validateAuthenticatedRequest($request);
         } catch (OAuthServerException $e) {
+            $request->header('Authorization', '');
             throw new PassportException(
                 $e->getMessage(),
                 $this,

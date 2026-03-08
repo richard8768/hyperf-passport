@@ -373,7 +373,7 @@ client_secret |是  |string | 服务端分配的client_id对应的密钥        
 - 使用刷新令牌获得新的会话令牌和刷新令牌
 
 ##### 请求地址
-- ` /oauth/token/refresh `
+- ` /oauth/token `
   
 ##### 请求方式
 - POST 

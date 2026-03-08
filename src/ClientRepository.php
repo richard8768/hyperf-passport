@@ -39,7 +39,7 @@ class ClientRepository
     /**
      * Get a client by the given ID.
      */
-    public function find(int $id): ?Client
+    public function find(string|int $id): ?Client
     {
         $passport = \Hyperf\Support\make(Passport::class);
         $client = $passport->client();
@@ -50,7 +50,7 @@ class ClientRepository
     /**
      * Get an active client by the given ID.
      */
-    public function findActive(int $id): ?Client
+    public function findActive(string|int $id): ?Client
     {
         $client = $this->find($id);
 
