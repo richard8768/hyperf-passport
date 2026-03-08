@@ -18,6 +18,7 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Stringable\Str;
 use HyperfExt\Cookie\CookieValuePrefix;
 use HyperfExt\Cookie\Middleware\EncryptCookieMiddleware;
+use HyperfExt\Encryption\Contract\DriverInterface as EncryptionDriverInterface;
 use HyperfExt\Encryption\EncryptionManager;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
@@ -67,7 +68,7 @@ class TokenGuard implements ExtendAuthGuard
     /**
      * The encrypter implementation.
      */
-    protected EncryptionManager $encrypter;
+    protected EncryptionDriverInterface $encrypter;
 
     protected RequestInterface $request;
 

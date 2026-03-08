@@ -49,6 +49,8 @@ class InstallCommand extends Command
 
         $this->call('passport:client', ['--personal' => true, '--name' => config('APP_NAME') . ' Personal Access Client', '--provider' => $provider]);
         $this->call('passport:client', ['--password' => true, '--name' => config('APP_NAME') . ' Password Grant Client', '--provider' => $provider]);
+        //$this->call('passport:client', ['--client' => true, '--name' => config('APP_NAME') . ' Client Credentials Grant Client', '--provider' => $provider]);
+        $this->call('passport:client', ['--user_id' => 10000, '--redirect_uri' => 'http://localhost/auth/callback', '--name' => config('APP_NAME') . ' Auth Code Grant Client', '--provider' => $provider]);
     }
 
     /**

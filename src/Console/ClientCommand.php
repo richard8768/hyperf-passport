@@ -74,7 +74,7 @@ class ClientCommand extends Command
         );
 
         $client = $clients->createPersonalAccessClient(
-            null,
+            0,
             $name,
             'http://localhost',
             $provider
@@ -104,7 +104,7 @@ class ClientCommand extends Command
         );
 
         $client = $clients->createPasswordGrantClient(
-            null,
+            0,
             $name,
             'http://localhost',
             $provider
@@ -134,7 +134,7 @@ class ClientCommand extends Command
         );
 
         $client = $clients->create(
-            null,
+            0,
             $name,
             '',
             $provider
@@ -172,7 +172,7 @@ class ClientCommand extends Command
         );
 
         $client = $clients->create(
-            $userId,
+            (int)$userId,
             $name,
             $redirect,
             $provider,

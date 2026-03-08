@@ -34,6 +34,8 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
      */
     protected EventDispatcherInterface $events;
 
+    protected AuthManager $auth;
+
     /**
      * Create a new repository instance.
      */
