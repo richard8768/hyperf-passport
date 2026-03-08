@@ -21,7 +21,7 @@ class AccessTokenCreated
     /**
      * The ID of the user associated with the token.
      */
-    public string $userId;
+    public null|int|string $userId;
 
     /**
      * The ID of the client associated with the token.
