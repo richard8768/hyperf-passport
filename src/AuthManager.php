@@ -69,4 +69,9 @@ class AuthManager extends QbhyAuthManager
         $config = $this->config['providers'][$name];
         return make($config['driver'], ['config' => $config, 'name' => $name]);
     }
+
+    public function setServerRequest(RequestInterface $serverRequest): void
+    {
+        $this->serverRequest = $serverRequest;
+    }
 }
