@@ -20,9 +20,11 @@ use Qbhy\HyperfAuth\AuthManager;
 use Richard\HyperfPassport\Passport;
 use Richard\HyperfPassport\PersonalAccessTokenResult;
 use Richard\HyperfPassport\TokenRepository;
+use Richard\HyperfPassport\Auth\DeleteTokenTrait;
 
 class PersonalAccessTokenController
 {
+    use DeleteTokenTrait;
     /**
      * The token repository implementation.
      */
@@ -54,7 +56,7 @@ class PersonalAccessTokenController
         $tokens = $this->tokenRepository->forUser($user->getKey());
 
         return $tokens->load('client')->filter(function ($token) {
-            return $token->client->personal_access_client && ! $token->revoked;
+            return $token->client->personal_access_client && !$token->revoked;
         })->values();
     }
 
@@ -66,10 +68,12 @@ class PersonalAccessTokenController
         $passport = \Hyperf\Support\make(Passport::class);
         $this->validation->make($request->all(), [
             'name' => 'required|max:191',
+            'provider' => 'string|max:20',
             'scopes' => 'array|in:' . implode(',', $passport->scopeIds()),
         ])->validate();
         $passportGuard = $this->auth->guard('passport');
-        $provider = $passportGuard->getProvider()->getProviderName();
+        $reqProvider = $request->input('provider');
+        $provider = (!empty($reqProvider)) ? $reqProvider : $passportGuard->getProvider()->getProviderName();
         return $passportGuard->user()->createToken(
             $request->input('name'),
             $request->input('scopes') ?: [],
@@ -79,16 +83,11 @@ class PersonalAccessTokenController
 
     /**
      * Delete the given token.
-     *
-     * @param string $tokenId
      */
-    public function destroy(Request $request, $tokenId): Response
+    public function destroy(Request $request): Response
     {
-        $user = $this->auth->guard('passport')->user();
-        $token = $this->tokenRepository->findForUser(
-            $tokenId,
-            $user->getKey()
-        );
+        $tokenId = $this->getTokenId($request);
+        $token = $this->getTokenByTokenId($tokenId);
 
         if (is_null($token)) {
             $response = new Response();

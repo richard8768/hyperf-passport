@@ -83,15 +83,16 @@ class ClientController
         $passport = \Hyperf\Support\make(Passport::class);
         $this->validation->make($request->all(), [
             'name' => 'required|max:191',
+            'provider' => 'required|max:20',
             'redirect' => ['required', $this->redirectRule],
             'confidential' => 'boolean',
         ])->validate();
         $user = $this->auth->guard('passport')->user();
         $client = $this->clients->create(
             $user->getKey(),
-            $request->name,
-            $request->redirect,
-            null,
+            $request->input('name'),
+            $request->input('redirect'),
+            $request->input('provider'),
             false,
             false,
             (bool) $request->input('confidential', true)
@@ -126,8 +127,8 @@ class ClientController
 
         return $this->clients->update(
             $client,
-            $request->name,
-            $request->redirect
+            $request->input('name'),
+            $request->input('redirect')
         );
     }
 

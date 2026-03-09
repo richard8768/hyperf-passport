@@ -65,8 +65,7 @@ class ClientRepository
         $passport = \Hyperf\Support\make(Passport::class);
         $client = $passport->client();
 
-        return $client
-            ->where($client->getKeyName(), $clientId)
+        return $client->where($client->getKeyName(), $clientId)
             ->where('user_id', $userId)
             ->first();
     }

@@ -136,7 +136,7 @@ class ClientCommand extends Command
         $client = $clients->create(
             0,
             $name,
-            '',
+            'http://localhost',
             $provider
         );
 
