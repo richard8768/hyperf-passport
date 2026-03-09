@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use Firebase\JWT\JWT;
 use Hyperf\Contract\ConfigInterface as Config;
 use Hyperf\HttpMessage\Cookie\Cookie;
+use Hyperf\Stringable\Str;
 use HyperfExt\Encryption\Contract\DriverInterface;
 use HyperfExt\Encryption\EncryptionManager;
 
@@ -36,7 +37,16 @@ class ApiTokenCookieFactory
     public function __construct(Config $config, EncryptionManager $encrypterManager)
     {
         $this->config = $config;
-        $this->encrypter = $encrypterManager->getDriver();
+        $config = $this->config->get("encryption.driver.aes");
+        $options = $config['options'];
+        $key = $this->config->get('passport.key');
+        if (empty($key)) {
+            throw new Exception('Please run "php bin/hyperf.php gen:key --length=256 " to set the passport key.');
+        }
+        $options['key']='base64:'.$key;
+        $options['cipher']='aes-256-cbc';
+        $this->encrypter = $encrypterManager->getDriver('aes',$options);
+        //$this->encrypter = $encrypterManager->getDriver();
     }
 
     /**
@@ -52,9 +62,9 @@ class ApiTokenCookieFactory
             $passport->cookie(),
             $this->createToken($userId, $csrfToken, $expiration),
             $expiration,
-            $configArray['path'],
-            $configArray['domain'],
-            $configArray['secure'],
+            $configArray['path']??'/',
+            $configArray['domain']??'',
+            $configArray['secure']??false,
             true,
             false,
             $configArray['same_site'] ?? null

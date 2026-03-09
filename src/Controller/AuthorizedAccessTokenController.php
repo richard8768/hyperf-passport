@@ -16,6 +16,7 @@ use Hyperf\HttpMessage\Server\Response;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Request;
 use Qbhy\HyperfAuth\AuthManager;
+use Richard\HyperfPassport\Exception\PassportException;
 use Richard\HyperfPassport\RefreshTokenRepository;
 use Richard\HyperfPassport\TokenRepository;
 
@@ -59,11 +60,15 @@ class AuthorizedAccessTokenController
     /**
      * Delete the given token.
      *
-     * @param string $tokenId
      * @return Response
      */
-    public function destroy(Request $request, $tokenId)
+    public function destroy(Request $request)
     {
+        $tokenId = $request->route('token_id');
+        if (empty($tokenId)) {
+            throw new PassportException('token_id is required');
+        }
+
         $user = $this->auth->guard('passport')->user();
         $token = $this->tokenRepository->findForUser(
             $tokenId,

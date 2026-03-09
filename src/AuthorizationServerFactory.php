@@ -48,6 +48,9 @@ class AuthorizationServerFactory
 
     public function __invoke(): AuthorizationServer|HigherOrderTapProxy
     {
+        if(empty($this->config->get('passport.key'))){
+            throw new Exception('Please run "php bin/hyperf.php gen:key --length=256 " to set the passport key.');
+        }
         $tokenExpireDays = new DateInterval('P7D');
         $refreshTokenExpireDays = new DateInterval('P60D');
         $personTokenDays = new DateInterval('P7D');
@@ -93,7 +96,7 @@ class AuthorizationServerFactory
      */
     public function makeAuthorizationServer(): AuthorizationServer
     {
-        return new AuthorizationServer(make(ClientRepository::class), make(AccessTokenRepository::class), make(ScopeRepository::class), $this->makeCryptKey('private'), $this->config->get('passport.key', 'E3Wxizr8gUXuBuyG7CecmGX9E9lbRzdFmqQpG2yP85eDuXzqOj'));
+        return new AuthorizationServer(make(ClientRepository::class), make(AccessTokenRepository::class), make(ScopeRepository::class), $this->makeCryptKey('private'), $this->config->get('passport.key'));
     }
 
     /**

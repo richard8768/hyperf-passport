@@ -46,10 +46,12 @@ class TransientTokenController
     {
         $response = new Response();
         $user = $this->auth->guard('passport')->user();
+        empty($this->session->token()) && $this->session->regenerateToken();
+        $csrfToken = $this->session->token();
         return $response->withBody(new SwooleStream('Refreshed.'))
             ->withCookie($this->cookieFactory->make(
                 $user->getKey(),
-                $this->session->token()
+                $csrfToken
             ));
     }
 }

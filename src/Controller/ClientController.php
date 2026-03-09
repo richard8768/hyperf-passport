@@ -19,6 +19,7 @@ use Hyperf\Validation\Contract\ValidatorFactoryInterface as ValidationFactory;
 use Qbhy\HyperfAuth\AuthManager;
 use Richard\HyperfPassport\Client;
 use Richard\HyperfPassport\ClientRepository;
+use Richard\HyperfPassport\Exception\PassportException;
 use Richard\HyperfPassport\Passport;
 use Richard\HyperfPassport\Rules\RedirectRule;
 
@@ -106,14 +107,14 @@ class ClientController
     /**
      * Update the given client.
      *
-     * @param string $clientId
      */
-    public function update(Request $request, $clientId): Client|Response
+    public function update(Request $request): Client|Response
     {
+        $clientId = (int)$this->getClientId($request);
         $user = $this->auth->guard('passport')->user();
         $client = $this->clients->findForUser($clientId, $user->getKey());
 
-        if (! $client) {
+        if (!$client) {
             $response = new Response();
             return $response->withStatus(404)->withBody(new SwooleStream(''));
         }
@@ -133,14 +134,14 @@ class ClientController
     /**
      * Delete the given client.
      *
-     * @param string $clientId
      */
-    public function destroy(Request $request, $clientId): Response
+    public function destroy(Request $request): Response
     {
+        $clientId = (int)$this->getClientId($request);
         $user = $this->auth->guard('passport')->user();
         $client = $this->clients->findForUser($clientId, $user->getKey());
 
-        if (! $client) {
+        if (!$client) {
             $response = new Response();
             return $response->withStatus(404)->withBody(new SwooleStream(''));
         }
@@ -149,5 +150,18 @@ class ClientController
 
         $response = new Response();
         return $response->withStatus(204)->withBody(new SwooleStream(''));
+    }
+
+    /**
+     * @param Request $request
+     * @return string
+     */
+    protected function getClientId(Request $request): string
+    {
+        $clientId = $request->route('client_id');
+        if (empty($clientId)) {
+            throw new PassportException('client_id is required');
+        }
+        return $clientId;
     }
 }

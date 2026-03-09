@@ -43,7 +43,7 @@ class TokenGuard implements ExtendAuthGuard
     /**
      * The currently authenticated user.
      */
-    protected ?Authenticatable $user;
+    protected ?Authenticatable $user = null;
 
     /**
      * The resource server instance.
