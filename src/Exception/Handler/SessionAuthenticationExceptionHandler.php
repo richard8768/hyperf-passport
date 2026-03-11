@@ -12,19 +12,17 @@ declare(strict_types=1);
 namespace Richard\HyperfPassport\Exception\Handler;
 
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Di\Annotation\Inject;
 use Hyperf\ExceptionHandler\ExceptionHandler;
-use Hyperf\HttpServer\Contract\ResponseInterface as HttpResponse;
+use Hyperf\Stringable\Str;
 use Psr\Http\Message\ResponseInterface;
 use Richard\HyperfPassport\Exception\SessionAuthenticationException;
 use Throwable;
+use Hyperf\Context\RequestContext;
+use function Hyperf\Support\value;
 
 class SessionAuthenticationExceptionHandler extends ExceptionHandler
 {
     protected StdoutLoggerInterface $logger;
-
-    #[Inject]
-    protected HttpResponse $httpResponse;
 
     public function __construct(StdoutLoggerInterface $logger)
     {
@@ -35,16 +33,23 @@ class SessionAuthenticationExceptionHandler extends ExceptionHandler
     {
         $this->logger->error(sprintf('%s[%s] in %s', $throwable->getMessage(), $throwable->getLine(), $throwable->getFile()));
         $this->logger->error($throwable->getTraceAsString());
-        $redirectUrl = '/';
 
-        switch (true) {
-            case $throwable instanceof SessionAuthenticationException:
-                $redirectUrl = $throwable->redirectTo() ?? '/';
-                $response = $response->withStatus(403);
-                break;
+        if ($throwable instanceof SessionAuthenticationException) {
+            $this->stopPropagation();
+            $redirectUrl = $throwable->redirectTo() ?? '/';
+            $redirectUrl = value(function () use ($redirectUrl) {
+                $dftSchema = 'http';
+                if (Str::startsWith($redirectUrl, ['http://', 'https://'])) {
+                    return $redirectUrl;
+                }
+
+                $host = RequestContext::get()->getUri()->getAuthority();
+
+                return $dftSchema . '://' . $host . (Str::startsWith($redirectUrl, '/') ? $redirectUrl : '/' . $redirectUrl);
+            });
+            return $response->withStatus(302)->withAddedHeader('Location', $redirectUrl);
         }
-        $this->stopPropagation();
-        return $this->httpResponse->redirect($redirectUrl);
+        return $response;
     }
 
     public function isValid(Throwable $throwable): bool
