@@ -30,9 +30,9 @@ class RefreshTokenRepository
      * Gets a refresh token by the given ID.
      *
      * @param string $id
-     * @return RefreshToken
+     * @return ?RefreshToken
      */
-    public function find(string $id): RefreshToken
+    public function find(string $id): ?RefreshToken
     {
         $passport = \Hyperf\Support\make(Passport::class);
         return $passport->refreshToken()->where('id', $id)->first();
