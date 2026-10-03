@@ -42,7 +42,7 @@
     "league/plates": "^3.6",
     "nesbot/carbon": "^2.0 || ^3.0",
     "nyholm/psr7": "^1.8",
-    "phpseclib/phpseclib": "^2.0|^3.0.57",
+    "phpseclib/phpseclib": "^3.0.57",
     "ramsey/uuid": "^4.9",
     "richard8768/hyperf-auth": "^1.0",
     "richard8768/cookie": "^1.3",
